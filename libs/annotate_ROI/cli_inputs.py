@@ -13,9 +13,9 @@ def process_cli(widget):
             widget.previous_region()
         if key == ord('k'): # right ROI
             widget.next_region()
-        if key in [ord('h'), ord('c'), ord('b')]:
+        if key in [ord('h'), ord('c'), ord('b'), ord('d')]:
             widget.update_content_type(chr(key))
-        if key == ord('d'):
+        if key == ord('r'):
             widget.update_content_type(None)
         if key == ord('v'):
             widget.read_varname()

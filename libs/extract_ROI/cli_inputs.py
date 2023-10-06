@@ -9,5 +9,5 @@ def process_cli(widget):
         if key == ord('q') or key == 27:
             exit = True
         # Delete last rectangle with 'd'
-        if key == ord('d'):
+        if key == ord('r'):
             widget.undo_add_rectangle()

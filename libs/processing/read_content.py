@@ -48,6 +48,13 @@ def read_content(image, config):
 
             if detected_objects:
                 content = detected_objects[0].text
+        elif region.content_type == 'Digit':
+            reader = Reader(['en'], True)
+            result = reader.readtext(fragment, allowlist='0123456789')
+
+            if result:
+                content = result[0][1]
+                probability = round(result[0][2], 2)
         else:
             reader = Reader(['en'], True)
             result = reader.readtext(fragment)
