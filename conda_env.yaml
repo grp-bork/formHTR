@@ -16,4 +16,5 @@ dependencies:
   - pip
   - pip:
       - imutils
-      - zxingcpp
+      - zxing-cpp
+      - google-cloud-vision
