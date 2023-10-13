@@ -80,3 +80,8 @@ def detect_rectangles(image, filter_scale):
         rectangles.append((minc + framebox[0], minr + framebox[1], maxc + framebox[0], maxr + framebox[1]))
     
     return rectangles
+
+
+def find_residuals(image):
+    """Use a service - probably Amazon or multiple - to find existing printed texts"""
+    pass

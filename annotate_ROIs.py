@@ -13,7 +13,7 @@ def process_inputs(filename, config_file):
     image = np.array(image)
 
     config = LogsheetConfig()
-    config.import_from_csv(config_file)
+    config.import_from_json(config_file)
 
     image = resize_image(image, (config.width, config.height))
         

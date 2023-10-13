@@ -46,7 +46,7 @@ class AnnotateROIsWidget:
         cv2.imshow('Annotate ROIs', self.image)
 
     def update_content_type(self, content_type):
-        self.config.update_content_type(self.selected_index, content_type)
+        self.config.update(self.selected_index, 'content_type', content_type)
         self.config.announce_status(self.selected_index)
 
     def next_region(self):
@@ -63,5 +63,5 @@ class AnnotateROIsWidget:
 
     def read_varname(self):
         varname = input("\nEnter name: ")
-        self.config.update_varname(self.selected_index, varname)
+        self.config.update(self.selected_index, 'varname', varname)
         self.config.announce_status(self.selected_index)

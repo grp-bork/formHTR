@@ -11,7 +11,7 @@ from libs.processing.store_results import store_results
 def process_inputs(scanned_logsheet, template, config_file):
     # load CSV config
     config = LogsheetConfig()
-    config.import_from_csv(config_file)
+    config.import_from_json(config_file)
 
     # convert pdfs to images
     template_image = convert_pdf_to_image(template)
