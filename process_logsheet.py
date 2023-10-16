@@ -7,6 +7,7 @@ from libs.processing.align_images import align_images
 from libs.processing.read_content import process_content
 from libs.processing.store_results import store_results
 from libs.services.call_services import call_services
+from libs.visualise_regions import annotate_pdfs
 
 
 def preprocess_input(scanned_logsheet, template, config):
@@ -26,7 +27,7 @@ def preprocess_input(scanned_logsheet, template, config):
     return logsheet_image
 
 
-def main(scanned_logsheet, template, config_file, output_file, google_credentials, amazon_credentials, azure_credentials):
+def main(scanned_logsheet, template, config_file, output_file, google_credentials, amazon_credentials, azure_credentials, debug):
     # load CSV config
     config = LogsheetConfig()
     config.import_from_json(config_file)
@@ -35,6 +36,9 @@ def main(scanned_logsheet, template, config_file, output_file, google_credential
     # call external OCR services
     credentials = {'google': google_credentials, 'amazon': amazon_credentials, 'azure': azure_credentials}
     indetified_content = call_services(logsheet_image, credentials)
+
+    if debug:
+        annotate_pdfs(indetified_content, logsheet_image)
     # process contents
     contents = process_content(indetified_content, logsheet_image, config)
     # store to Excel sheet
@@ -57,6 +61,8 @@ if __name__ == '__main__':
     required.add_argument('--amazon', type=str, required=True, help='Path to Amazon vision credentials')
     required.add_argument('--azure', type=str, required=True, help='Path to Azure vision credentials')
 
+    optional.add_argument('--debug', action=argparse.BooleanOptionalAction, default=False, help='Run in debug mode')
+
     args = args_parser.parse_args()
 
-    main(args.pdf_logsheet, args.pdf_template, args.config_file, args.output_file, args.google, args.amazon, args.azure)
+    main(args.pdf_logsheet, args.pdf_template, args.config_file, args.output_file, args.google, args.amazon, args.azure, args.debug)

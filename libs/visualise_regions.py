@@ -1,0 +1,38 @@
+from PIL import Image, ImageDraw, ImageFont
+import urllib.request
+from pathlib import Path
+
+
+FONT_URL = "https://github.com/matomo-org/travis-scripts/raw/master/fonts/Arial.ttf"
+
+def load_font():
+    font_file = Path("Arial.ttf")
+    if not font_file.is_file():
+        urllib.request.urlretrieve("FONT_URL", "Arial.ttf")
+
+    try:
+        font = ImageFont.truetype("Arial.ttf", size=30)
+    except IOError:
+        font = ImageFont.load_default()
+    return font
+
+def create_debug_dir():
+    Path("debug/").mkdir(parents=True, exist_ok=True)
+
+def annotate_pdfs(indetified_content, logsheet_image):
+    create_debug_dir()
+
+    for service, content in indetified_content.values():
+        visualise_regions(content, logsheet_image, f'{service}_annotated.pdf')
+
+def visualise_regions(regions, image, output_pdf):
+    img = Image.fromarray(image)
+    draw = ImageDraw.Draw(img)
+    font = load_font()
+
+    # Iterate through OCR results and annotate the image
+    for region in regions:
+        draw.rectangle(region['coords'], outline="red")
+        draw.text((region['coords'][0], region['coords'][1]-20), region['content'], fill="red", font=font)
+    
+    img.save(output_pdf, "PDF", resolution=100.0)
