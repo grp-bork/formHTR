@@ -2,7 +2,6 @@ import json
 
 
 ROI_TYPES = {'h': 'Handwritten',
-             'd': 'Digit',
              'c': 'Checkbox',
              'b': 'Barcode'}
 

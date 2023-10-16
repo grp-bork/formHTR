@@ -43,8 +43,7 @@ This is done by pressing appropriate control commands.
 * Press `h` to add "Handwritten" type to the current ROI.
 * Press `c` to add "Checkbox" type to the current ROI.
 * Press `b` to add "Barcode" type to the current ROI.
-* Press `d` to add "Digit" type to the current ROI.
-* Press `r` to delete the type from the current ROI.
+* Press `r` or `d` to delete the type from the current ROI.
 * Press `v` to enter the variable name.
 * Press an arrow to navigate through ROIs (only left and right for now).
 
