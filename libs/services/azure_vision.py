@@ -6,8 +6,8 @@ import time
 
 class AzureVision:
     def __init__(self, azure_credentials):
-        credentials = CognitiveServicesCredentials(azure_credentials['subscription_key'])
-        self.client = ComputerVisionClient(endpoint=azure_credentials['endpoint'], credentials=credentials)
+        credentials = CognitiveServicesCredentials(azure_credentials['SUBSCRIPTION_KEY'])
+        self.client = ComputerVisionClient(endpoint=azure_credentials['ENDPOINT'], credentials=credentials)
 
     def annotate_image(self, image):
         image_path = "temp_image.png"
