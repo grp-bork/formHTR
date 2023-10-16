@@ -41,7 +41,7 @@ class Residual(Region):
 
 
 class ROI(Region):
-    def __init__(self, start_x, start_y, end_x, end_y, varname, content_type):
+    def __init__(self, start_x, start_y, end_x, end_y, varname=None, content_type=None):
         super().__init__(start_x, start_y, end_x, end_y)
         self.varname = varname
         self.content_type = content_type
@@ -89,7 +89,7 @@ class LogsheetConfig:
             value (str): desired value
         """
         if attribute == 'content_type':
-            value = ROI_TYPES['value']
+            value = ROI_TYPES[value]
         setattr(self.regions[index], attribute, value)
 
     def announce_status(self, index, clean_len=20):
@@ -142,7 +142,7 @@ class LogsheetConfig:
         for region in data['content']:
             self.regions.append(ROI(*region['coords'],
                                     varname=region['varname'],
-                                    content_type=region['content_type']))
+                                    content_type=region['type']))
             
         self.height = int(data['height'])
         self.width = int(data['width'])
