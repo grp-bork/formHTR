@@ -26,15 +26,19 @@ def process_content(indetified_content, logsheet_image, config):
         
         if region.content_type == 'Barcode':
             # TODO: check whether there is only one hit in the region
+            # remove from the tree
             content = read_barcode(fragment)
         elif region.content_type == 'Checkbox':
             # TODO check percentage pixel content in the region
+            # remove from the tree whatever was found there
+            # perhaps if it was proper text, store it
             pass
         else:
             # TODO: find intersections and remove from the tree
-            # TODO: in the end investigate what remained in the trees
             pass
 
         results.append([region.varname, fragment, content])
+
+    # TODO: in the end investigate what remained in the trees
             
     return results
