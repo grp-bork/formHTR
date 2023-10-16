@@ -4,9 +4,8 @@ from azure.cognitiveservices.vision.computervision.models import OperationStatus
 import time
 
 
-class GoogleVision:
+class AzureVision:
     def __init__(self, azure_credentials):
-        # Authenticate with Google Cloud using the key file
         credentials = CognitiveServicesCredentials(azure_credentials['subscription_key'])
         self.client = ComputerVisionClient(endpoint=azure_credentials['endpoint'], credentials=credentials)
 
@@ -21,8 +20,7 @@ class GoogleVision:
 
         # Get ID from returned headers
         operationLocation = rawHttpResponse.headers["Operation-Location"]
-        idLocation = len(operationLocation) - 36
-        operationId = operationLocation[idLocation:]
+        operationId = operationLocation.split("/")[-1]
         
         # SDK call
         result = self.client.get_read_result(operationId)
