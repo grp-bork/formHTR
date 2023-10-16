@@ -19,10 +19,10 @@ def load_font():
 def create_debug_dir():
     Path("debug/").mkdir(parents=True, exist_ok=True)
 
-def annotate_pdfs(indetified_content, logsheet_image):
+def annotate_pdfs(identified_content, logsheet_image):
     create_debug_dir()
 
-    for service, content in indetified_content.values():
+    for service, content in identified_content.items():
         visualise_regions(content, logsheet_image, f'{service}_annotated.pdf')
 
 def visualise_regions(regions, image, output_pdf):
@@ -35,4 +35,4 @@ def visualise_regions(regions, image, output_pdf):
         draw.rectangle(region['coords'], outline="red")
         draw.text((region['coords'][0], region['coords'][1]-20), region['content'], fill="red", font=font)
     
-    img.save(output_pdf, "PDF", resolution=100.0)
+    img.save(f'debug/{output_pdf}', "PDF", resolution=100.0)

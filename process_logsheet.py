@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import json
 
 from libs.pdf_to_image import convert_pdf_to_image, resize_image
 from libs.logsheet_config import LogsheetConfig
@@ -9,6 +10,15 @@ from libs.processing.store_results import store_results
 from libs.services.call_services import call_services
 from libs.visualise_regions import annotate_pdfs
 
+
+def load_credentials(google_credentials, amazon_credentials, azure_credentials):
+    with open(amazon_credentials, 'r') as f:
+        amazon_credentials = json.load(f)
+
+    with open(azure_credentials, 'r') as f:
+        azure_credentials = json.load(f)
+
+    return {'google': google_credentials, 'amazon': amazon_credentials, 'azure': azure_credentials}
 
 def preprocess_input(scanned_logsheet, template, config):
     # convert pdfs to images
@@ -29,18 +39,18 @@ def preprocess_input(scanned_logsheet, template, config):
 
 def main(scanned_logsheet, template, config_file, output_file, google_credentials, amazon_credentials, azure_credentials, debug):
     # load CSV config
-    config = LogsheetConfig()
+    config = LogsheetConfig([], [])
     config.import_from_json(config_file)
     # assume PDF and CSV config correspond to each other (QR codes are not reliable anyway)
     logsheet_image = preprocess_input(scanned_logsheet, template, config)
     # call external OCR services
-    credentials = {'google': google_credentials, 'amazon': amazon_credentials, 'azure': azure_credentials}
-    indetified_content = call_services(logsheet_image, credentials)
+    credentials = load_credentials(google_credentials, amazon_credentials, azure_credentials)
+    identified_content = call_services(logsheet_image, credentials, config)
 
     if debug:
-        annotate_pdfs(indetified_content, logsheet_image)
+        annotate_pdfs(identified_content, logsheet_image)
     # process contents
-    contents = process_content(indetified_content, logsheet_image, config)
+    contents = process_content(identified_content, logsheet_image, config)
     # store to Excel sheet
     store_results(contents, output_file)
 

@@ -2,7 +2,6 @@ from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from msrest.authentication import CognitiveServicesCredentials
 from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
 import time
-import io
 
 
 class AzureVision:
@@ -10,9 +9,7 @@ class AzureVision:
         credentials = CognitiveServicesCredentials(azure_credentials['SUBSCRIPTION_KEY'])
         self.client = ComputerVisionClient(endpoint=azure_credentials['ENDPOINT'], credentials=credentials)
 
-    def annotate_image(self, image):
-        image_stream = io.BytesIO()
-        image.save(image_stream, format='PNG')
+    def annotate_image(self, image_stream):
         image_stream.seek(0)  # Rewind the stream to the beginning
 
         rawHttpResponse = self.client.read_in_stream(image_stream, language="en", raw=True)

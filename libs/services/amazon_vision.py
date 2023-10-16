@@ -8,7 +8,8 @@ class AmazonVision:
                                    aws_secret_access_key=amazon_credentials['SECRET_KEY'],
                                    region_name=amazon_credentials['REGION'])
 
-    def annotate_image(self, image):
+    def annotate_image(self, image_stream):
+        image = image_stream.getvalue()
         response = self.client.detect_document_text(Document={'Bytes': bytearray(image)})
         return response
 
