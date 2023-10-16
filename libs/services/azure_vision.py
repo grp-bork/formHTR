@@ -2,6 +2,7 @@ from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from msrest.authentication import CognitiveServicesCredentials
 from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
 import time
+import io
 
 
 class AzureVision:
@@ -10,13 +11,12 @@ class AzureVision:
         self.client = ComputerVisionClient(endpoint=azure_credentials['ENDPOINT'], credentials=credentials)
 
     def annotate_image(self, image):
-        image_path = "temp_image.png"
-        image.save(image_path, "PNG")
-        
-        with open(image_path, 'rb') as image_stream:
-            # Use the stream to call the API
-            rawHttpResponse = self.client.read_in_stream(image_stream, language="en", raw=True)
-            # try lower DPI if Bad request (azure.cognitiveservices.vision.computervision.models._models_py3.ComputerVisionOcrErrorException)
+        image_stream = io.BytesIO()
+        image.save(image_stream, format='PNG')
+        image_stream.seek(0)  # Rewind the stream to the beginning
+
+        rawHttpResponse = self.client.read_in_stream(image_stream, language="en", raw=True)
+        # try lower DPI if Bad request (azure.cognitiveservices.vision.computervision.models._models_py3.ComputerVisionOcrErrorException)
 
         # Get ID from returned headers
         operationLocation = rawHttpResponse.headers["Operation-Location"]

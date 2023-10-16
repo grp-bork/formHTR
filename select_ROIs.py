@@ -1,6 +1,5 @@
 import argparse
 import cv2
-from pathlib import Path
 import numpy as np
 
 from libs.extract_ROI.select_ROIs_widget import SelectROIsWidget
