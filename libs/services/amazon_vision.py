@@ -1,6 +1,6 @@
 import boto3
 
-from libs.logsheet_config import Rectangle
+from libs.region import Rectangle
 
 
 class AmazonVision:

@@ -5,7 +5,8 @@ import numpy as np
 from libs.extract_ROI.select_ROIs_widget import SelectROIsWidget
 from libs.pdf_to_image import convert_pdf_to_image, resize_image
 from libs.extract_ROI.autodect import detect_rectangles, find_residuals
-from libs.logsheet_config import LogsheetConfig, ROI
+from libs.logsheet_config import LogsheetConfig
+from libs.region import ROI
 from libs.extract_ROI.cli_inputs import process_cli
 
 

@@ -1,7 +1,7 @@
 from google.cloud import vision_v1
 from google.oauth2 import service_account
 
-from libs.logsheet_config import Rectangle
+from libs.region import Rectangle
 
 
 class GoogleVision:

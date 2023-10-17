@@ -3,7 +3,7 @@ from msrest.authentication import CognitiveServicesCredentials
 from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
 import time
 
-from libs.logsheet_config import Rectangle
+from libs.region import Rectangle
 
 
 class AzureVision:

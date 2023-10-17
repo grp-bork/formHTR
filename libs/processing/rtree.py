@@ -1,5 +1,5 @@
 from rtree import index
-from libs.logsheet_config import Rectangle
+from libs.region import Rectangle
 
 
 class Ensemble:
@@ -15,15 +15,15 @@ class Ensemble:
         results = []
 
         candidates = self.google_rtree.find_intersection(rectangle)
-        results.append([Rectangle(*candidate.bbox, candidate.obj) for candidate in candidates])
+        results.append([Rectangle(*candidate.bbox, candidate.object) for candidate in candidates])
         self.google_rtree.delete_rectangles(candidates)
 
         candidates = self.amazon_rtree.find_intersection(rectangle)
-        results.append([Rectangle(*candidate.bbox, candidate.obj) for candidate in candidates])
+        results.append([Rectangle(*candidate.bbox, candidate.object) for candidate in candidates])
         self.amazon_rtree.delete_rectangles(candidates)
 
         candidates = self.azure_rtree.find_intersection(rectangle)
-        results.append([Rectangle(*candidate.bbox, candidate.obj) for candidate in candidates])
+        results.append([Rectangle(*candidate.bbox, candidate.object) for candidate in candidates])
         self.azure_rtree.delete_rectangles(candidates)
 
         return results
@@ -36,7 +36,7 @@ class RectangleTree:
             self.index.insert(i, roi.get_coords(), obj=roi.content)
     
     def find_intersection(self, rectangle):
-        return list(self.index.intersection(rectangle))
+        return list(self.index.intersection(rectangle, objects=True))
     
     def delete_rectangle(self, id, coords):
         self.index.delete(id, coords)
@@ -47,5 +47,5 @@ class RectangleTree:
 
     def prune_residuals(self, residuals):
         for residual in residuals:
-            candidates = self.find_intersection(residual)
+            candidates = self.find_intersection(residual.get_coords())
             self.delete_rectangles(candidates)
