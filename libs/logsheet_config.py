@@ -56,6 +56,22 @@ class ROI(Region):
         self.varname = varname
 
 
+class Rectangle(Region):
+    def __init__(self, start_x, start_y, end_x, end_y, content):
+        super().__init__(start_x, start_y, end_x, end_y)
+        self.content = content
+        self.center_x, self.center_y = self.compute_center()
+
+    def __str__(self):
+        return f'{self.content}: {super().__str__()}'
+
+    def compute_center(self):
+        return (self.start_x + self.end_x)/2, (self.start_y + self.end_y)/2
+
+    def is_left(self, other):
+        return self.end_x <= other.center_x and self.start_y <= other.center_y <= self.end_y
+
+
 class LogsheetConfig:
     """
     Class to store and represent the whole config.

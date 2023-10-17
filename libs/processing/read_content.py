@@ -1,5 +1,6 @@
-from libs.processing.rtree import RectangleTree
+from libs.processing.rtree import Ensemble
 from libs.processing.barcode import read_barcode
+from libs.processing.process_area import check_barcode_area
 
 
 def process_content(indetified_content, logsheet_image, config):
@@ -16,25 +17,24 @@ def process_content(indetified_content, logsheet_image, config):
     """
     results = []
 
-    google_rtree = RectangleTree(indetified_content['google'])
-    amazon_rtree = RectangleTree(indetified_content['amazon'])
-    azure_rtree = RectangleTree(indetified_content['azure'])
+    ensemble = Ensemble(indetified_content, config)
 
     for region in config.regions:
         fragment = logsheet_image[region.start_y:region.end_y, region.start_x:region.end_x]
         content = None
+
+        candidates = ensemble.find_intersection(region.get_coords())
         
         if region.content_type == 'Barcode':
-            # TODO: check whether there is only one hit in the region
-            # remove from the tree
-            content = read_barcode(fragment)
+            valid_content = check_barcode_area(candidates)
+            if valid_content:
+                content = read_barcode(fragment)
         elif region.content_type == 'Checkbox':
             # TODO check percentage pixel content in the region
             # remove from the tree whatever was found there
             # perhaps if it was proper text, store it
             pass
         else:
-            # TODO: find intersections and remove from the tree
             pass
 
         results.append([region.varname, fragment, content])

@@ -1,5 +1,7 @@
 import boto3
 
+from libs.logsheet_config import Rectangle
+
 
 class AmazonVision:
     def __init__(self, amazon_credentials):
@@ -37,6 +39,6 @@ class AmazonVision:
                 bottom_right = [abs_left + abs_width, abs_top + abs_height]
                 
                 # Append the extracted data to the list
-                identified.append({'content': text, 'coords': top_left + bottom_right})
+                identified.append(Rectangle(*top_left, *bottom_right, text))
         
         return identified

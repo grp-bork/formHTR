@@ -1,6 +1,8 @@
 from google.cloud import vision_v1
 from google.oauth2 import service_account
 
+from libs.logsheet_config import Rectangle
+
 
 class GoogleVision:
     def __init__(self, key_path):
@@ -22,5 +24,5 @@ class GoogleVision:
         for text in outputs[1:]:  # [1:] to exclude the first element which is the entire text
             vertices = [(vertex.x, vertex.y) for vertex in text.bounding_poly.vertices]
             string_encode = text.description.encode("ascii", "ignore")
-            identified.append({'coords': vertices[0] + vertices[2], 'content': string_encode.decode()})
+            identified.append(Rectangle(*vertices[0], *vertices[2], string_encode.decode()))
         return identified

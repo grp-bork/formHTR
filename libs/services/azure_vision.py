@@ -3,6 +3,8 @@ from msrest.authentication import CognitiveServicesCredentials
 from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
 import time
 
+from libs.logsheet_config import Rectangle
+
 
 class AzureVision:
     def __init__(self, azure_credentials):
@@ -34,5 +36,5 @@ class AzureVision:
             for line in outputs.analyze_result.read_results[0].lines:
                 for word in line.words:
                     vertices = word.bounding_box
-                    identified.append({'content': word.text, 'coords': vertices[0:2] + vertices[4:6]})
+                    identified.append(Rectangle(*vertices[0:2], *vertices[4:6], word.text))
         return identified
