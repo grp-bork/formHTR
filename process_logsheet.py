@@ -56,7 +56,7 @@ def main(scanned_logsheet, template, config_file, output_file, google_credential
 
 
 if __name__ == '__main__':
-    args_parser = argparse.ArgumentParser(description='Select ROIs in given PDF file.')
+    args_parser = argparse.ArgumentParser(description='Extract medatada from logsheet.')
 
     args_parser._action_groups.pop()
     required = args_parser.add_argument_group('required arguments')

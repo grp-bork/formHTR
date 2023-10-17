@@ -32,7 +32,7 @@ def visualise_regions(regions, image, output_pdf):
 
     # Iterate through OCR results and annotate the image
     for region in regions:
-        draw.rectangle(region['coords'], outline="red")
-        draw.text((region['coords'][0], region['coords'][1]-20), region['content'], fill="red", font=font)
+        draw.rectangle(region.get_coords(), outline="red")
+        draw.text((region.get_start()[0], region.get_start()[1]-20), region.content, fill="red", font=font)
     
     img.save(f'debug/{output_pdf}', "PDF", resolution=100.0)
