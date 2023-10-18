@@ -6,13 +6,9 @@ dependencies:
   - numpy
   - opencv
   - pillow==9.5.0
-  - scikit-image
   - pdf2image
-  - openpyxl
   - pandas
   - xlsxwriter
-  - easyocr
-  - poppler
   - pip
   - pip:
       - imutils
@@ -21,3 +17,4 @@ dependencies:
       - rtree
       - boto3
       - azure-cognitiveservices-vision-computervision
+      - pyzbar
