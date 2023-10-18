@@ -64,6 +64,7 @@ The processing of logsheets is using external services requiring credentials to 
 
 __Google__
 
+```
 {
   "type": "service_account",
   "project_id": "theid",,
@@ -77,21 +78,26 @@ __Google__
   "client_x509_cert_url": "someurl",
   "universe_domain": "googleapis.com"
 }
+```
 
 __Amazon__
 
+```
 {
     "ACCESS_KEY": "YOUR_KEY_ID_HERE",
     "SECRET_KEY": "YOUR_ACCESS_KEY_HERE",
     "REGION": "YOUR_REGION_NAME_HERE"
 }
+```
 
 __Microsoft__
 
+```
 {
     "SUBSCRIPTION_KEY": "YOURKEYHERE",
     "ENDPOINT": "https://ENDPOINT"
 }
+```
 
 ---
 
