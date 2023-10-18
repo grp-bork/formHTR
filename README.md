@@ -1,5 +1,5 @@
-# formHCR
-Handprint character recognition in form documents.
+# formHTR
+Handprint text recognition in form documents.
 
 
 # Installation
@@ -19,7 +19,7 @@ This functionality is split (for now) into two separate scripts.
 Script `select_ROIs.py` is used to find and define locations of regions of interest (ROIs) in the given PDF.
 
 Generally, it is possible to draw ROIs (rectangles) manually but also to detect them automatically.
-The coordinates of ROIs are stored in a CSV file.
+The coordinates of ROIs are stored in a JSON file.
 
 The tool is supposed to be run from the command line, as the control commands are entered there.
 

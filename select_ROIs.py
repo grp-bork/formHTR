@@ -62,11 +62,11 @@ if __name__ == '__main__':
     optional = args_parser.add_argument_group('optional arguments')
 
     required.add_argument('--pdf_file', type=str, required=True, help='PDF template of a logsheet')
-    required.add_argument('--output_file', type=str, required=True, help='Path to output CSV file containing config')
+    required.add_argument('--output_file', type=str, required=True, help='Path to output JSON file containing config')
 
     optional.add_argument('--autodetect', action=argparse.BooleanOptionalAction, default=False, help='Apply autodetection algorithm to find ROIs automatically')
     optional.add_argument('--autodetect_filter', type=float, default=3, help='Autodetection parameter: scaling factor to filter out too small ROIs (recommended value between 1 and 3)')
-    optional.add_argument('--config_file', type=str, default=None, help='Path to input CSV file containing config')
+    optional.add_argument('--config_file', type=str, default=None, help='Path to input JSON file containing config')
     optional.add_argument('--find_residuals', action=argparse.BooleanOptionalAction, default=False, help='Find existing text in the template and flag it as residual (will be always ignored)')
     optional.add_argument('--display_residuals', action=argparse.BooleanOptionalAction, default=False, help='Display found residuals.')
 

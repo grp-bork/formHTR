@@ -37,8 +37,8 @@ if __name__ == '__main__':
     optional = args_parser.add_argument_group('optional arguments')
 
     required.add_argument('--pdf_file', type=str, required=True, help='PDF template of a logsheet')
-    required.add_argument('--config_file', type=str, required=True, help='Path to input CSV file containing config')
-    required.add_argument('--output_file', type=str, required=True, help='Path to output CSV file containing config')
+    required.add_argument('--config_file', type=str, required=True, help='Path to input JSON file containing config')
+    required.add_argument('--output_file', type=str, required=True, help='Path to output JSON file containing config')
 
     optional.add_argument('--remove_unannotated', action=argparse.BooleanOptionalAction, default=False, help='ROIs with no annotation are removed from the output config file.')
     optional.add_argument('--display_residuals', action=argparse.BooleanOptionalAction, default=False, help='Display read-only residuals.')

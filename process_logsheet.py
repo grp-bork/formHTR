@@ -64,14 +64,14 @@ if __name__ == '__main__':
 
     required.add_argument('--pdf_logsheet', type=str, required=True, help='Scanned logsheet in PDF format')
     required.add_argument('--pdf_template', type=str, required=True, help='PDF template of the logsheet')
-    required.add_argument('--config_file', type=str, required=True, help='Path to CSV file containing config')
+    required.add_argument('--config_file', type=str, required=True, help='Path to JSON file containing config')
     required.add_argument('--output_file', type=str, required=True, help='Path to output xlsx file')
 
     required.add_argument('--google', type=str, required=True, help='Path to Google vision credentials')
     required.add_argument('--amazon', type=str, required=True, help='Path to Amazon vision credentials')
     required.add_argument('--azure', type=str, required=True, help='Path to Azure vision credentials')
 
-    optional.add_argument('--debug', action=argparse.BooleanOptionalAction, default=False, help='Run in debug mode')
+    optional.add_argument('--debug', action=argparse.BooleanOptionalAction, default=False, help='Run in debug mode - output annotated PDF files.')
 
     args = args_parser.parse_args()
 
