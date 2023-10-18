@@ -1,0 +1,718 @@
+{
+    "content": [
+        {
+            "coords": [
+                454,
+                246,
+                802,
+                355
+            ],
+            "type": "Handwritten",
+            "varname": "side_name"
+        },
+        {
+            "coords": [
+                946,
+                246,
+                1020,
+                355
+            ],
+            "type": "Handwritten",
+            "varname": "site_id"
+        },
+        {
+            "coords": [
+                1179,
+                253,
+                1380,
+                378
+            ],
+            "type": "Handwritten",
+            "varname": "year"
+        },
+        {
+            "coords": [
+                1382,
+                253,
+                1512,
+                378
+            ],
+            "type": "Handwritten",
+            "varname": "month"
+        },
+        {
+            "coords": [
+                1513,
+                253,
+                1633,
+                378
+            ],
+            "type": "Handwritten",
+            "varname": "day"
+        },
+        {
+            "coords": [
+                465,
+                648,
+                591,
+                783
+            ],
+            "type": "Checkbox",
+            "varname": "ctd_deployed"
+        },
+        {
+            "coords": [
+                948,
+                1816,
+                1512,
+                2058
+            ],
+            "type": "Barcode",
+            "varname": "mte_sample"
+        },
+        {
+            "coords": [
+                1841,
+                224,
+                2425,
+                370
+            ],
+            "type": "Handwritten",
+            "varname": "operator"
+        }
+    ],
+    "height": 3508,
+    "to_ignore": [
+        {
+            "content": "CTD",
+            "coords": [
+                68,
+                69,
+                209,
+                122
+            ]
+        },
+        {
+            "content": "and",
+            "coords": [
+                251,
+                69,
+                371,
+                122
+            ]
+        },
+        {
+            "content": "Sampling",
+            "coords": [
+                396,
+                69,
+                709,
+                135
+            ]
+        },
+        {
+            "content": "Event",
+            "coords": [
+                735,
+                71,
+                923,
+                122
+            ]
+        },
+        {
+            "content": "Form",
+            "coords": [
+                946,
+                70,
+                1115,
+                122
+            ]
+        },
+        {
+            "content": "LSI16",
+            "coords": [
+                2233,
+                73,
+                2418,
+                128
+            ]
+        },
+        {
+            "content": "YYYY",
+            "coords": [
+                1209,
+                203,
+                1332,
+                239
+            ]
+        },
+        {
+            "content": "MM",
+            "coords": [
+                1408,
+                203,
+                1482,
+                239
+            ]
+        },
+        {
+            "content": "DD",
+            "coords": [
+                1535,
+                202,
+                1600,
+                239
+            ]
+        },
+        {
+            "content": "SiteID",
+            "coords": [
+                287,
+                279,
+                410,
+                317
+            ]
+        },
+        {
+            "content": "-LSI-",
+            "coords": [
+                821,
+                280,
+                922,
+                316
+            ]
+        },
+        {
+            "content": "Date",
+            "coords": [
+                1060,
+                287,
+                1155,
+                324
+            ]
+        },
+        {
+            "content": "Operator",
+            "coords": [
+                1647,
+                281,
+                1829,
+                327
+            ]
+        },
+        {
+            "content": "CTD",
+            "coords": [
+                100,
+                563,
+                217,
+                608
+            ]
+        },
+        {
+            "content": "CTD",
+            "coords": [
+                116,
+                695,
+                209,
+                731
+            ]
+        },
+        {
+            "content": "Deployed",
+            "coords": [
+                224,
+                695,
+                415,
+                740
+            ]
+        },
+        {
+            "content": "HH",
+            "coords": [
+                395,
+                898,
+                462,
+                934
+            ]
+        },
+        {
+            "content": "MM",
+            "coords": [
+                519,
+                898,
+                596,
+                934
+            ]
+        },
+        {
+            "content": "HH",
+            "coords": [
+                1117,
+                898,
+                1184,
+                933
+            ]
+        },
+        {
+            "content": "MM",
+            "coords": [
+                1241,
+                898,
+                1319,
+                934
+            ]
+        },
+        {
+            "content": "Start",
+            "coords": [
+                129,
+                988,
+                232,
+                1026
+            ]
+        },
+        {
+            "content": "time",
+            "coords": [
+                243,
+                989,
+                335,
+                1026
+            ]
+        },
+        {
+            "content": "End",
+            "coords": [
+                838,
+                982,
+                921,
+                1019
+            ]
+        },
+        {
+            "content": "date",
+            "coords": [
+                936,
+                982,
+                1029,
+                1019
+            ]
+        },
+        {
+            "content": "GPS",
+            "coords": [
+                89,
+                1130,
+                183,
+                1167
+            ]
+        },
+        {
+            "content": "N/S",
+            "coords": [
+                388,
+                1194,
+                461,
+                1231
+            ]
+        },
+        {
+            "content": "DD",
+            "coords": [
+                527,
+                1194,
+                590,
+                1230
+            ]
+        },
+        {
+            "content": "MM.MMM",
+            "coords": [
+                657,
+                1194,
+                858,
+                1230
+            ]
+        },
+        {
+            "content": "E/W",
+            "coords": [
+                1181,
+                1194,
+                1268,
+                1231
+            ]
+        },
+        {
+            "content": "DD",
+            "coords": [
+                1331,
+                1194,
+                1395,
+                1230
+            ]
+        },
+        {
+            "content": "MM.MMM",
+            "coords": [
+                1461,
+                1194,
+                1662,
+                1230
+            ]
+        },
+        {
+            "content": "Latitude",
+            "coords": [
+                169,
+                1282,
+                331,
+                1319
+            ]
+        },
+        {
+            "content": "Longitude",
+            "coords": [
+                950,
+                1282,
+                1149,
+                1327
+            ]
+        },
+        {
+            "content": "CTD",
+            "coords": [
+                103,
+                1536,
+                196,
+                1573
+            ]
+        },
+        {
+            "content": "Retrieved",
+            "coords": [
+                210,
+                1536,
+                403,
+                1573
+            ]
+        },
+        {
+            "content": "MTE",
+            "coords": [
+                109,
+                1771,
+                228,
+                1816
+            ]
+        },
+        {
+            "content": "MTE",
+            "coords": [
+                124,
+                1903,
+                219,
+                1939
+            ]
+        },
+        {
+            "content": "Deployed",
+            "coords": [
+                234,
+                1903,
+                425,
+                1948
+            ]
+        },
+        {
+            "content": "Water",
+            "coords": [
+                111,
+                2210,
+                274,
+                2256
+            ]
+        },
+        {
+            "content": "Collection",
+            "coords": [
+                290,
+                2210,
+                568,
+                2255
+            ]
+        },
+        {
+            "content": "HH",
+            "coords": [
+                469,
+                2340,
+                536,
+                2376
+            ]
+        },
+        {
+            "content": "MM",
+            "coords": [
+                593,
+                2340,
+                671,
+                2376
+            ]
+        },
+        {
+            "content": "HH",
+            "coords": [
+                1191,
+                2340,
+                1259,
+                2375
+            ]
+        },
+        {
+            "content": "MM",
+            "coords": [
+                1315,
+                2340,
+                1393,
+                2376
+            ]
+        },
+        {
+            "content": "Start",
+            "coords": [
+                204,
+                2430,
+                305,
+                2468
+            ]
+        },
+        {
+            "content": "time",
+            "coords": [
+                317,
+                2431,
+                408,
+                2467
+            ]
+        },
+        {
+            "content": "End",
+            "coords": [
+                913,
+                2424,
+                995,
+                2461
+            ]
+        },
+        {
+            "content": "date",
+            "coords": [
+                1010,
+                2424,
+                1103,
+                2461
+            ]
+        },
+        {
+            "content": "GPS",
+            "coords": [
+                163,
+                2572,
+                257,
+                2609
+            ]
+        },
+        {
+            "content": "N/S",
+            "coords": [
+                462,
+                2637,
+                536,
+                2674
+            ]
+        },
+        {
+            "content": "DD",
+            "coords": [
+                601,
+                2637,
+                665,
+                2673
+            ]
+        },
+        {
+            "content": "MM.MMM",
+            "coords": [
+                729,
+                2637,
+                932,
+                2674
+            ]
+        },
+        {
+            "content": "E/W",
+            "coords": [
+                1255,
+                2637,
+                1342,
+                2674
+            ]
+        },
+        {
+            "content": "DD",
+            "coords": [
+                1405,
+                2637,
+                1469,
+                2674
+            ]
+        },
+        {
+            "content": "MM.MMM",
+            "coords": [
+                1534,
+                2637,
+                1736,
+                2674
+            ]
+        },
+        {
+            "content": "Latitude",
+            "coords": [
+                244,
+                2724,
+                405,
+                2761
+            ]
+        },
+        {
+            "content": "Longitude",
+            "coords": [
+                1023,
+                2723,
+                1223,
+                2770
+            ]
+        },
+        {
+            "content": "Processing",
+            "coords": [
+                126,
+                3013,
+                437,
+                3071
+            ]
+        },
+        {
+            "content": "time",
+            "coords": [
+                454,
+                3013,
+                574,
+                3060
+            ]
+        },
+        {
+            "content": "HH",
+            "coords": [
+                481,
+                3144,
+                548,
+                3180
+            ]
+        },
+        {
+            "content": "MM",
+            "coords": [
+                605,
+                3144,
+                682,
+                3180
+            ]
+        },
+        {
+            "content": "HH",
+            "coords": [
+                1205,
+                3144,
+                1271,
+                3180
+            ]
+        },
+        {
+            "content": "MM",
+            "coords": [
+                1327,
+                3144,
+                1406,
+                3180
+            ]
+        },
+        {
+            "content": "Start",
+            "coords": [
+                215,
+                3235,
+                318,
+                3272
+            ]
+        },
+        {
+            "content": "time",
+            "coords": [
+                330,
+                3235,
+                420,
+                3272
+            ]
+        },
+        {
+            "content": "End",
+            "coords": [
+                924,
+                3228,
+                1007,
+                3265
+            ]
+        },
+        {
+            "content": "date",
+            "coords": [
+                1022,
+                3228,
+                1115,
+                3265
+            ]
+        },
+        {
+            "content": "Notes",
+            "coords": [
+                52,
+                3418,
+                183,
+                3454
+            ]
+        },
+        {
+            "content": "on",
+            "coords": [
+                199,
+                3427,
+                256,
+                3454
+            ]
+        },
+        {
+            "content": "back",
+            "coords": [
+                272,
+                3417,
+                382,
+                3454
+            ]
+        }
+    ],
+    "width": 2481
+}

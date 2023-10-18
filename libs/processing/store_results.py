@@ -50,15 +50,14 @@ def store_results(results, output_file):
 
     for row_number, result in enumerate(results, 1):
         worksheet.write(row_number, 0, result[0])
-        worksheet.write(row_number, 1, result[2])
-        worksheet.write(row_number, 2, result[3])
-        filename = store_image(result[1], images_directory, row_number)
-        height, width, _ = result[1].shape
+        worksheet.write(row_number, 1, result[1])
+        filename = store_image(result[2], images_directory, row_number)
+        height, width, _ = result[2].shape
         max_width = max(width, max_width)
-        worksheet.insert_image(row_number, 3, filename)
+        worksheet.insert_image(row_number, 2, filename)
         worksheet.set_row_pixels(row_number, height)
 
-    worksheet.set_column_pixels(3, 3, max_width)
+    worksheet.set_column_pixels(2, 3, max_width)
 
     worksheet.autofit()
     workbook.close()

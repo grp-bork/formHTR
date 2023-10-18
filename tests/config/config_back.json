@@ -1,0 +1,22 @@
+{
+    "to_ignore": [
+        {
+            "content": "Notes:",
+            "coords": [
+                54,
+                75,
+                199,
+                112
+            ]
+        },
+        {
+            "content": "Operators:",
+            "coords": [
+                61,
+                3092,
+                308,
+                3143
+            ]
+        }
+    ]
+}

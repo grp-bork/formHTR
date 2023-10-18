@@ -1,14 +1,16 @@
-from easyocr import Reader
-import cv2
-import zxingcpp
+from libs.processing.rtree import Ensemble
+from libs.processing.barcode import read_barcode
+from libs.processing.process_area import check_barcode_area, general_text_area
+from libs.processing.checkbox import is_ticked
 
 
-def read_content(image, config):
+def process_content(indetified_content, logsheet_image, config):
     """
     Top level function to read content of ROIs.
 
     Args:
-        image (Image): given image
+        indetified_content (dict): identified content using OCR services
+        logsheet_image (Image): logsheet image
         config (LogsheetConfig): configuration of given logsheet
 
     Returns:
@@ -16,53 +18,29 @@ def read_content(image, config):
     """
     results = []
 
+    ensemble = Ensemble(indetified_content, config)
+
     for region in config.regions:
-        fragment = image[region.start_y:region.end_y, region.start_x:region.end_x]
-        content = ""
-        probability = 1
+        fragment = logsheet_image[region.start_y:region.end_y, region.start_x:region.end_x]
+        content = None
+
+        candidates = ensemble.find_intersection(region.get_coords())
         
         if region.content_type == 'Barcode':
-            gray_image = cv2.cvtColor(fragment, cv2.COLOR_BGR2GRAY)
-
-            # Edge detection
-            edges = cv2.Canny(gray_image, 100, 200)
-
-            # Find contours
-            contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-            # Find the largest contour
-            largest_contour = max(contours, key=cv2.contourArea)
-
-            # Get the rotated bounding box of the largest contour
-            rect = cv2.minAreaRect(largest_contour)
-            angle = rect[-1]
-
-            # Rotate the image to align the barcode
-            (h, w) = fragment.shape[:2]
-            center = (w // 2, h // 2)
-            M = cv2.getRotationMatrix2D(center, angle, 1.0)
-            rotated_image = cv2.warpAffine(fragment, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
-
-            # Decode the barcode
-            detected_objects = zxingcpp.read_barcodes(rotated_image)
-
-            if detected_objects:
-                content = detected_objects[0].text
-        elif region.content_type == 'Digit':
-            reader = Reader(['en'], True)
-            result = reader.readtext(fragment, allowlist='0123456789')
-
-            if result:
-                content = result[0][1]
-                probability = round(result[0][2], 2)
+            # TODO use barcode value from OCR if everything else fails
+            valid_content = check_barcode_area(candidates)
+            if valid_content:
+                content = read_barcode(fragment)
+        elif region.content_type == 'Checkbox':
+            content = is_ticked(fragment)
+            # TODO remove from the tree whatever was found there
+            # perhaps if it was proper text, store it
+            pass
         else:
-            reader = Reader(['en'], True)
-            result = reader.readtext(fragment)
+            content = general_text_area(candidates)
 
-            if result:
-                content = result[0][1]
-                probability = round(result[0][2], 2)
+        results.append([region.varname, content, fragment])
+
+    # TODO: in the end investigate what remained in the trees
             
-        results.append([region.varname, fragment, content, probability])
-
     return results

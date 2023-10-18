@@ -5,11 +5,12 @@ class AnnotateROIsWidget:
     """
     Widget to annotate ROIs on the given template.
     """
-    def __init__(self, image, config):
+    def __init__(self, image, config, display_residuals):
         self.original_image = image
         self.image = self.original_image.copy()
         self.config = config
         self.num_of_regions = len(self.config.regions)
+        self.display_residuals = display_residuals
 
         self.selected_index = 0
 
@@ -35,7 +36,10 @@ class AnnotateROIsWidget:
             colour = (240,20,20)
             if i == self.selected_index:
                 colour = (0,0,255)
-            cv2.rectangle(self.image, region.get_start(), region.get_end(), colour, 2)
+            cv2.rectangle(self.image, region.get_start(), region.get_end(), colour, 6)
+        if self.display_residuals:
+            for residual in self.config.residuals:
+                cv2.rectangle(self.image, residual.get_start(), residual.get_end(), (60,166,71), 5)
 
     def reset_image(self):
         """
@@ -46,7 +50,7 @@ class AnnotateROIsWidget:
         cv2.imshow('Annotate ROIs', self.image)
 
     def update_content_type(self, content_type):
-        self.config.update_content_type(self.selected_index, content_type)
+        self.config.update(self.selected_index, 'content_type', content_type)
         self.config.announce_status(self.selected_index)
 
     def next_region(self):
@@ -62,6 +66,6 @@ class AnnotateROIsWidget:
             self.config.announce_status(self.selected_index)
 
     def read_varname(self):
-        varname = input("\nEnter name: ")
-        self.config.update_varname(self.selected_index, varname)
+        varname = input('\nEnter name: ')
+        self.config.update(self.selected_index, 'varname', varname)
         self.config.announce_status(self.selected_index)

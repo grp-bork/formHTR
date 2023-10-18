@@ -1,5 +1,5 @@
-# formHCR
-Handprint character recognition in form documents.
+# formHTR
+Handprint text recognition in form documents.
 
 
 # Installation
@@ -19,7 +19,7 @@ This functionality is split (for now) into two separate scripts.
 Script `select_ROIs.py` is used to find and define locations of regions of interest (ROIs) in the given PDF.
 
 Generally, it is possible to draw ROIs (rectangles) manually but also to detect them automatically.
-The coordinates of ROIs are stored in a CSV file.
+The coordinates of ROIs are stored in a JSON file.
 
 The tool is supposed to be run from the command line, as the control commands are entered there.
 
@@ -43,14 +43,13 @@ This is done by pressing appropriate control commands.
 * Press `h` to add "Handwritten" type to the current ROI.
 * Press `c` to add "Checkbox" type to the current ROI.
 * Press `b` to add "Barcode" type to the current ROI.
-* Press `d` to add "Digit" type to the current ROI.
-* Press `r` to delete the type from the current ROI.
+* Press `r` or `d` to delete the type from the current ROI.
 * Press `v` to enter the variable name.
 * Press an arrow to navigate through ROIs (only left and right for now).
 
 Run `python select_ROIs.py -h` for details.
 
-## process logsheet
+### process logsheet
 
 Script `process_logsheet.py` is used to extract values from specified ROIs.
 
@@ -58,3 +57,46 @@ This is the crucial step that applies various techniques to extract the informat
 It can process one logsheet at a time, given the template and config files.
 
 Run `python select_ROIs.py -h` for details.
+
+#### Credentials
+
+The processing of logsheets is using external services requiring credentials to use them. Here we specify structure that is expected for credentials, always in JSON format.
+
+__Google__
+
+{
+  "type": "service_account",
+  "project_id": "theid",,
+  "private_key_id": "thekey",
+  "private_key": "-----BEGIN PRIVATE KEY-----anotherkey-----END PRIVATE KEY-----\n"
+  "client_email": "emailaddress",
+  "client_id": "id",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "someurl",
+  "universe_domain": "googleapis.com"
+}
+
+__Amazon__
+
+{
+    "ACCESS_KEY": "YOUR_KEY_ID_HERE",
+    "SECRET_KEY": "YOUR_ACCESS_KEY_HERE",
+    "REGION": "YOUR_REGION_NAME_HERE"
+}
+
+__Microsoft__
+
+{
+    "SUBSCRIPTION_KEY": "YOURKEYHERE",
+    "ENDPOINT": "https://ENDPOINT"
+}
+
+---
+
+## Testing
+
+It is possible to test logsheet processing using dry run without credentials on data stored in `tests/`.
+
+Run `python dry_processing.py -h` for details.

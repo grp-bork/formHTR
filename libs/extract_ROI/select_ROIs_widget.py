@@ -5,10 +5,11 @@ class SelectROIsWidget:
     """
     Widget to draw ROIs on the given template.
     """
-    def __init__(self, image, config):
+    def __init__(self, image, config, display_residuals):
         self.original_image = image
         self.image = self.original_image.copy()
         self.config = config
+        self.display_residuals = display_residuals
 
         self.drawing_in_progress = False
         self.start_x, self.start_y = -1, -1
@@ -41,11 +42,11 @@ class SelectROIsWidget:
             # accept only non-empty rectangles
             if self.start_x != x and self.start_y != y:
                 print(f'Added rectangle: top left {(self.start_x, self.start_y)}, bottom right: {(x, y)}')
-                self.config.add_region(self.start_x, self.start_y, x, y)
+                self.config.add_roi(self.start_x, self.start_y, x, y)
 
                 # Draw rectangle 
                 cv2.rectangle(self.image, (self.start_x, self.start_y), (x, y), (240,20,20), 5)
-                cv2.imshow("Select ROIs", self.image)
+                cv2.imshow('Select ROIs', self.image)
 
     def draw_existing_rectangles(self):
         """
@@ -53,6 +54,9 @@ class SelectROIsWidget:
         """
         for region in self.config.regions:
             cv2.rectangle(self.image, region.get_start(), region.get_end(), (240,20,20), 5)
+        if self.display_residuals:
+            for residual in self.config.residuals:
+                cv2.rectangle(self.image, residual.get_start(), residual.get_end(), (60,166,71), 5)
 
     def reset_image(self):
         """

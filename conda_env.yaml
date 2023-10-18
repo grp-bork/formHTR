@@ -6,14 +6,15 @@ dependencies:
   - numpy
   - opencv
   - pillow==9.5.0
-  - scikit-image
   - pdf2image
-  - openpyxl
   - pandas
   - xlsxwriter
-  - easyocr
-  - poppler
   - pip
   - pip:
       - imutils
-      - zxingcpp
+      - zxing-cpp
+      - google-cloud-vision
+      - rtree
+      - boto3
+      - azure-cognitiveservices-vision-computervision
+      - pyzbar
