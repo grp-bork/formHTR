@@ -101,15 +101,20 @@ def general_text_area(candidates):
         str: extracted text
     """
     # seperate each by lines
-    candidates = list(map(separate_to_lines, candidates))
-    # sort from left to right 
+    candidate_lines = []
     for candidate in candidates:
-        for line in candidate:
-            line.sort()
+        if candidate:
+            lines = separate_to_lines(candidate)
+            for line in lines:
+                line.sort()
+            candidate_lines.append(lines)
 
-    lines = []
+    words = []
     
-    for i in range(len(candidates[0])):
+    for i in range(len(candidate_lines[0])):
+        lines = []
+        for candidate in candidate_lines:
+            lines.append(candidate[i])
         # make sure they have the same number of lines !
-        lines.append(process_lines([candidates[0][i], candidates[1][i], candidates[2][i]]))
-    return '\n'.join(lines)
+        words.append(process_lines(lines))
+    return '\n'.join(words)
