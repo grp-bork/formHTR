@@ -18,7 +18,7 @@ class LogsheetConfig:
         self.height = height
         self.width = width
 
-    def add_roi(self, start_x, start_y, end_x, end_y, varname, content_type):
+    def add_roi(self, start_x, start_y, end_x, end_y, varname=None, content_type=None):
         """
         Create new ROI
         """

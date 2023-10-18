@@ -42,7 +42,7 @@ class SelectROIsWidget:
             # accept only non-empty rectangles
             if self.start_x != x and self.start_y != y:
                 print(f'Added rectangle: top left {(self.start_x, self.start_y)}, bottom right: {(x, y)}')
-                self.config.add_region(self.start_x, self.start_y, x, y)
+                self.config.add_roi(self.start_x, self.start_y, x, y)
 
                 # Draw rectangle 
                 cv2.rectangle(self.image, (self.start_x, self.start_y), (x, y), (240,20,20), 5)
