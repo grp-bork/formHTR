@@ -1,8 +1,22 @@
 import cv2
 import zxingcpp
+from pyzbar.pyzbar import decode
 
 
 def read_barcode(image):
+    # try zxingcpp
+    detected_objects = zxingcpp.read_barcodes(image)
+    if detected_objects:
+        return detected_objects[0].text
+    
+    # try pyzbar
+    decoded_objects = decode(image)
+    barcodes = [obj.data.decode('utf-8') for obj in decoded_objects]
+    if barcodes:
+        return barcodes[0]
+        
+    # try to rotate the image
+
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     # Edge detection
@@ -23,7 +37,7 @@ def read_barcode(image):
     center = (w // 2, h // 2)
     M = cv2.getRotationMatrix2D(center, angle, 1.0)
     rotated_image = cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
-
+    
     # Decode the barcode
     detected_objects = zxingcpp.read_barcodes(rotated_image)
 
