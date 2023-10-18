@@ -43,6 +43,9 @@ def separate_to_lines(rectangles):
 def majority_vote_word_sets(sets_of_words):
     """Vote on individual positions of identified words in line
 
+    TODO: it might be also smart to give higher priority if we are expecting a number
+    or if we have a set of expected words/values
+
     Args:
         sets_of_words (list): list of lists (per service) of words corresponding to a line
 
@@ -74,8 +77,11 @@ def majority_vote_word_sets(sets_of_words):
 def process_lines(lines):
     """Join lines to words let majority voting decide
 
-    A smarted algo should be used here at some point,
+    TODO: A smarted algo should be used here at some point,
     working perhaps with individual words and their positions.
+
+    TODO: if majority says there is one item and one service says its two,
+    perhaps the majority is right
 
     Args:
         lines (list): lists of rectangles organised in lines
