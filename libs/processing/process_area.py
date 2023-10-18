@@ -1,6 +1,3 @@
-from libs.processing.rtree import RectangleTree
-
-
 def check_barcode_area(candidates):
     """Check content of barcode
 
