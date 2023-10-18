@@ -1,6 +1,6 @@
 from libs.processing.rtree import Ensemble
 from libs.processing.barcode import read_barcode
-from libs.processing.process_area import check_barcode_area
+from libs.processing.process_area import check_barcode_area, general_text_area
 
 
 def process_content(indetified_content, logsheet_image, config):
@@ -35,7 +35,7 @@ def process_content(indetified_content, logsheet_image, config):
             # perhaps if it was proper text, store it
             pass
         else:
-            pass
+            content = general_text_area(candidates)
 
         results.append([region.varname, fragment, content])
 

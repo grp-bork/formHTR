@@ -55,6 +55,9 @@ class Rectangle(Region):
         self.content = content
         self.center_x, self.center_y = self.compute_center()
 
+    def __lt__(self, other):
+        return self.center_x < other.center_x
+
     def __str__(self):
         return f'"{self.content}": {super().__str__()}'
     
@@ -64,5 +67,5 @@ class Rectangle(Region):
     def compute_center(self):
         return (self.start_x + self.end_x)/2, (self.start_y + self.end_y)/2
 
-    def is_left(self, other):
-        return self.end_x <= other.center_x and self.start_y <= other.center_y <= self.end_y
+    def is_y_aligned(self, other):
+        return other.start_y <= self.center_y <= other.end_y
