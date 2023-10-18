@@ -5,7 +5,7 @@ from libs.region import Rectangle
 
 class AmazonVision:
     def __init__(self, amazon_credentials):
-        self.client = boto3.client("textract",
+        self.client = boto3.client('textract',
                                    aws_access_key_id=amazon_credentials['ACCESS_KEY'],
                                    aws_secret_access_key=amazon_credentials['SECRET_KEY'],
                                    region_name=amazon_credentials['REGION'])

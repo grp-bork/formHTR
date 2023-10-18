@@ -46,7 +46,7 @@ class SelectROIsWidget:
 
                 # Draw rectangle 
                 cv2.rectangle(self.image, (self.start_x, self.start_y), (x, y), (240,20,20), 5)
-                cv2.imshow("Select ROIs", self.image)
+                cv2.imshow('Select ROIs', self.image)
 
     def draw_existing_rectangles(self):
         """

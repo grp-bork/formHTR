@@ -66,6 +66,6 @@ class AnnotateROIsWidget:
             self.config.announce_status(self.selected_index)
 
     def read_varname(self):
-        varname = input("\nEnter name: ")
+        varname = input('\nEnter name: ')
         self.config.update(self.selected_index, 'varname', varname)
         self.config.announce_status(self.selected_index)

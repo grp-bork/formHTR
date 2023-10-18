@@ -13,7 +13,7 @@ def call_services(logsheet_image, credentials, config):
 
     image_pil = Image.fromarray(logsheet_image)
     image_stream = io.BytesIO()
-    image_pil.save(image_stream, format="PNG")
+    image_pil.save(image_stream, format='PNG')
 
     outputs = google.annotate_image(image_stream)
     google_identified = google.process_output(outputs)

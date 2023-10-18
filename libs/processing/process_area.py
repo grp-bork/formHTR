@@ -88,7 +88,7 @@ def process_lines(lines):
     """
     lines_of_words = [[rectangle.content for rectangle in line] for line in lines]
     sorted_lines = sorted(lines_of_words, key=len, reverse=True)
-    return "".join(majority_vote_word_sets(sorted_lines))
+    return ''.join(majority_vote_word_sets(sorted_lines))
 
 
 def general_text_area(candidates):
@@ -112,4 +112,4 @@ def general_text_area(candidates):
     for i in range(len(candidates[0])):
         # make sure they have the same number of lines !
         lines.append(process_lines([candidates[0][i], candidates[1][i], candidates[2][i]]))
-    return "\n".join(lines)
+    return '\n'.join(lines)

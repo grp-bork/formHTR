@@ -13,7 +13,7 @@ class GoogleVision:
     def annotate_image(self, image_stream):
         image = image_stream.getvalue()
 
-        image_context = vision_v1.ImageContext(language_hints=["en"])
+        image_context = vision_v1.ImageContext(language_hints=['en'])
         vision_image = vision_v1.Image(content=image)
         response = self.client.text_detection(image=vision_image, image_context=image_context)
         return response.text_annotations
@@ -23,6 +23,6 @@ class GoogleVision:
         # Iterate through OCR results and annotate the image
         for text in outputs[1:]:  # [1:] to exclude the first element which is the entire text
             vertices = [(vertex.x, vertex.y) for vertex in text.bounding_poly.vertices]
-            string_encode = text.description.encode("ascii", "ignore")
+            string_encode = text.description.encode('ascii', 'ignore')
             identified.append(Rectangle(*vertices[0], *vertices[2], string_encode.decode()))
         return identified

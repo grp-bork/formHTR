@@ -19,7 +19,7 @@ def align_images(logsheet, template, maxFeatures=500, keepPercent=0.2, debug=Fal
     matches = matcher.match(descsA, descsB, None)
     
     # sort the matches by their distance (the smaller the distance,
-    # the "more similar" the features are)
+    # the 'more similar' the features are)
     matches = sorted(matches, key=lambda x:x.distance)
     # keep only the top matches
     keep = int(len(matches) * keepPercent)
@@ -28,14 +28,14 @@ def align_images(logsheet, template, maxFeatures=500, keepPercent=0.2, debug=Fal
     if debug:
         matchedVis = cv2.drawMatches(logsheet, kpsA, template, kpsB, matches, None)
         matchedVis = imutils.resize(matchedVis, width=1000)
-        cv2.imshow("Matched Keypoints", matchedVis)
+        cv2.imshow('Matched Keypoints', matchedVis)
         cv2.waitKey(0)
     
     # allocate memory for the keypoints (x, y)-coordinates from the
     # top matches -- we'll use these coordinates to compute our
     # homography matrix
-    ptsA = np.zeros((len(matches), 2), dtype="float")
-    ptsB = np.zeros((len(matches), 2), dtype="float")
+    ptsA = np.zeros((len(matches), 2), dtype='float')
+    ptsB = np.zeros((len(matches), 2), dtype='float')
     # loop over the top matches
     for (i, m) in enumerate(matches):
         # indicate that the two keypoints in the respective images
@@ -51,7 +51,7 @@ def align_images(logsheet, template, maxFeatures=500, keepPercent=0.2, debug=Fal
     # return the aligned image
     
     if debug:
-        cv2.imshow("Image Alignment Overlay", aligned)
+        cv2.imshow('Image Alignment Overlay', aligned)
         cv2.waitKey(0)
 
     return aligned

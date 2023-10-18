@@ -14,12 +14,12 @@ class AzureVision:
     def annotate_image(self, image_stream):
         image_stream.seek(0)  # Rewind the stream to the beginning
 
-        rawHttpResponse = self.client.read_in_stream(image_stream, language="en", raw=True)
+        rawHttpResponse = self.client.read_in_stream(image_stream, language='en', raw=True)
         # try lower DPI if Bad request (azure.cognitiveservices.vision.computervision.models._models_py3.ComputerVisionOcrErrorException)
 
         # Get ID from returned headers
-        operationLocation = rawHttpResponse.headers["Operation-Location"]
-        operationId = operationLocation.split("/")[-1]
+        operationLocation = rawHttpResponse.headers['Operation-Location']
+        operationId = operationLocation.split('/')[-1]
         
         # SDK call
         result = self.client.get_read_result(operationId)
