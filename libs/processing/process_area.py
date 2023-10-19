@@ -102,6 +102,7 @@ def general_text_area(candidates):
     for candidate in candidates:
         if candidate:
             lines = separate_to_lines(candidate)
+            lines = sorted(lines, key=lambda x: x[0].center_y)
             for line in lines:
                 line.sort()
             candidate_lines.append(lines)
