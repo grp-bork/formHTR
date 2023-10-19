@@ -15,14 +15,15 @@ def call_services(logsheet_image, credentials, config):
     image_stream = io.BytesIO()
     image_pil.save(image_stream, format='PNG')
 
-    outputs = google.annotate_image(image_stream)
-    google_identified = google.process_output(outputs)
+    google_identified = google.annotate_image(image_stream)
+    google_identified = google.process_output(google_identified)
 
-    outputs = amazon.annotate_image(image_stream)
-    amazon_identified = amazon.process_output(outputs, config.width, config.height)
+    amazon_identified = amazon.annotate_image(image_stream)
+    amazon_identified = amazon.process_output(amazon_identified, config.width, config.height)
 
-    outputs = azure.annotate_image(image_stream)
-    azure_identified = azure.process_output(outputs)
+    azure_identified = azure.annotate_image(image_stream)
+    if azure_identified:
+        azure_identified = azure.process_output(azure_identified)
 
     return {'google': google_identified,
             'amazon': amazon_identified,

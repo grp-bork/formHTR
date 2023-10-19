@@ -2,13 +2,23 @@
     "content": [
         {
             "coords": [
+                1844,
+                227,
+                2420,
+                366
+            ],
+            "type": "Handwritten",
+            "varname": "operator"
+        },
+        {
+            "coords": [
                 454,
                 246,
                 802,
                 355
             ],
             "type": "Handwritten",
-            "varname": "side_name"
+            "varname": "site_name"
         },
         {
             "coords": [
@@ -18,7 +28,7 @@
                 355
             ],
             "type": "Handwritten",
-            "varname": "site_id"
+            "varname": "side_id"
         },
         {
             "coords": [
@@ -58,7 +68,117 @@
                 783
             ],
             "type": "Checkbox",
-            "varname": "ctd_deployed"
+            "varname": "ctd_demployed"
+        },
+        {
+            "coords": [
+                1087,
+                949,
+                1220,
+                1070
+            ],
+            "type": "Handwritten",
+            "varname": "ctd_end_time_hh"
+        },
+        {
+            "coords": [
+                1226,
+                949,
+                1349,
+                1070
+            ],
+            "type": "Handwritten",
+            "varname": "ctd_end_time_mm"
+        },
+        {
+            "coords": [
+                385,
+                953,
+                518,
+                1075
+            ],
+            "type": "Handwritten",
+            "varname": "ctd_start_time_hh"
+        },
+        {
+            "coords": [
+                524,
+                953,
+                647,
+                1075
+            ],
+            "type": "Handwritten",
+            "varname": "ctd_start_time_mm"
+        },
+        {
+            "coords": [
+                380,
+                1245,
+                475,
+                1368
+            ],
+            "type": "Handwritten",
+            "varname": "ctd_latitude_NS"
+        },
+        {
+            "coords": [
+                1174,
+                1245,
+                1269,
+                1368
+            ],
+            "type": "Handwritten",
+            "varname": "ctd_longitude_EW"
+        },
+        {
+            "coords": [
+                480,
+                1246,
+                628,
+                1368
+            ],
+            "type": "Handwritten",
+            "varname": "ctd_latitude_dd"
+        },
+        {
+            "coords": [
+                632,
+                1246,
+                883,
+                1368
+            ],
+            "type": "Handwritten",
+            "varname": "ctd_latitude_mm"
+        },
+        {
+            "coords": [
+                1273,
+                1246,
+                1421,
+                1368
+            ],
+            "type": "Handwritten",
+            "varname": "ctd_longitude_dd"
+        },
+        {
+            "coords": [
+                1426,
+                1246,
+                1677,
+                1368
+            ],
+            "type": "Handwritten",
+            "varname": "ctd_longitude_mm"
+        },
+        {
+            "coords": [
+                451,
+                1491,
+                577,
+                1625
+            ],
+            "type": "Checkbox",
+            "varname": "ctd_retrieved"
         },
         {
             "coords": [
@@ -72,13 +192,153 @@
         },
         {
             "coords": [
-                1841,
-                224,
-                2425,
-                370
+                472,
+                1857,
+                598,
+                1991
+            ],
+            "type": "Checkbox",
+            "varname": "mte_deployed"
+        },
+        {
+            "coords": [
+                1161,
+                2391,
+                1294,
+                2513
             ],
             "type": "Handwritten",
-            "varname": "operator"
+            "varname": "water_collection_end_time_hh"
+        },
+        {
+            "coords": [
+                1300,
+                2391,
+                1423,
+                2513
+            ],
+            "type": "Handwritten",
+            "varname": "water_collection_end_time_mm"
+        },
+        {
+            "coords": [
+                459,
+                2395,
+                592,
+                2517
+            ],
+            "type": "Handwritten",
+            "varname": "water_collection_start_time_hh"
+        },
+        {
+            "coords": [
+                598,
+                2395,
+                721,
+                2517
+            ],
+            "type": "Handwritten",
+            "varname": "water_collection_start_time_mm"
+        },
+        {
+            "coords": [
+                454,
+                2688,
+                549,
+                2810
+            ],
+            "type": "Handwritten",
+            "varname": "water_collection_latitude_NS"
+        },
+        {
+            "coords": [
+                554,
+                2688,
+                702,
+                2810
+            ],
+            "type": "Handwritten",
+            "varname": " water_collection_latitude_dd"
+        },
+        {
+            "coords": [
+                706,
+                2688,
+                957,
+                2810
+            ],
+            "type": "Handwritten",
+            "varname": " water_collection_latitude_mm"
+        },
+        {
+            "coords": [
+                1248,
+                2688,
+                1343,
+                2810
+            ],
+            "type": "Handwritten",
+            "varname": " water_collection_longitude_EW"
+        },
+        {
+            "coords": [
+                1347,
+                2688,
+                1495,
+                2810
+            ],
+            "type": "Handwritten",
+            "varname": "water_collection_longitude_dd"
+        },
+        {
+            "coords": [
+                1500,
+                2688,
+                1750,
+                2810
+            ],
+            "type": "Handwritten",
+            "varname": "water_collection_longitude_mm"
+        },
+        {
+            "coords": [
+                1173,
+                3195,
+                1307,
+                3317
+            ],
+            "type": "Handwritten",
+            "varname": "processing_time_end_time_hh"
+        },
+        {
+            "coords": [
+                1312,
+                3195,
+                1435,
+                3317
+            ],
+            "type": "Handwritten",
+            "varname": "processing_time_end_time_mm"
+        },
+        {
+            "coords": [
+                471,
+                3199,
+                605,
+                3321
+            ],
+            "type": "Handwritten",
+            "varname": "processing_time_start_time_hh"
+        },
+        {
+            "coords": [
+                610,
+                3199,
+                733,
+                3321
+            ],
+            "type": "Handwritten",
+            "varname": "processing_time_start_time_mm"
         }
     ],
     "height": 3508,
