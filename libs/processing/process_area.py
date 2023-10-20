@@ -1,3 +1,6 @@
+from Bio import pairwise2
+
+
 def check_barcode_area(candidates):
     """Check content of barcode
 
@@ -37,38 +40,62 @@ def separate_to_lines(rectangles):
     return groups
 
 
-def majority_vote_word_sets(sets_of_words):
-    """Vote on individual positions of identified words in line
+def align_pairwise(s1, s2):
+    alignments = pairwise2.align.globalxs(s1, s2, -3, -1, gap_char=' ')
+    return alignments[0][0]
 
-    TODO: it might be also smart to give higher priority if we are expecting a number
-    or if we have a set of expected words/values
+
+def majority_vote(strings):
+    """Vote on individual positions of identified words
 
     Args:
-        sets_of_words (list): list of lists (per service) of words corresponding to a line
+        strings (list): list of words (per service) corresponding to a line
 
     Returns:
         list: most probable list of words
     """
-    # Determine the maximum set length
-    max_length = max(len(s) for s in sets_of_words)
+    # Pad strings to the same length
+    max_length = max(len(s) for s in strings)
+    padded_strings = [s.ljust(max_length) for s in strings]
 
-    # Compute the majority-voted set
+    # Compute the majority-voted string
     result = []
-    for i in range(max_length):
-        word_count = {}
+    for chars in zip(*padded_strings):
+        # Count occurrences of each character
+        count = {}
+        for char in chars:
+            count[char] = count.get(char, 0) + 1
         
-        # Count occurrences of each word at position i
-        for word_set in sets_of_words:
-            if i < len(word_set):
-                word = word_set[i]
-                word_count[word] = word_count.get(word, 0) + 1
+        # Get the character with maximum occurrence
+        voted_char = max(count, key=count.get)
+        result.append(voted_char)
 
-        # If any words were found for this position, get the one with maximum occurrence
-        if word_count:
-            voted_word = max(word_count, key=word_count.get)
-            result.append(voted_word)
+    return ''.join(result)
 
-    return result
+
+def identify_words(lines):
+    if len(lines) == 1:
+        return lines[0]
+    elif len(lines) == 2:
+        # TODO we can get both directly
+        align_1 = align_pairwise(lines[0], lines[1])
+        align_2 = align_pairwise(lines[1], lines[0])
+        # TODO voting with two like this makes no sense
+        # perhaps its better to just take one of the outputs with no mixing and voting
+        return majority_vote([align_1, align_2])
+    elif len(lines) == 3:
+        results = []
+        for i in range(len(lines)):
+            this = lines[i]
+            other1 = lines[(i+1)%3]
+            other2 = lines[(i+2)%3]
+
+            align1 = align_pairwise(this, other1)
+            align2 = align_pairwise(this, other2)
+
+            result = align_pairwise(align1, align2)
+            results.append(result)
+        return majority_vote(results)
 
 
 def process_lines(lines):
@@ -85,7 +112,7 @@ def process_lines(lines):
     """
     lines_of_words = [[rectangle.content for rectangle in line] for line in lines]
     sorted_lines = sorted(lines_of_words, key=len, reverse=True)
-    return ''.join(majority_vote_word_sets(sorted_lines))
+    return identify_words([' '.join(line) for line in sorted_lines])
 
 
 def general_text_area(candidates):
