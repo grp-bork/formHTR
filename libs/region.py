@@ -48,6 +48,9 @@ class ROI(Region):
     def update_varname(self, varname):
         self.varname = varname
 
+    def exceeding_rectangle(self, rectangle):
+        return rectangle.end_x > self.end_x
+
 
 class Rectangle(Region):
     def __init__(self, start_x, start_y, end_x, end_y, content):

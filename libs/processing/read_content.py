@@ -37,7 +37,7 @@ def process_content(indetified_content, logsheet_image, config):
             # perhaps if it was proper text, store it
             pass
         else:
-            content = general_text_area(candidates)
+            content = general_text_area(candidates, region)
 
         results.append([region.varname, content, fragment])
 
