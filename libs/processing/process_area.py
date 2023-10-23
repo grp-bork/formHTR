@@ -40,6 +40,11 @@ def separate_to_lines(rectangles):
     return groups
 
 
+def align_lines(lines):
+    # group lines by y-coordinate
+    pass
+
+
 def align_pairwise(s1, s2):
     alignments = pairwise2.align.globalxs(s1, s2, -3, -1, gap_char=' ')
     return alignments[0][0]
@@ -96,9 +101,47 @@ def identify_words(lines):
             result = align_pairwise(align1, align2)
             results.append(result)
         return majority_vote(results)
+    
+
+def filter_exceeding_words(lines, roi):
+    """Filter regions exceeding bounds of ROI
+
+    There are three cases:
+    1. None of the regions exceeds the bounds
+    2. Some of them
+    3. All of them
+
+    We keep everything as is in cases 1. and 3.,
+    in case 2. we filter out the exceeding ones
+    (as at least one of the services thinks the 
+    exceeding part does not belong here)
+
+    Args:
+        lines (_type_): _description_
+        roi (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    indicators = []
+    reduced_lines = []
+    for line in lines:
+        reduced_line = []
+        exceeding_indicator = False
+        for rectangle in line:
+            rectangle_exceeding = roi.exceeding_rectangle(rectangle)
+            exceeding_indicator = exceeding_indicator or rectangle_exceeding
+            if not rectangle_exceeding:
+                reduced_line.append(rectangle)
+        indicators.append(exceeding_indicator)
+        reduced_lines.append(reduced_line)
+
+    if not (all(indicators) or not any(indicators)):
+        return reduced_lines
+    return lines
 
 
-def process_lines(lines):
+def process_lines(lines, roi):
     """Join lines to words let majority voting decide
 
     TODO: A smarted algo should be used here at some point,
@@ -110,16 +153,18 @@ def process_lines(lines):
     Args:
         lines (list): lists of rectangles organised in lines
     """
+    lines = filter_exceeding_words(lines, roi)
     lines_of_words = [[rectangle.content for rectangle in line] for line in lines]
-    sorted_lines = sorted(lines_of_words, key=len, reverse=True)
-    return identify_words([' '.join(line) for line in sorted_lines])
+    lines_of_words = filter(None, lines_of_words)
+    return identify_words([' '.join(line) for line in lines_of_words])
 
 
-def general_text_area(candidates):
+def general_text_area(candidates, roi):
     """Process text area
 
     Args:
         candidates (list of lists): identified rectangles intersecting ROI
+        roi_coords (tuple): coordinates of the ROI
 
     Returns:
         str: extracted text
@@ -135,11 +180,14 @@ def general_text_area(candidates):
             candidate_lines.append(lines)
 
     words = []
+
+    # here we need to call align_lines, some services might identify different number of lines
+    # and their contents might no align correctly
     
     for i in range(len(candidate_lines[0])):
         lines = []
         for candidate in candidate_lines:
             lines.append(candidate[i])
         # make sure they have the same number of lines !
-        words.append(process_lines(lines))
+        words.append(process_lines(lines, roi))
     return '\n'.join(words)
