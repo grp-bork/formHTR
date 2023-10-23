@@ -40,8 +40,19 @@ def separate_to_lines(rectangles):
     return groups
 
 
-def align_pairwise(s1, s2):
-    alignments = pairwise2.align.globalxs(s1, s2, -3, -1, gap_char=' ')
+def align_pairwise(string_1, string_2):
+    """Align two strings
+
+    TODO: need to be optimised using penalty scores
+
+    Args:
+        string_1 (str): first string
+        string_2 (str): second string
+
+    Returns:
+        str: aligned string
+    """
+    alignments = pairwise2.align.globalxs(string_1, string_2, -3, -1, gap_char=' ')
     return alignments[0][0]
 
 
@@ -74,14 +85,25 @@ def majority_vote(strings):
 
 
 def identify_words(lines):
+    """Identify words from lines.
+    Behaves differently based on how many lines there are.
+
+    TODO The case when there are only two, some improvements could be done:
+    - we can get both directly instead of calling align_pairwise twice
+    - voting with two like this makes no sense, perhaps its better to just
+      take one of the outputs with no mixing and voting
+
+    Args:
+        lines (list): given list of lines as strings
+
+    Returns:
+        str: identified word
+    """
     if len(lines) == 1:
         return lines[0]
     elif len(lines) == 2:
-        # TODO we can get both directly
         align_1 = align_pairwise(lines[0], lines[1])
         align_2 = align_pairwise(lines[1], lines[0])
-        # TODO voting with two like this makes no sense
-        # perhaps its better to just take one of the outputs with no mixing and voting
         return majority_vote([align_1, align_2])
     elif len(lines) == 3:
         results = []
