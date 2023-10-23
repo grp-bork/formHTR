@@ -40,11 +40,6 @@ def separate_to_lines(rectangles):
     return groups
 
 
-def align_lines(lines):
-    # group lines by y-coordinate
-    pass
-
-
 def align_pairwise(s1, s2):
     alignments = pairwise2.align.globalxs(s1, s2, -3, -1, gap_char=' ')
     return alignments[0][0]
@@ -117,11 +112,11 @@ def filter_exceeding_words(lines, roi):
     exceeding part does not belong here)
 
     Args:
-        lines (_type_): _description_
-        roi (_type_): _description_
+        lines (list): given list of lines
+        roi (ROI): respective ROI
 
     Returns:
-        _type_: _description_
+        list: filtered lines
     """
     indicators = []
     reduced_lines = []
@@ -159,6 +154,33 @@ def process_lines(lines, roi):
     return identify_words([' '.join(line) for line in lines_of_words])
 
 
+def align_lines(candidate_lines):
+    """Group lines to categories by y-coordinate
+
+    Also sort them by y-coordinate to ensure correct order.
+
+    # TODO handle cases when there are more than 3 members in a group
+
+    Args:
+        candidate_lines (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
+    groups = dict()
+    for lines in candidate_lines:
+        for line in lines:
+            grouped = False
+            for group_key in groups.keys():
+                if group_key.is_y_aligned(line[0]):
+                    groups[group_key].append(line)
+                    grouped = True
+            if not grouped:
+                groups[line[0]] = [line]
+    sorted_values = [v for _, v in sorted(groups.items(), key=lambda item: item[0].center_y)]
+    return sorted_values
+
+
 def general_text_area(candidates, roi):
     """Process text area
 
@@ -174,20 +196,13 @@ def general_text_area(candidates, roi):
     for candidate in candidates:
         if candidate:
             lines = separate_to_lines(candidate)
-            lines = sorted(lines, key=lambda x: x[0].center_y)
             for line in lines:
                 line.sort()
             candidate_lines.append(lines)
 
     words = []
 
-    # here we need to call align_lines, some services might identify different number of lines
-    # and their contents might no align correctly
-    
-    for i in range(len(candidate_lines[0])):
-        lines = []
-        for candidate in candidate_lines:
-            lines.append(candidate[i])
-        # make sure they have the same number of lines !
-        words.append(process_lines(lines, roi))
+    aligned_groups = align_lines(candidate_lines)
+    for group in aligned_groups:
+        words.append(process_lines(group, roi))
     return '\n'.join(words)
