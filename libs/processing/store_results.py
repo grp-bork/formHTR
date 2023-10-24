@@ -7,8 +7,7 @@ from shutil import rmtree
 def write_header(worksheet):
     worksheet.write(0, 0, 'Variable name')
     worksheet.write(0, 1, 'Extracted content')
-    worksheet.write(0, 2, 'Probability')
-    worksheet.write(0, 3, 'Cropped image')
+    worksheet.write(0, 2, 'Cropped image')
 
 def store_image(image, location, index):
     """
