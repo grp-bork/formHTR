@@ -1,0 +1,14 @@
+numpy
+opencv-python
+pillow==9.5.0
+pdf2image
+pandas
+xlsxwriter
+imutils
+zxing-cpp
+google-cloud-vision
+rtree
+boto3
+azure-cognitiveservices-vision-computervision
+pyzbar
+biopython

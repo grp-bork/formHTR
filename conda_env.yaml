@@ -1,21 +1,10 @@
-name: formHCR
+name: formHTR-dev
 channels:
   - conda-forge
   - defaults
 dependencies:
-  - numpy
-  - opencv
-  - pillow==9.5.0
-  - pdf2image
-  - pandas
-  - xlsxwriter
+  - python
+  - poppler
   - pip
   - pip:
-      - imutils
-      - zxing-cpp
-      - google-cloud-vision
-      - rtree
-      - boto3
-      - azure-cognitiveservices-vision-computervision
-      - pyzbar
-      - biopython
+    - -r requirements.txt
