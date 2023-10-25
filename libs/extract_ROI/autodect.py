@@ -1,9 +1,11 @@
-from skimage.io import imread
 import cv2
-
+from PIL import Image
+import io
 from skimage import filters, measure, morphology
 from skimage.filters import threshold_triangle
 from skimage.color import rgb2gray
+
+from libs.services.google_vision import GoogleVision
 
 
 def extract_framebox(image):
@@ -82,6 +84,23 @@ def detect_rectangles(image, filter_scale):
     return rectangles
 
 
-def find_residuals(image):
-    """Use a service - probably Amazon or multiple - to find existing printed texts"""
-    pass
+def find_residuals(image, credentials):
+    """Use Google vision service to find existing printed texts (residuals)
+
+    Args:
+        image (list): image in numpy array format
+        credentials (dict): credentials for Google vision service
+
+    Returns:
+        list: list of identified residuals
+    """
+
+    google = GoogleVision(credentials)
+
+    image_pil = Image.fromarray(image)
+    image_stream = io.BytesIO()
+    image_pil.save(image_stream, format='PNG')
+
+    identified = google.annotate_image(image_stream)
+    identified = google.process_output(identified)
+    return [rectangle.to_residual() for rectangle in identified]
