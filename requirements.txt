@@ -12,3 +12,4 @@ boto3
 azure-cognitiveservices-vision-computervision
 pyzbar
 biopython
+scikit-image
