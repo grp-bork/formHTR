@@ -72,3 +72,6 @@ class Rectangle(Region):
 
     def is_y_aligned(self, other):
         return other.start_y <= self.center_y <= other.end_y
+
+    def to_residual(self):
+        return Residual(*self.get_coords(), self.content)
