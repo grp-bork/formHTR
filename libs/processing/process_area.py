@@ -259,6 +259,7 @@ def general_text_area(candidates, roi):
             words.append(process_lines(group, roi))
     else:
         for group in aligned_groups:
-            words.append(' '.join([rectangle.content for rectangle in group[1]]))
+            # TODO instead of taking result from first service, decide which result is the best?
+            words.append(' '.join([rectangle.content for rectangle in group[0]]))
 
     return '\n'.join(words)
