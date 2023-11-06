@@ -32,6 +32,9 @@ class Residual(Region):
     def update_expected_content(self, expected_content):
         self.expected_content = expected_content
 
+    def point_is_inside(self, x, y):
+        return self.start_x <= x <= self.end_x and self.start_y <= y <= self.end_y
+
 
 class ROI(Region):
     def __init__(self, start_x, start_y, end_x, end_y, varname=None, content_type=None):

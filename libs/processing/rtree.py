@@ -48,4 +48,7 @@ class RectangleTree:
     def prune_residuals(self, residuals):
         for residual in residuals:
             candidates = self.find_intersection(residual.get_coords())
-            self.delete_rectangles(candidates)
+            for candidate in candidates:
+                x, y = (candidate.bbox[0] + candidate.bbox[2])/2, (candidate.bbox[1] + candidate.bbox[3])/2
+                if residual.point_is_inside(x, y):
+                    self.delete_rectangle(candidate.id, candidate.bbox)
