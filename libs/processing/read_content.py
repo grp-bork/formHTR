@@ -42,5 +42,6 @@ def process_content(indetified_content, logsheet_image, config):
         results.append([region.varname, content, fragment])
 
     # TODO: in the end investigate what remained in the trees
+    artefacts = ensemble.filter_artefacts()
             
     return results
