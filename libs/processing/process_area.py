@@ -1,4 +1,5 @@
 from Bio import pairwise2
+import numpy as np
 
 
 def check_barcode_area(candidates):
@@ -28,16 +29,39 @@ def separate_to_lines(rectangles):
     Returns:
         list of list: list of rectangles grouped to lines
     """
-    groups = [[rectangles[0]]]
-    for rectangle in rectangles[1:]:
-        aligned = False
-        for i in range(len(groups)):
-            if rectangle.is_y_aligned(groups[i][-1]) and not aligned:
-                groups[i].append(rectangle)
-                aligned = True
-        if not aligned:
-            groups.append([rectangle])
-    return groups
+    rectangles.sort(key=lambda rectangle: rectangle.center_y)
+    average_height = np.mean([rectangle.height for rectangle in rectangles])
+    line_break_threshold = average_height * 0.5
+
+    # Step 3: Group coordinates into lines
+    lines = []
+    current_line = []
+    previous_y = rectangles[0].center_y
+
+    for rectangle in rectangles:
+        if abs(rectangle.center_y - previous_y) > line_break_threshold:
+            # A line break is detected
+            lines.append(current_line)
+            current_line = []
+        
+        current_line.append(rectangle)
+        previous_y = rectangle.center_y  # Update previous_y to the bottom of the current word
+
+    # Don't forget to add the last line if it's not empty
+    if current_line:
+        lines.append(current_line)
+
+    return lines
+
+
+def get_max_words(groups):
+    max_words = 0
+
+    for group in groups:
+        for line in group:
+            max_words = max(max_words, len(line))
+
+    return max_words
 
 
 def align_pairwise(string_1, string_2):
@@ -181,26 +205,28 @@ def align_lines(candidate_lines):
 
     Also sort them by y-coordinate to ensure correct order.
 
-    # TODO handle cases when there are more than 3 members in a group
-
     Args:
-        candidate_lines (_type_): _description_
+        candidate_lines (list): identified lines from all services
 
     Returns:
-        _type_: _description_
-    """    
+        list: lines grouped by y-coordinate
+    """
     groups = dict()
     for lines in candidate_lines:
         for line in lines:
+            center = np.mean([rectangle.center_y for rectangle in line])
+            bottom = max([rectangle.end_y for rectangle in line])
+            top = min([rectangle.start_y for rectangle in line])
+
             grouped = False
-            for group_key in groups.keys():
-                if group_key.is_y_aligned(line[0]):
-                    groups[group_key].append(line)
+            for group_center in groups.keys():
+                if bottom >= group_center >= top:
+                    groups[group_center].append(line)
                     grouped = True
             if not grouped:
-                groups[line[0]] = [line]
-    sorted_values = [v for _, v in sorted(groups.items(), key=lambda item: item[0].center_y)]
-    return sorted_values
+                groups[center] = [line]
+    
+    return [v for _, v in groups.items()]
 
 
 def general_text_area(candidates, roi):
@@ -225,6 +251,14 @@ def general_text_area(candidates, roi):
     words = []
 
     aligned_groups = align_lines(candidate_lines)
-    for group in aligned_groups:
-        words.append(process_lines(group, roi))
+
+    max_words = get_max_words(aligned_groups)
+
+    if len(aligned_groups) <= 3 and max_words <= 5:
+        for group in aligned_groups:
+            words.append(process_lines(group, roi))
+    else:
+        for group in aligned_groups:
+            words.append(' '.join([rectangle.content for rectangle in group[1]]))
+
     return '\n'.join(words)

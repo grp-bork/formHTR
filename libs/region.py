@@ -60,6 +60,7 @@ class Rectangle(Region):
         super().__init__(start_x, start_y, end_x, end_y)
         self.content = content
         self.center_x, self.center_y = self.compute_center()
+        self.height = end_y - start_y
 
     def __lt__(self, other):
         return self.center_x < other.center_x
