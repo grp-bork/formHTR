@@ -8,7 +8,7 @@ FONT_URL = 'https://github.com/matomo-org/travis-scripts/raw/master/fonts/Arial.
 def load_font():
     font_file = Path('Arial.ttf')
     if not font_file.is_file():
-        urllib.request.urlretrieve('FONT_URL', 'Arial.ttf')
+        urllib.request.urlretrieve(FONT_URL, 'Arial.ttf')
 
     try:
         font = ImageFont.truetype('Arial.ttf', size=30)
