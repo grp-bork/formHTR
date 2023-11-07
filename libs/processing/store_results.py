@@ -43,11 +43,12 @@ def store_results(results, artefacts, output_file):
 
     # create a new Excel file and add a worksheet
     workbook = xlsxwriter.Workbook(output_file)
-    worksheet = workbook.add_worksheet('Extracted')
+    worksheet = workbook.add_worksheet('Metadata')
     write_header(worksheet)
 
     max_width = 0
 
+    # fill in data
     for row_number, result in enumerate(results, 2):
         worksheet.write(f'A{row_number}', result[0])
         values = list(result[1].values())
@@ -66,7 +67,30 @@ def store_results(results, artefacts, output_file):
         worksheet.set_row_pixels(row_number-1, height)
 
     worksheet.set_column_pixels(2, 3, max_width)
-
     worksheet.autofit()
+
+    max_width = 0
+
+    # add extra identified content
+    extra_worksheet = workbook.add_worksheet('Extra')
+    row_number = 1
+    for key in artefacts.keys():
+        if len(artefacts[key]) != 0:
+            extra_worksheet.write(f'A{row_number}', key)
+            row_number += 1
+            for extra in artefacts[key]:
+                extra_worksheet.write(f'A{row_number}', extra[0])
+
+                filename = store_image(extra[1], images_directory, row_number+1000)
+                height, width, _ = extra[1].shape
+                max_width = max(width, max_width)
+                extra_worksheet.insert_image(f'B{row_number}', filename)
+                extra_worksheet.set_row_pixels(row_number-1, height)
+                row_number += 1
+            row_number += 1
+    
+    extra_worksheet.set_column_pixels(1, 2, max_width)
+    extra_worksheet.autofit()
+
     workbook.close()
     rmtree(images_directory)
