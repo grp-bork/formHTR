@@ -12,18 +12,18 @@ class Ensemble:
         self.azure_rtree.prune_residuals(config.residuals)
 
     def find_intersection(self, rectangle):
-        results = []
+        results = dict()
 
         candidates = self.google_rtree.find_intersection(rectangle)
-        results.append([Rectangle(*candidate.bbox, candidate.object) for candidate in candidates])
+        results['google'] = [Rectangle(*candidate.bbox, candidate.object) for candidate in candidates]
         self.google_rtree.mark_rectangles(candidates)
 
         candidates = self.amazon_rtree.find_intersection(rectangle)
-        results.append([Rectangle(*candidate.bbox, candidate.object) for candidate in candidates])
+        results['amazon'] = [Rectangle(*candidate.bbox, candidate.object) for candidate in candidates]
         self.amazon_rtree.mark_rectangles(candidates)
 
         candidates = self.azure_rtree.find_intersection(rectangle)
-        results.append([Rectangle(*candidate.bbox, candidate.object) for candidate in candidates])
+        results['azure'] = [Rectangle(*candidate.bbox, candidate.object) for candidate in candidates]
         self.azure_rtree.mark_rectangles(candidates)
 
         return results
