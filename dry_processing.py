@@ -63,7 +63,7 @@ def main(scanned_logsheet, template, config_file, output_file, test_set, debug):
     # process contents
     contents, artefacts = process_content(identified_content, logsheet_image, config)
     # store to Excel sheet
-    store_results(contents, output_file)
+    store_results(contents, artefacts, output_file)
 
 
 if __name__ == '__main__':
