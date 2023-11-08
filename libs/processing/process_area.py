@@ -8,7 +8,6 @@ def filter_numbers(values):
     return values
 
 
-
 def separate_to_lines(rectangles):
     """Split set of rectangles into lines.
 

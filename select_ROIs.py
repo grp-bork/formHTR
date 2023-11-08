@@ -71,8 +71,7 @@ if __name__ == '__main__':
     optional.add_argument('--display_residuals', action=argparse.BooleanOptionalAction, default=False, help='Display found residuals.')
 
     args = args_parser.parse_args()
-
-    print(vars(args))
+    
     if args.detect_residuals and not args.credentials:
         args_parser.error('The --detect_residuals argument requires --credentials.')
 
