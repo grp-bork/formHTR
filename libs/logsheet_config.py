@@ -5,7 +5,8 @@ from libs.region import ROI, Residual
 
 ROI_TYPES = {'h': 'Handwritten',
              'c': 'Checkbox',
-             'b': 'Barcode'}
+             'b': 'Barcode',
+             'n': 'Number'}
 
 
 class LogsheetConfig:
