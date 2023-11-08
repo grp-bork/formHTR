@@ -3,6 +3,14 @@ import numpy as np
 
 
 def is_a_number(string):
+    """Polish given string and check if can be converted to float.
+
+    Args:
+        string (str): given string possibly containing a float
+
+    Returns:
+        str: polished string
+    """
     string = string.replace(" ", "")
     string = string.replace(",", ".")
     try:
@@ -13,6 +21,16 @@ def is_a_number(string):
 
 
 def identify_number(values):
+    """If some number were found, give them priority
+
+    Otherwise we will handle the region is general text area
+
+    Args:
+        values (list): list of identified values
+
+    Returns:
+        str: identified number (as string for compatibility)
+    """
     float_strings = [is_a_number(value) for value in values]
     filtered_items = list(filter(lambda item: item is not None, float_strings))
     if len(filtered_items) != 0:
@@ -56,6 +74,15 @@ def separate_to_lines(rectangles):
 
 
 def get_max_dimensions(candidates):
+    """Identify dimensions of identified text
+    used to determine its size
+
+    Args:
+        candidates (list): identified lines of rectangles
+
+    Returns:
+        tuple: pair of values
+    """
     max_words = 0
     max_lines = 0
 
