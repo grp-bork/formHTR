@@ -5,7 +5,8 @@ from libs.region import ROI, Residual
 
 ROI_TYPES = {'h': 'Handwritten',
              'c': 'Checkbox',
-             'b': 'Barcode'}
+             'b': 'Barcode',
+             'n': 'Number'}
 
 
 class LogsheetConfig:
@@ -40,7 +41,7 @@ class LogsheetConfig:
             attribute (str): attribute to be set
             value (str): desired value
         """
-        if attribute == 'content_type':
+        if attribute == 'content_type' and value is not None:
             value = ROI_TYPES[value]
         setattr(self.regions[index], attribute, value)
 
@@ -91,10 +92,20 @@ class LogsheetConfig:
         for residual in data['to_ignore']:
             self.residuals.append(Residual(*residual['coords'],
                                     expected_content=residual['content']))
+        index = 0
         for region in data['content']:
+            varname = region['varname']
+            if varname is None:
+                varname = str(index)
+                index += 1
+            
+            content_type = region['type']
+            if content_type is None:
+                content_type = 'Handwritten'
+            
             self.regions.append(ROI(*region['coords'],
-                                    varname=region['varname'],
-                                    content_type=region['type']))
+                                    varname=varname,
+                                    content_type=content_type))
             
         self.height = int(data['height'])
         self.width = int(data['width'])

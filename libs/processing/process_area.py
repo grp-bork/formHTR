@@ -2,6 +2,41 @@ from Bio import pairwise2
 import numpy as np
 
 
+def is_a_number(string):
+    """Polish given string and check if can be converted to float.
+
+    Args:
+        string (str): given string possibly containing a float
+
+    Returns:
+        str: polished string
+    """
+    string = string.replace(" ", "")
+    string = string.replace(",", ".")
+    try:
+        float(string)
+    except ValueError:
+        return None
+    return string
+
+
+def identify_number(values):
+    """If some number were found, give them priority
+
+    Otherwise we will handle the region is general text area
+
+    Args:
+        values (list): list of identified values
+
+    Returns:
+        str: identified number (as string for compatibility)
+    """
+    float_strings = [is_a_number(value) for value in values]
+    filtered_items = list(filter(lambda item: item is not None, float_strings))
+    if len(filtered_items) != 0:
+        return max(set(filtered_items), key=filtered_items.count)
+
+
 def separate_to_lines(rectangles):
     """Split set of rectangles into lines.
 
@@ -39,6 +74,15 @@ def separate_to_lines(rectangles):
 
 
 def get_max_dimensions(candidates):
+    """Identify dimensions of identified text
+    used to determine its size
+
+    Args:
+        candidates (list): identified lines of rectangles
+
+    Returns:
+        tuple: pair of values
+    """
     max_words = 0
     max_lines = 0
 
@@ -98,7 +142,7 @@ def majority_vote(strings):
     return ''.join(result)
 
 
-def identify_words(lines):
+def identify_words(lines, is_number):
     """Identify words from lines.
     Behaves differently based on how many lines there are.
 
@@ -109,6 +153,7 @@ def identify_words(lines):
 
     Args:
         lines (list): given list of lines as strings
+        is_number (bool): True if number(s) is/are expected
 
     Returns:
         str: identified word
@@ -116,11 +161,15 @@ def identify_words(lines):
     if len(lines) == 1:
         return lines[0]
     elif len(lines) == 2:
-        align_1 = align_pairwise(lines[0], lines[1])
-        align_2 = align_pairwise(lines[1], lines[0])
-        return majority_vote([align_1, align_2])
+        values = [align_pairwise(lines[0], lines[1]), 
+                  align_pairwise(lines[1], lines[0])]
+        if is_number:
+            number = identify_number(values)
+            if number is not None:
+                return number
+        return majority_vote(values)
     elif len(lines) == 3:
-        results = []
+        values = []
         for i in range(len(lines)):
             this = lines[i]
             other1 = lines[(i+1)%3]
@@ -130,8 +179,12 @@ def identify_words(lines):
             align2 = align_pairwise(this, other2)
 
             result = align_pairwise(align1, align2)
-            results.append(result)
-        return majority_vote(results)
+            values.append(result)
+        if is_number:
+            number = identify_number(values)
+            if number is not None:
+                return number
+        return majority_vote(values)
     
 
 def filter_exceeding_words(lines, roi):
@@ -172,7 +225,7 @@ def filter_exceeding_words(lines, roi):
     return lines
 
 
-def process_lines(lines, roi):
+def process_lines(lines, roi, is_number):
     """Join lines to words let majority voting decide
 
     TODO: A smarted algo should be used here at some point,
@@ -183,11 +236,13 @@ def process_lines(lines, roi):
 
     Args:
         lines (list): lists of rectangles organised in lines
+        roi (ROI): given ROI
+        is_number (bool): True if number(s) is/are expected
     """
     lines = filter_exceeding_words(lines, roi)
     lines_of_words = [[rectangle.content for rectangle in line] for line in lines]
     lines_of_words = filter(None, lines_of_words)
-    return identify_words([' '.join(line) for line in lines_of_words])
+    return identify_words([' '.join(line) for line in lines_of_words], is_number)
 
 
 def align_lines(candidate_lines):
@@ -219,12 +274,13 @@ def align_lines(candidate_lines):
     return [v for _, v in groups.items()]
 
 
-def general_text_area(candidates, roi):
+def general_text_area(candidates, roi, is_number):
     """Process text area
 
     Args:
         candidates (list of lists): identified rectangles intersecting ROI
-        roi_coords (tuple): coordinates of the ROI
+        roi (ROI): given ROI
+        is_number (bool): True if number(s) is/are expected
 
     Returns:
         str: extracted text
@@ -240,18 +296,20 @@ def general_text_area(candidates, roi):
 
     results = dict()
 
-    for key in candidate_lines:
-        results[key] = construct_lines(candidate_lines[key])
-
     max_words, max_lines = get_max_dimensions(candidate_lines)
 
     # if the text area is reasonably small
     if max_lines <= 3 and max_words <= 5:
+        for key in candidate_lines:
+            results[key] = construct_lines(candidate_lines[key])
+    
         aligned_groups = align_lines(candidate_lines.values())
         words = []
         for group in aligned_groups:
-            word = process_lines(group, roi)
+            word = process_lines(group, roi, is_number)
             words.append(word.strip())
         results['inferred'] = '\n'.join(words)
+    else:
+        results['inferred'] = construct_lines(list(candidate_lines.values())[0])
 
     return results
