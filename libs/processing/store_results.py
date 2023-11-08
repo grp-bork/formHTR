@@ -4,10 +4,20 @@ import xlsxwriter
 from shutil import rmtree
 
 
+def order_results(values):
+    output = []
+    for key in ['inferred', 'google', 'amazon', 'azure']:
+        value = values.get(key, None)
+        if value:
+            output.append(value)
+    return output
+
+
 def write_header(worksheet):
     worksheet.write('A1', 'Variable name')
     worksheet.write('B1', 'Extracted content')
     worksheet.write('C1', 'Cropped image')
+
 
 def store_image(image, location, index):
     """
@@ -24,6 +34,7 @@ def store_image(image, location, index):
     filename = f'{location}/cropped_image_{index}.png'
     cv2.imwrite(filename, image, [cv2.IMWRITE_PNG_COMPRESSION, 9])
     return filename
+
 
 def store_results(results, artefacts, output_file):
     """
@@ -51,8 +62,9 @@ def store_results(results, artefacts, output_file):
     # fill in data
     for row_number, result in enumerate(results, 2):
         worksheet.write(f'A{row_number}', result[0])
-        values = list(result[1].values())
-        worksheet.data_validation(f'B{row_number}', {'validate': 'list', 'show_error': False, 'source': values})
+        values = order_results(result[1])
+        if len(values) > 1:
+            worksheet.data_validation(f'B{row_number}', {'validate': 'list', 'show_error': False, 'source': values})
 
         inferred = result[1].get('inferred', None)
         if inferred is None and len(values) != 0:

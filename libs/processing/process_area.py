@@ -296,18 +296,20 @@ def general_text_area(candidates, roi, is_number):
 
     results = dict()
 
-    for key in candidate_lines:
-        results[key] = construct_lines(candidate_lines[key])
-
     max_words, max_lines = get_max_dimensions(candidate_lines)
 
     # if the text area is reasonably small
     if max_lines <= 3 and max_words <= 5:
+        for key in candidate_lines:
+            results[key] = construct_lines(candidate_lines[key])
+    
         aligned_groups = align_lines(candidate_lines.values())
         words = []
         for group in aligned_groups:
             word = process_lines(group, roi, is_number)
             words.append(word.strip())
         results['inferred'] = '\n'.join(words)
+    else:
+        results['inferred'] = construct_lines(list(candidate_lines.values())[0])
 
     return results
