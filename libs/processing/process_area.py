@@ -2,22 +2,6 @@ from Bio import pairwise2
 import numpy as np
 
 
-def check_barcode_area(candidates):
-    """Check content of barcode
-
-    Make sure there is at most one object and 
-    at least one service found something
-
-    Args:
-        candidates (list): list of intersected rectangles
-
-    Returns:
-        bool: True if area is ok
-    """
-    sums = [len(item) for item in candidates]
-    return all([i <= 1 for i in sums]) and sum(sums) >= 1
-
-
 def separate_to_lines(rectangles):
     """Split set of rectangles into lines.
 
