@@ -3,7 +3,16 @@ import zxingcpp
 from pyzbar.pyzbar import decode
 
 
-def read_barcode(image):
+def extract_barcode(candidates):
+    barcodes = []
+    for key in candidates.keys():
+        if len(candidates[key]) == 1:
+            barcodes.append(candidates[key][0].content)
+
+    if barcodes:
+        return max(set(barcodes), key=barcodes.count)
+
+def read_barcode(image, candidates):
     # try zxingcpp
     detected_objects = zxingcpp.read_barcodes(image)
     if detected_objects:
@@ -16,7 +25,6 @@ def read_barcode(image):
         return barcodes[0]
         
     # try to rotate the image
-
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     # Edge detection
@@ -43,3 +51,5 @@ def read_barcode(image):
 
     if detected_objects:
         return detected_objects[0].text
+
+    return extract_barcode(candidates)

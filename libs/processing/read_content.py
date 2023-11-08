@@ -1,6 +1,6 @@
 from libs.processing.rtree import Ensemble
 from libs.processing.barcode import read_barcode
-from libs.processing.process_area import check_barcode_area, general_text_area
+from libs.processing.process_area import general_text_area
 from libs.processing.checkbox import is_ticked
 
 
@@ -28,10 +28,7 @@ def process_content(indetified_content, logsheet_image, config):
         candidates = ensemble.find_intersection(region.get_coords())
         
         if region.content_type == 'Barcode':
-            # TODO use barcode value from OCR if everything else fails
-            valid_content = check_barcode_area(candidates)
-            if valid_content:
-                content['inferred'] = read_barcode(fragment)
+            content['inferred'] = read_barcode(fragment, candidates)
         elif region.content_type == 'Checkbox':
             content['inferred'] = is_ticked(fragment)
             # TODO remove from the tree whatever was found there
