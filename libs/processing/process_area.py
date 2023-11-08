@@ -54,14 +54,20 @@ def separate_to_lines(rectangles):
     return lines
 
 
-def get_max_words(groups):
+def get_max_dimensions(candidates):
     max_words = 0
+    max_lines = 0
 
-    for group in groups:
-        for line in group:
+    for candidate in candidates.values():
+        max_lines = max(max_lines, len(candidate))
+        for line in candidate:
             max_words = max(max_words, len(line))
 
-    return max_words
+    return max_words, max_lines
+
+
+def construct_lines(lines):
+    return '\n'.join([' '.join([rectangle.content for rectangle in line]) for line in lines])
 
 
 def align_pairwise(string_1, string_2):
@@ -240,26 +246,28 @@ def general_text_area(candidates, roi):
         str: extracted text
     """
     # seperate each by lines
-    candidate_lines = []
-    for candidate in candidates:
-        if candidate:
-            lines = separate_to_lines(candidate)
+    candidate_lines = dict()
+    for key in candidates.keys():
+        if candidates[key]:
+            lines = separate_to_lines(candidates[key])
             for line in lines:
                 line.sort()
-            candidate_lines.append(lines)
+            candidate_lines[key] = lines
 
-    words = []
+    results = dict()
 
-    aligned_groups = align_lines(candidate_lines)
+    for key in candidate_lines:
+        results[key] = construct_lines(candidate_lines[key])
 
-    max_words = get_max_words(aligned_groups)
+    max_words, max_lines = get_max_dimensions(candidate_lines)
 
-    if len(aligned_groups) <= 3 and max_words <= 5:
+    # if the text area is reasonably small
+    if max_lines <= 3 and max_words <= 5:
+        aligned_groups = align_lines(candidate_lines.values())
+        words = []
         for group in aligned_groups:
-            words.append(process_lines(group, roi))
-    else:
-        for group in aligned_groups:
-            # TODO instead of taking result from first service, decide which result is the best?
-            words.append(' '.join([rectangle.content for rectangle in group[0]]))
+            word = process_lines(group, roi)
+            words.append(word.strip())
+        results['inferred'] = '\n'.join(words)
 
-    return '\n'.join(words)
+    return results

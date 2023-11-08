@@ -61,9 +61,9 @@ def main(scanned_logsheet, template, config_file, output_file, test_set, debug):
     if debug:
         annotate_pdfs(identified_content, logsheet_image)
     # process contents
-    contents = process_content(identified_content, logsheet_image, config)
+    contents, artefacts = process_content(identified_content, logsheet_image, config)
     # store to Excel sheet
-    store_results(contents, output_file)
+    store_results(contents, artefacts, output_file)
 
 
 if __name__ == '__main__':

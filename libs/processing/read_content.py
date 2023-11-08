@@ -17,12 +17,13 @@ def process_content(indetified_content, logsheet_image, config):
         list: a list of identified content with its confidence
     """
     results = []
-
+    artefacts = dict()
+    
     ensemble = Ensemble(indetified_content, config)
 
     for region in config.regions:
         fragment = logsheet_image[region.start_y:region.end_y, region.start_x:region.end_x]
-        content = None
+        content = dict()
 
         candidates = ensemble.find_intersection(region.get_coords())
         
@@ -30,9 +31,9 @@ def process_content(indetified_content, logsheet_image, config):
             # TODO use barcode value from OCR if everything else fails
             valid_content = check_barcode_area(candidates)
             if valid_content:
-                content = read_barcode(fragment)
+                content['inferred'] = read_barcode(fragment)
         elif region.content_type == 'Checkbox':
-            content = is_ticked(fragment)
+            content['inferred'] = is_ticked(fragment)
             # TODO remove from the tree whatever was found there
             # perhaps if it was proper text, store it
             pass
@@ -40,7 +41,11 @@ def process_content(indetified_content, logsheet_image, config):
             content = general_text_area(candidates, region)
 
         results.append([region.varname, content, fragment])
-
-    # TODO: in the end investigate what remained in the trees
-            
-    return results
+    
+    for key, remaining in ensemble.filter_artefacts().items():
+        artefacts[key] = []
+        for rectangle in remaining:
+            artefacts[key].append([rectangle.content, logsheet_image[int(rectangle.start_y):int(rectangle.end_y), 
+                                                                     int(rectangle.start_x):int(rectangle.end_x)]])
+    
+    return results, artefacts

@@ -8,6 +8,8 @@ Handprint text recognition in form documents.
 conda env create -f conda_env.yaml
 ```
 
+The tool also requires [zbar](https://github.com/NaturalHistoryMuseum/pyzbar/issues/37) shared library installed.
+
 # Usage
 
 ## Create ROIs
