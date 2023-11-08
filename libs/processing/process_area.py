@@ -2,10 +2,21 @@ from Bio import pairwise2
 import numpy as np
 
 
-def filter_numbers(values):
-    print(values)
-    # TODO
-    return values
+def is_a_number(string):
+    string = string.replace(" ", "")
+    string = string.replace(",", ".")
+    try:
+        float(string)
+    except ValueError:
+        return None
+    return string
+
+
+def identify_number(values):
+    float_strings = [is_a_number(value) for value in values]
+    filtered_items = list(filter(lambda item: item is not None, float_strings))
+    if len(filtered_items) != 0:
+        return max(set(filtered_items), key=filtered_items.count)
 
 
 def separate_to_lines(rectangles):
@@ -123,10 +134,12 @@ def identify_words(lines, is_number):
     if len(lines) == 1:
         return lines[0]
     elif len(lines) == 2:
-        values [align_pairwise(lines[0], lines[1]), 
-                align_pairwise(lines[1], lines[0])]
+        values = [align_pairwise(lines[0], lines[1]), 
+                  align_pairwise(lines[1], lines[0])]
         if is_number:
-            values = filter_numbers(values)
+            number = identify_number(values)
+            if number is not None:
+                return number
         return majority_vote(values)
     elif len(lines) == 3:
         values = []
@@ -141,7 +154,9 @@ def identify_words(lines, is_number):
             result = align_pairwise(align1, align2)
             values.append(result)
         if is_number:
-            values = filter_numbers(values)
+            number = identify_number(values)
+            if number is not None:
+                return number
         return majority_vote(values)
     
 
