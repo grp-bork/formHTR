@@ -1,57 +1,48 @@
 import numpy as np
-import imutils
 import cv2
 
 
-def align_images(logsheet, template, maxFeatures=500, keepPercent=0.2, debug=False):
-    # convert both the input image and template to grayscale
-    logsheet_gray = cv2.cvtColor(logsheet, cv2.COLOR_BGR2GRAY)
-    template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
-    
-    # use ORB to detect keypoints and extract (binary) local
-    # invariant features
-    orb = cv2.ORB_create(maxFeatures)
-    (kpsA, descsA) = orb.detectAndCompute(logsheet_gray, None)
-    (kpsB, descsB) = orb.detectAndCompute(template_gray, None)
-    # match the features
-    method = cv2.DESCRIPTOR_MATCHER_BRUTEFORCE_HAMMING
-    matcher = cv2.DescriptorMatcher_create(method)
-    matches = matcher.match(descsA, descsB, None)
-    
-    # sort the matches by their distance (the smaller the distance,
-    # the 'more similar' the features are)
-    matches = sorted(matches, key=lambda x:x.distance)
-    # keep only the top matches
-    keep = int(len(matches) * keepPercent)
-    matches = matches[:keep]
-    # check to see if we should visualize the matched keypoints
-    if debug:
-        matchedVis = cv2.drawMatches(logsheet, kpsA, template, kpsB, matches, None)
-        matchedVis = imutils.resize(matchedVis, width=1000)
-        cv2.imshow('Matched Keypoints', matchedVis)
-        cv2.waitKey(0)
-    
-    # allocate memory for the keypoints (x, y)-coordinates from the
-    # top matches -- we'll use these coordinates to compute our
-    # homography matrix
-    ptsA = np.zeros((len(matches), 2), dtype='float')
-    ptsB = np.zeros((len(matches), 2), dtype='float')
-    # loop over the top matches
-    for (i, m) in enumerate(matches):
-        # indicate that the two keypoints in the respective images
-        # map to each other
-        ptsA[i] = kpsA[m.queryIdx].pt
-        ptsB[i] = kpsB[m.trainIdx].pt
-        
-    # compute the homography matrix between the two sets of matched points
-    (H, mask) = cv2.findHomography(ptsA, ptsB, method=cv2.RANSAC)
-    # use the homography matrix to align the images
-    (h, w) = template.shape[:2]
-    aligned = cv2.warpPerspective(logsheet, H, (w, h))
-    # return the aligned image
-    
-    if debug:
-        cv2.imshow('Image Alignment Overlay', aligned)
-        cv2.waitKey(0)
+def find_corners(image):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = cv2.GaussianBlur(gray, (5, 5), 0)
+
+    # Enhanced Edge Detection
+    edged = cv2.Canny(gray, 50, 150)
+    edged = cv2.dilate(edged, None, iterations=1)
+    edged = cv2.erode(edged, None, iterations=1)
+
+    # Find Contours
+    contours, _ = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)[:5]
+
+    # Loop over contours and approximate the shape
+    for c in contours:
+        peri = cv2.arcLength(c, True)
+        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+
+        # Assuming the box has 4 sides
+        if len(approx) == 4:
+            rect = cv2.minAreaRect(approx)
+            corners = cv2.boxPoints(rect)
+            corners = np.int0(corners)
+
+            return corners
+
+    return None  # No box found
+
+
+def align_images(scanned, template):
+    # Find corners in both images
+    template_corners = find_corners(template)
+    scanned_corners = find_corners(scanned)
+
+    # Order the corners (top-left, top-right, bottom-right, bottom-left)
+    # This step can be refined based on your rectangle's orientation
+    template_corners = sorted(template_corners, key=lambda x: x[0] + x[1])
+    scanned_corners = sorted(scanned_corners, key=lambda x: x[0] + x[1])
+
+    # Compute the transformation matrix and apply it
+    h, _ = cv2.findHomography(np.array(scanned_corners), np.array(template_corners))
+    aligned = cv2.warpPerspective(scanned, h, (template.shape[1], template.shape[0]))
 
     return aligned
