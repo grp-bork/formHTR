@@ -31,9 +31,6 @@ def process_content(indetified_content, logsheet_image, config):
             content['inferred'] = read_barcode(fragment, candidates)
         elif region.content_type == 'Checkbox':
             content['inferred'] = is_ticked(fragment)
-            # TODO remove from the tree whatever was found there
-            # perhaps if it was proper text, store it
-            pass
         else:
             is_number = region.content_type == 'Number'
             content = general_text_area(candidates, region, is_number)
