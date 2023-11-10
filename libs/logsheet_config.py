@@ -1,6 +1,7 @@
 import json
 
 from libs.region import ROI, Residual
+from libs.annotate_ROI.utils import is_approximately_square
 
 
 ROI_TYPES = {'h': 'Handwritten',
@@ -89,6 +90,9 @@ class LogsheetConfig:
         with open(input_file, 'r') as f:
             data = json.load(f)
 
+        self.height = int(data['height'])
+        self.width = int(data['width'])
+
         for residual in data['to_ignore']:
             self.residuals.append(Residual(*residual['coords'],
                                     expected_content=residual['content']))
@@ -101,11 +105,11 @@ class LogsheetConfig:
             
             content_type = region['type']
             if content_type is None:
-                content_type = 'Handwritten'
+                if is_approximately_square(*region['coords'], self.width, self.height):
+                    content_type = 'Checkbox'
+                else:
+                    content_type = 'Handwritten'
             
             self.regions.append(ROI(*region['coords'],
                                     varname=varname,
                                     content_type=content_type))
-            
-        self.height = int(data['height'])
-        self.width = int(data['width'])
