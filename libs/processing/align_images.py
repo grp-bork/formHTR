@@ -31,7 +31,7 @@ def find_corners(image):
     return None  # No box found
 
 
-def align_images(template, scanned):
+def align_images(scanned, template):
     # Find corners in both images
     template_corners = find_corners(template)
     scanned_corners = find_corners(scanned)
