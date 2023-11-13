@@ -33,7 +33,7 @@ def preprocess_input(scanned_logsheet, template, config, page):
     template_image = resize_image(template_image, (config.width, config.height))
 
     # fix logsheet_image (reorient and scale)
-    logsheet_image = align_images(logsheet_image, template_image) #, debug=True)
+    logsheet_image = align_images(logsheet_image, template_image)
     return logsheet_image
 
 

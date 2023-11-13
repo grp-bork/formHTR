@@ -27,7 +27,7 @@
                 1020,
                 355
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "side_id"
         },
         {
@@ -37,7 +37,7 @@
                 1380,
                 378
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "year"
         },
         {
@@ -47,7 +47,7 @@
                 1512,
                 378
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "month"
         },
         {
@@ -57,7 +57,7 @@
                 1633,
                 378
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "day"
         },
         {
@@ -77,7 +77,7 @@
                 1220,
                 1070
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "ctd_end_time_hh"
         },
         {
@@ -87,7 +87,7 @@
                 1349,
                 1070
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "ctd_end_time_mm"
         },
         {
@@ -97,7 +97,7 @@
                 518,
                 1075
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "ctd_start_time_hh"
         },
         {
@@ -107,7 +107,7 @@
                 647,
                 1075
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "ctd_start_time_mm"
         },
         {
@@ -137,7 +137,7 @@
                 628,
                 1368
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "ctd_latitude_dd"
         },
         {
@@ -147,7 +147,7 @@
                 883,
                 1368
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "ctd_latitude_mm"
         },
         {
@@ -157,7 +157,7 @@
                 1421,
                 1368
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "ctd_longitude_dd"
         },
         {
@@ -167,7 +167,7 @@
                 1677,
                 1368
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "ctd_longitude_mm"
         },
         {
@@ -207,7 +207,7 @@
                 1294,
                 2513
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "water_collection_end_time_hh"
         },
         {
@@ -217,7 +217,7 @@
                 1423,
                 2513
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "water_collection_end_time_mm"
         },
         {
@@ -227,7 +227,7 @@
                 592,
                 2517
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "water_collection_start_time_hh"
         },
         {
@@ -237,7 +237,7 @@
                 721,
                 2517
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "water_collection_start_time_mm"
         },
         {
@@ -257,7 +257,7 @@
                 702,
                 2810
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": " water_collection_latitude_dd"
         },
         {
@@ -267,7 +267,7 @@
                 957,
                 2810
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": " water_collection_latitude_mm"
         },
         {
@@ -287,7 +287,7 @@
                 1495,
                 2810
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "water_collection_longitude_dd"
         },
         {
@@ -297,7 +297,7 @@
                 1750,
                 2810
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "water_collection_longitude_mm"
         },
         {
@@ -307,7 +307,7 @@
                 1307,
                 3317
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "processing_time_end_time_hh"
         },
         {
@@ -317,7 +317,7 @@
                 1435,
                 3317
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "processing_time_end_time_mm"
         },
         {
@@ -327,7 +327,7 @@
                 605,
                 3321
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "processing_time_start_time_hh"
         },
         {
@@ -337,7 +337,7 @@
                 733,
                 3321
             ],
-            "type": "Handwritten",
+            "type": "Number",
             "varname": "processing_time_start_time_mm"
         }
     ],
