@@ -55,8 +55,9 @@ class RectangleTree:
             for candidate in candidates:
                 x, y = (candidate.bbox[0] + candidate.bbox[2])/2, (candidate.bbox[1] + candidate.bbox[3])/2
                 if residual.point_is_inside(x, y):
-                    self.index.delete(candidate.id, candidate.bbox)
-
+                    if candidate.object in residual.expected_content:
+                        self.index.delete(candidate.id, candidate.bbox)
+    
     def filter_unused(self):
         all_rectangles = list(self.index.intersection(self.index.get_bounds(), objects=True))
         unused_rectangles = []
