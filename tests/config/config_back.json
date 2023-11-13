@@ -1,22 +1,96 @@
 {
+    "content": [
+        {
+            "coords": [
+                377,
+                3104,
+                954,
+                3243
+            ],
+            "type": "Handwritten",
+            "varname": "1"
+        },
+        {
+            "coords": [
+                1104,
+                3104,
+                1681,
+                3243
+            ],
+            "type": "Handwritten",
+            "varname": "2"
+        },
+        {
+            "coords": [
+                1832,
+                3104,
+                2408,
+                3243
+            ],
+            "type": "Handwritten",
+            "varname": "3"
+        },
+        {
+            "coords": [
+                377,
+                3288,
+                954,
+                3426
+            ],
+            "type": "Handwritten",
+            "varname": "4"
+        },
+        {
+            "coords": [
+                1104,
+                3288,
+                1681,
+                3426
+            ],
+            "type": "Handwritten",
+            "varname": "5"
+        },
+        {
+            "coords": [
+                1832,
+                3288,
+                2408,
+                3426
+            ],
+            "type": "Handwritten",
+            "varname": "6"
+        },
+        {
+            "coords": [
+                37,
+                55,
+                2435,
+                3052
+            ],
+            "type": "Handwritten",
+            "varname": "7"
+        }
+    ],
+    "height": 3508,
     "to_ignore": [
         {
             "content": "Notes:",
             "coords": [
-                54,
-                75,
-                199,
-                112
+                55,
+                77,
+                202,
+                111
             ]
         },
         {
             "content": "Operators:",
             "coords": [
-                61,
-                3092,
-                308,
-                3143
+                64,
+                3095,
+                306,
+                3139
             ]
         }
-    ]
+    ],
+    "width": 2481
 }

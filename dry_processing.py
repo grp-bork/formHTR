@@ -12,7 +12,7 @@ from libs.region import Rectangle
 from tests.extracted_content import EXTRACTED
 
 
-def load_store_results(test_set):
+def load_stored_results(test_set):
     google_identified = []
     for rect in EXTRACTED[test_set]['REGIONS_GOOGLE']:
         google_identified.append(Rectangle(*rect['coords'], rect['content']))
@@ -31,12 +31,12 @@ def load_store_results(test_set):
            }
 
 
-def preprocess_input(scanned_logsheet, template, config):
+def preprocess_input(scanned_logsheet, template, config, page):
     # convert pdfs to images
     template_image = convert_pdf_to_image(template)
     template_image = np.array(template_image)
 
-    logsheet_image = convert_pdf_to_image(scanned_logsheet)
+    logsheet_image = convert_pdf_to_image(scanned_logsheet, page)
     logsheet_image = np.array(logsheet_image)
 
     # resize images
@@ -44,24 +44,45 @@ def preprocess_input(scanned_logsheet, template, config):
     template_image = resize_image(template_image, (config.width, config.height))
 
     # fix logsheet_image (reorient and scale)
-    logsheet_image = align_images(logsheet_image, template_image) #, debug=True)
+    logsheet_image = align_images(logsheet_image, template_image)
     return logsheet_image
 
 
-def main(scanned_logsheet, template, config_file, output_file, test_set, debug):
+def process_logsheet(logsheet, template, config_file, test_set, debug=False, front=True):
     # load CSV config
     config = LogsheetConfig([], [])
     config.import_from_json(config_file)
+
+    page = 0 if front else 1
+
     # assume PDF and CSV config correspond to each other (QR codes are not reliable anyway)
-    logsheet_image = preprocess_input(scanned_logsheet, template, config)
-    
-    # import OCR results
-    identified_content = load_store_results(test_set)
+    logsheet_image = preprocess_input(logsheet, template, config, page)
+    # call external OCR services
+    test_set = test_set + '_back' if not front else test_set
+    identified_content = load_stored_results(test_set)
 
     if debug:
-        annotate_pdfs(identified_content, logsheet_image)
+        annotate_pdfs(identified_content, logsheet_image, front)
+
     # process contents
-    contents, artefacts = process_content(identified_content, logsheet_image, config)
+    return process_content(identified_content, logsheet_image, config)
+
+
+def main(scanned_logsheet, template, config_file, output_file, test_set, 
+         debug, backside, backside_template, backside_config):
+    
+    # extract contents from the front page
+    contents, artefacts = process_logsheet(scanned_logsheet, template, config_file, test_set, debug=debug)
+
+    # extract contents from the back side (if present)
+    if backside:
+        contents_back, artefacts_back = process_logsheet(scanned_logsheet, backside_template, backside_config, test_set, debug=debug, front=False)
+
+        # join results
+        contents += contents_back
+        for key in artefacts.keys():
+            artefacts[key] = artefacts[key] + artefacts_back[key]
+
     # store to Excel sheet
     store_results(contents, artefacts, output_file)
 
@@ -80,7 +101,11 @@ if __name__ == '__main__':
     required.add_argument('--test_set', type=str, required=True, help='TARA or CTD')
 
     optional.add_argument('--debug', action=argparse.BooleanOptionalAction, default=False, help='Run in debug mode')
+    optional.add_argument('--backside', action=argparse.BooleanOptionalAction, default=False, help='Backside page present.')
+    optional.add_argument('--backside_template', type=str, help='PDF template of the backside')
+    optional.add_argument('--backside_config', type=str, help='Path to JSON file containing config of the backside')
 
     args = args_parser.parse_args()
 
-    main(args.pdf_logsheet, args.pdf_template, args.config_file, args.output_file, args.test_set, args.debug)
+    main(args.pdf_logsheet, args.pdf_template, args.config_file, args.output_file, args.test_set,
+         args.debug, args.backside, args.backside_template, args.backside_config)

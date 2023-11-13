@@ -2,17 +2,18 @@ from pdf2image import convert_from_path
 import cv2
 
 
-def convert_pdf_to_image(pdf_path, size=None):
+def convert_pdf_to_image(pdf_path, page=0):
     """
     Convert PDF to image (assume only one page).
 
     Args:
         pdf_path (str): path to given PDF file
+        page (int): page number to be extracted. Defaults to 0.
 
     Returns:
         Image: converted image
     """
-    return convert_from_path(pdf_path, dpi=300)[0]
+    return convert_from_path(pdf_path, dpi=300)[page]
 
 
 def resize_image(image, size):
