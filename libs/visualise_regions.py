@@ -19,11 +19,13 @@ def load_font():
 def create_debug_dir():
     Path('debug/').mkdir(parents=True, exist_ok=True)
 
-def annotate_pdfs(identified_content, logsheet_image):
+def annotate_pdfs(identified_content, logsheet_image, front):
     create_debug_dir()
 
+    backside = '_back' if not front else ''
+
     for service, content in identified_content.items():
-        visualise_regions(content, logsheet_image, f'{service}_annotated.pdf')
+        visualise_regions(content, logsheet_image, f'{service}_annotated{backside}.pdf')
 
 def visualise_regions(regions, image, output_pdf):
     img = Image.fromarray(image)
