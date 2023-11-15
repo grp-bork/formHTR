@@ -5,7 +5,6 @@ def process_cli(widget):
     exit = False
     while not exit:
         key = cv2.waitKey(0)
-        # TODO codes probably need to be generalised
         # Close program with 'q' or 'Esc' button
         if key == ord('q') or key == 27:
             exit = True
