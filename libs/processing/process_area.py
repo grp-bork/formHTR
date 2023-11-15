@@ -101,8 +101,6 @@ def construct_lines(lines):
 def align_pairwise(string_1, string_2):
     """Align two strings
 
-    TODO: need to be optimised using penalty scores
-
     Args:
         string_1 (str): first string
         string_2 (str): second string
@@ -146,11 +144,6 @@ def identify_words(lines, is_number):
     """Identify words from lines.
     Behaves differently based on how many lines there are.
 
-    TODO The case when there are only two, some improvements could be done:
-    - we can get both directly instead of calling align_pairwise twice
-    - voting with two like this makes no sense, perhaps its better to just
-      take one of the outputs with no mixing and voting
-
     Args:
         lines (list): given list of lines as strings
         is_number (bool): True if number(s) is/are expected
@@ -158,6 +151,7 @@ def identify_words(lines, is_number):
     Returns:
         str: identified word
     """
+    lines = list(filter(None, lines))
     if len(lines) == 1:
         return lines[0]
     elif len(lines) == 2:
@@ -227,12 +221,6 @@ def filter_exceeding_words(lines, roi):
 
 def process_lines(lines, roi, is_number):
     """Join lines to words let majority voting decide
-
-    TODO: A smarted algo should be used here at some point,
-    working perhaps with individual words and their positions.
-
-    TODO: if majority says there is one item and one service says its two,
-    perhaps the majority is right
 
     Args:
         lines (list): lists of rectangles organised in lines
