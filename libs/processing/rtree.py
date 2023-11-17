@@ -59,9 +59,11 @@ class RectangleTree:
                         self.index.delete(candidate.id, candidate.bbox)
     
     def filter_unused(self):
-        all_rectangles = list(self.index.intersection(self.index.get_bounds(), objects=True))
-        unused_rectangles = []
-        for item in all_rectangles:
-            if item.id not in self.used_rois:
-                unused_rectangles.append(Rectangle(*item.bbox, item.object))
-        return unused_rectangles
+        if self.index.get_size() != 0:
+            all_rectangles = list(self.index.intersection(self.index.get_bounds(), objects=True))
+            unused_rectangles = []
+            for item in all_rectangles:
+                if item.id not in self.used_rois:
+                    unused_rectangles.append(Rectangle(*item.bbox, item.object))
+            return unused_rectangles
+        return []
