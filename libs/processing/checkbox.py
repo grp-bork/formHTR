@@ -28,7 +28,7 @@ def is_ticked(image_array, edge_ignore_percentage=0.2, threshold_percentage=0.1)
     cropped = image_gray[crop_y:h-crop_y, crop_x:w-crop_x]
     
     # Threshold the image (assuming the checkbox is darker)
-    _, binary = cv2.threshold(cropped, 128, 255, cv2.THRESH_BINARY_INV)
+    _, binary = cv2.threshold(cropped, 240, 255, cv2.THRESH_BINARY_INV)
     
     # Calculate the percentage of black pixels
     black_pixels = np.sum(binary == 255)
