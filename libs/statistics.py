@@ -8,5 +8,8 @@ def compute_success_ratio(contents, artefacts):
     Returns:
         float: success ratio
     """
+    num_of_identified = len(contents)
     max_artefacts = max([len(items) for items in artefacts.values()])
-    return len(contents)/max_artefacts
+    return {'identified': num_of_identified, 
+            'artefacts': max_artefacts, 
+            'ratio': num_of_identified/max_artefacts}
