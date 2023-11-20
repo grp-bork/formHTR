@@ -10,6 +10,7 @@ from libs.visualise_regions import annotate_pdfs
 from libs.region import Rectangle
 from tests.extracted_content import EXTRACTED
 from libs.pdf_to_image import get_image_size
+from libs.statistics import compute_success_ratio
 
 
 def load_stored_results(test_set):
@@ -86,8 +87,11 @@ def main(scanned_logsheet, template, config_file, output_file, test_set,
         for key in artefacts.keys():
             artefacts[key] = artefacts[key] + artefacts_back[key]
 
+    ratio = compute_success_ratio(contents, artefacts)
+
     # store to Excel sheet
     store_results(contents, artefacts, output_file)
+    return ratio
 
 
 if __name__ == '__main__':
