@@ -10,6 +10,7 @@ from libs.processing.store_results import store_results
 from libs.services.call_services import call_services
 from libs.visualise_regions import annotate_pdfs
 from libs.pdf_to_image import get_image_size
+from libs.statistics import compute_success_ratio
 
 
 def load_credentials(google_credentials, amazon_credentials, azure_credentials):
@@ -78,8 +79,11 @@ def main(scanned_logsheet, template, config_file, output_file, google_credential
         for key in artefacts.keys():
             artefacts[key] = artefacts[key] + artefacts_back[key]
 
+    ratio = compute_success_ratio(contents, artefacts)
+
     # store to Excel sheet
     store_results(contents, artefacts, output_file)
+    return ratio
 
 
 if __name__ == '__main__':
