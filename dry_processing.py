@@ -7,9 +7,9 @@ from libs.processing.align_images import align_images
 from libs.processing.read_content import process_content
 from libs.processing.store_results import store_results
 from libs.visualise_regions import annotate_pdfs
-
 from libs.region import Rectangle
 from tests.extracted_content import EXTRACTED
+from libs.pdf_to_image import get_image_size
 
 
 def load_stored_results(test_set):
@@ -31,12 +31,12 @@ def load_stored_results(test_set):
            }
 
 
-def preprocess_input(scanned_logsheet, template, config, page):
+def preprocess_input(scanned_logsheet, template, config, page, max_size=4, dpi=300):
     # convert pdfs to images
-    template_image = convert_pdf_to_image(template)
+    template_image = convert_pdf_to_image(template, dpi=dpi)
     template_image = np.array(template_image)
 
-    logsheet_image = convert_pdf_to_image(scanned_logsheet, page)
+    logsheet_image = convert_pdf_to_image(scanned_logsheet, page, dpi=dpi)
     logsheet_image = np.array(logsheet_image)
 
     # resize images
@@ -45,6 +45,9 @@ def preprocess_input(scanned_logsheet, template, config, page):
 
     # fix logsheet_image (reorient and scale)
     logsheet_image = align_images(logsheet_image, template_image)
+
+    if get_image_size(logsheet_image) > max_size * 2**20:
+        logsheet_image = preprocess_input(scanned_logsheet, template, config, page, max_size, dpi=dpi-50)
     return logsheet_image
 
 
