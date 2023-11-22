@@ -140,6 +140,18 @@ def majority_vote(strings):
     return ''.join(result)
 
 
+def remove_non_ascii(string):
+    """Remove non-ascii characters (these do not work in the alignment)
+
+    Args:
+        string (str): input line
+
+    Returns:
+        str: line containing only ascii characters
+    """
+    return ''.join(char for char in string if ord(char) < 128)
+
+
 def identify_words(lines, is_number):
     """Identify words from lines.
     Behaves differently based on how many lines there are.
@@ -151,7 +163,10 @@ def identify_words(lines, is_number):
     Returns:
         str: identified word
     """
+    # curate lines
     lines = list(filter(None, lines))
+    lines = list(map(remove_non_ascii, lines))
+
     if len(lines) == 1:
         return lines[0]
     elif len(lines) == 2:
