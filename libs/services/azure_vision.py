@@ -5,6 +5,7 @@ from azure.cognitiveservices.vision.computervision.models._models_py3 import Com
 import time
 
 from libs.region import Rectangle
+from libs.services.utils import extract_corners
 
 
 class AzureVision:
@@ -41,5 +42,6 @@ class AzureVision:
             for line in outputs.analyze_result.read_results[0].lines:
                 for word in line.words:
                     vertices = word.bounding_box
-                    identified.append(Rectangle(*vertices[0:2], *vertices[4:6], word.text))
+                    start, end = extract_corners([vertices[0:2], vertices[4:6]])
+                    identified.append(Rectangle(*start, *end, word.text))
         return identified
