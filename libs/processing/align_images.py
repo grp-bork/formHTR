@@ -37,7 +37,7 @@ def find_corners(image):
             all_corners += corners
 
     # to determine image corner points
-    width, height, _ = image.shape
+    height, width, _ = image.shape
 
     # Order of corners is top-left, top-right, bottom-right, bottom-left
     outer_corners = [compute_closest_point((0, 0), all_corners),
