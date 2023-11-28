@@ -36,4 +36,4 @@ def is_ticked(image_array, edge_ignore_percentage=0.2, threshold_percentage=0.1)
     black_percentage = black_pixels / total_pixels
 
     # Determine if checked
-    return black_percentage > threshold_percentage
+    return bool(black_percentage > threshold_percentage)
