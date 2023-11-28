@@ -75,6 +75,7 @@ def store_results(results, artefacts, output_file):
         worksheet.write(f'B{row_number}', inferred)
 
         if type(inferred) == bool:
+            worksheet.data_validation(f'B{row_number}', {'validate': 'list', 'show_error': False, 'source': [True, False]})
             worksheet.conditional_format(f'B{row_number}', {'type': 'cell',
                                          'criteria': '==',
                                          'value': True,
