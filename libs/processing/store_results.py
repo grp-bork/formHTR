@@ -59,6 +59,8 @@ def store_results(results, artefacts, output_file):
 
     max_width = 0
 
+    bool_format = workbook.add_format({'bg_color': '#f1e740'})
+
     # fill in data
     for row_number, result in enumerate(results, 2):
         worksheet.write(f'A{row_number}', result[0])
@@ -71,6 +73,13 @@ def store_results(results, artefacts, output_file):
             inferred = values[0]
 
         worksheet.write(f'B{row_number}', inferred)
+
+        if type(inferred) == bool:
+            worksheet.data_validation(f'B{row_number}', {'validate': 'list', 'show_error': False, 'source': [True, False]})
+            worksheet.conditional_format(f'B{row_number}', {'type': 'cell',
+                                         'criteria': '==',
+                                         'value': True,
+                                         'format': bool_format})
 
         filename = store_image(result[2], images_directory, row_number)
         height, width, _ = result[2].shape
