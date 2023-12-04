@@ -164,8 +164,8 @@ def identify_words(lines, is_number):
         str: identified word
     """
     # curate lines
-    lines = list(filter(None, lines))
     lines = list(map(remove_non_ascii, lines))
+    lines = list(filter(None, lines))
 
     if len(lines) == 1:
         return lines[0]
