@@ -310,7 +310,8 @@ def general_text_area(candidates, roi, is_number):
         words = []
         for group in aligned_groups:
             word = process_lines(group, roi, is_number)
-            words.append(word.strip())
+            if word:
+                words.append(word.strip())
         results['inferred'] = '\n'.join(words)
     else:
         results['inferred'] = construct_lines(list(candidate_lines.values())[0])

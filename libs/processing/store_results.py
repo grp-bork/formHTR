@@ -100,14 +100,15 @@ def store_results(results, artefacts, output_file):
             extra_worksheet.write(f'A{row_number}', key)
             row_number += 1
             for extra in artefacts[key]:
-                extra_worksheet.write(f'A{row_number}', extra[0])
+                if extra[1].size != 0:
+                    extra_worksheet.write(f'A{row_number}', extra[0])
 
-                filename = store_image(extra[1], images_directory, row_number+1000)
-                height, width, _ = extra[1].shape
-                max_width = max(width, max_width)
-                extra_worksheet.insert_image(f'B{row_number}', filename)
-                extra_worksheet.set_row_pixels(row_number-1, height)
-                row_number += 1
+                    filename = store_image(extra[1], images_directory, row_number+1000)
+                    height, width, _ = extra[1].shape
+                    max_width = max(width, max_width)
+                    extra_worksheet.insert_image(f'B{row_number}', filename)
+                    extra_worksheet.set_row_pixels(row_number-1, height)
+                    row_number += 1
             row_number += 1
     
     extra_worksheet.set_column_pixels(1, 2, max_width)
