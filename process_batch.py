@@ -6,6 +6,14 @@ import time
 from process_logsheet import main as process_logsheet
 
 
+SYNONYMS = {'202303_LSI4_SoilSampleDescriptionForm': '202305_LSI4_SoilSampleDescriptionForm',
+            '202303_LSI1_SiteDescriptionForm': '202305_LSI1_SiteDescriptionForm',
+            '202303_LSI3_SoilTransectDescriptionForm': '202305_LSI3_SoilTransectDescriptionForm',
+            '202303_LSI7_SedimentTransectDistributionForm': '202305_LSI7_SedimentTransectDistributionForm', 
+            '202303_LSI8_SedimentSampleDistributionForm': '202305_LSI8_SedimentSampleDistributionForm',
+            '202303_LSI10_AerosolsSampleDistributionForm': '202305_LSI10_AerosolsSampleDistributionForm'}
+
+
 def create_output_dir(location):
     os.makedirs(location)
 
@@ -26,6 +34,8 @@ def process_batch(logsheet_folder, template_folder, config_folder, output_locati
             number = None
 
         template = f'{name}.pdf'
+        if name in SYNONYMS:
+            template = f'{SYNONYMS[name]}.pdf'
         config = f'{name}.json'
 
         # find template and config
@@ -44,8 +54,8 @@ def process_batch(logsheet_folder, template_folder, config_folder, output_locati
                 shutil.copy(f'{logsheet_folder}/{logsheet}', f'{location}/logsheet.pdf')
 
                 stats = process_logsheet(f'{logsheet_folder}/{logsheet}', f'{template_folder}/{template}', f'{config_folder}/{config}', f'{location}/metadata.xlsx', 
-                                        google_credentials, amazon_credentials, azure_credentials, 
-                                        True, True, f'{template_folder}/202303_backside.pdf', f'{config_folder}/202303_backside.json')
+                                         google_credentials, amazon_credentials, azure_credentials, 
+                                         True, True, f'{template_folder}/202303_backside.pdf', f'{config_folder}/202303_backside.json')
                 print(stats)
                 time.sleep(20)
             else:
