@@ -9,9 +9,14 @@ from process_logsheet import main as process_logsheet
 SYNONYMS = {'202303_LSI4_SoilSampleDescriptionForm': '202305_LSI4_SoilSampleDescriptionForm',
             '202303_LSI1_SiteDescriptionForm': '202305_LSI1_SiteDescriptionForm',
             '202303_LSI3_SoilTransectDescriptionForm': '202305_LSI3_SoilTransectDescriptionForm',
-            '202303_LSI7_SedimentTransectDistributionForm': '202305_LSI7_SedimentTransectDistributionForm', 
-            '202303_LSI8_SedimentSampleDistributionForm': '202305_LSI8_SedimentSampleDistributionForm',
-            '202303_LSI10_AerosolsSampleDistributionForm': '202305_LSI10_AerosolsSampleDistributionForm'}
+            '202303_LSI7_SedimentTransectDescriptionForm': '202305_LSI7_SedimentTransectDistributionForm',
+            '202303_LSI8_SedimentSampleDescriptionForm': '202305_LSI8_SedimentSampleDistributionForm',
+            '202303_LSI10_AerosolesSampleDescriptionForm': '202305_LSI10_AerosolsSampleDistributionForm',
+            '202303_LSI6_SoilSampleDistributionForm': '202305_LSI6_SoilSampleDistributionForm',
+            '202303_LSI9_SedimentSampleDistributionForm': '202305_LSI9_SedimentSampleDistributionForm',
+            '20230329_LSI11_LeafSampleDescriptionForm': '202305_LSI13_LeafSampleDistributionForm',
+            '202308_LSI20_ShallowWaterNiskinForm1': '202305_LSI20_ShallowWaterNiskinForm1'}
+
 
 
 def create_output_dir(location):
@@ -34,9 +39,10 @@ def process_batch(logsheet_folder, template_folder, config_folder, output_locati
             number = None
 
         template = f'{name}.pdf'
+        config = f'{name}.json'
         if name in SYNONYMS:
             template = f'{SYNONYMS[name]}.pdf'
-        config = f'{name}.json'
+            config = f'{SYNONYMS[name]}.json'
 
         # find template and config
         if template not in templates or config not in configs:
@@ -53,9 +59,12 @@ def process_batch(logsheet_folder, template_folder, config_folder, output_locati
                 # store logsheet in output location
                 shutil.copy(f'{logsheet_folder}/{logsheet}', f'{location}/logsheet.pdf')
 
-                stats = process_logsheet(f'{logsheet_folder}/{logsheet}', f'{template_folder}/{template}', f'{config_folder}/{config}', f'{location}/metadata.xlsx', 
+                try:
+                    stats = process_logsheet(f'{logsheet_folder}/{logsheet}', f'{template_folder}/{template}', f'{config_folder}/{config}', f'{location}/metadata.xlsx', 
                                          google_credentials, amazon_credentials, azure_credentials, 
                                          True, True, f'{template_folder}/202303_backside.pdf', f'{config_folder}/202303_backside.json')
+                except Exception:
+                    pass
                 print(stats)
                 time.sleep(20)
             else:
