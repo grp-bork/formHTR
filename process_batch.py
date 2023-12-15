@@ -11,7 +11,8 @@ SYNONYMS = {'202303_LSI4_SoilSampleDescriptionForm': '202305_LSI4_SoilSampleDesc
             '202303_LSI3_SoilTransectDescriptionForm': '202305_LSI3_SoilTransectDescriptionForm',
             '202303_LSI7_SedimentTransectDistributionForm': '202305_LSI7_SedimentTransectDistributionForm', 
             '202303_LSI8_SedimentSampleDistributionForm': '202305_LSI8_SedimentSampleDistributionForm',
-            '202303_LSI10_AerosolsSampleDistributionForm': '202305_LSI10_AerosolsSampleDistributionForm'}
+            '202303_LSI10_AerosolsSampleDistributionForm': '202305_LSI10_AerosolsSampleDistributionForm',
+            '202303_LSI6_SoilSampleDistributionForm': '202305_LSI6_SoilSampleDistributionForm'}
 
 
 def create_output_dir(location):
@@ -34,9 +35,10 @@ def process_batch(logsheet_folder, template_folder, config_folder, output_locati
             number = None
 
         template = f'{name}.pdf'
+        config = f'{name}.json'
         if name in SYNONYMS:
             template = f'{SYNONYMS[name]}.pdf'
-        config = f'{name}.json'
+            config = f'{SYNONYMS[name]}.pdf'
 
         # find template and config
         if template not in templates or config not in configs:
