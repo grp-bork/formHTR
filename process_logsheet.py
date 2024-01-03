@@ -43,7 +43,7 @@ def preprocess_input(scanned_logsheet, template, config, page, max_size=4, dpi=3
     return logsheet_image
 
 
-def process_logsheet(logsheet, template, config_file, credentials, debug=False, front=True):
+def process_logsheet(logsheet, template, config_file, credentials, debug=False, front=True, checkbox_edges=0.2):
     # load CSV config
     config = LogsheetConfig([], [])
     config.import_from_json(config_file)
@@ -59,20 +59,25 @@ def process_logsheet(logsheet, template, config_file, credentials, debug=False, 
         annotate_pdfs(identified_content, logsheet_image, front)
 
     # process contents
-    return process_content(identified_content, logsheet_image, config)
+    return process_content(identified_content, logsheet_image, config, checkbox_edges)
 
 
 def main(scanned_logsheet, template, config_file, output_file, google_credentials, amazon_credentials, azure_credentials, 
-         debug, backside, backside_template, backside_config):
+         debug, backside, backside_template, backside_config, ugly_checkboxes):
+    
+    checkbox_edges = 0.2
+    if ugly_checkboxes:
+        checkbox_edges = 0.4
     
     credentials = load_credentials(google_credentials, amazon_credentials, azure_credentials)
     
     # extract contents from the front page
-    contents, artefacts = process_logsheet(scanned_logsheet, template, config_file, credentials, debug=debug)
+    contents, artefacts = process_logsheet(scanned_logsheet, template, config_file, credentials, debug=debug, checkbox_edges=checkbox_edges)
 
     # extract contents from the back side (if present)
     if backside:
-        contents_back, artefacts_back = process_logsheet(scanned_logsheet, backside_template, backside_config, credentials, debug=debug, front=False)
+        contents_back, artefacts_back = process_logsheet(scanned_logsheet, backside_template, backside_config, credentials,
+                                                         debug=debug, checkbox_edges=checkbox_edges, front=False)
 
         # join results
         contents += contents_back
@@ -106,6 +111,7 @@ if __name__ == '__main__':
     optional.add_argument('--backside', action=argparse.BooleanOptionalAction, default=False, help='Backside page present.')
     optional.add_argument('--backside_template', type=str, help='PDF template of the backside')
     optional.add_argument('--backside_config', type=str, help='Path to JSON file containing config of the backside')
+    optional.add_argument('--ugly_checkboxes', action=argparse.BooleanOptionalAction, default=False, help='Checkboxes in the logsheet have irregular shape or large edges.')
 
     args = args_parser.parse_args()
 
@@ -113,4 +119,4 @@ if __name__ == '__main__':
         args_parser.error('The --backside argument requires --backside_template and --backside_config.')
 
     main(args.pdf_logsheet, args.pdf_template, args.config_file, args.output_file, args.google, args.amazon, args.azure, 
-         args.debug, args.backside, args.backside_template, args.backside_config)
+         args.debug, args.backside, args.backside_template, args.backside_config, args.ugly_checkboxes)

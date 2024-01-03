@@ -4,7 +4,7 @@ from libs.processing.process_area import general_text_area
 from libs.processing.checkbox import is_ticked
 
 
-def process_content(indetified_content, logsheet_image, config):
+def process_content(indetified_content, logsheet_image, config, checkbox_edges):
     """
     Top level function to read content of ROIs.
 
@@ -12,6 +12,7 @@ def process_content(indetified_content, logsheet_image, config):
         indetified_content (dict): identified content using OCR services
         logsheet_image (Image): logsheet image
         config (LogsheetConfig): configuration of given logsheet
+        checkbox_edges (bool): cutoff edges for checkboxes to avoid detecting box
 
     Returns:
         list: a list of identified content with its confidence
@@ -30,7 +31,7 @@ def process_content(indetified_content, logsheet_image, config):
         if region.content_type == 'Barcode':
             content['inferred'] = read_barcode(fragment, candidates)
         elif region.content_type == 'Checkbox':
-            content['inferred'] = is_ticked(fragment)
+            content['inferred'] = is_ticked(fragment, edge_ignore_percentage=checkbox_edges)
         else:
             is_number = region.content_type == 'Number'
             content = general_text_area(candidates, region, is_number)
