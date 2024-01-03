@@ -99,7 +99,7 @@ def find_residuals(image, credentials):
 
     image_pil = Image.fromarray(image)
     image_stream = io.BytesIO()
-    image_pil.save(image_stream, format='PNG')
+    image_pil.save(image_stream, format='JPEG')
 
     identified = google.annotate_image(image_stream)
     identified = google.process_output(identified)
