@@ -44,5 +44,5 @@ def get_image_size(logsheet_image):
     """
     img_file = BytesIO()
     image = Image.fromarray(logsheet_image)
-    image.save(img_file, 'png', quality='keep')
+    image.save(img_file, format='JPEG')
     return img_file.tell()
