@@ -11,30 +11,31 @@ from libs.processing.align_images import compute_closest_point, transform
 
 
 def select_points(image, window_name):
+    original_image = image.copy()
     points = []
 
     def click_event(event, x, y, flags, params):
-        # TODO dont allow to draw if len(points) > 3
         if event == cv2.EVENT_LBUTTONDOWN:
-            points.append((x,y))
-            cv2.circle(image, (x,y), 15, (0, 0, 255), -1)
-            cv2.imshow(window_name, image)
+            if len(points) < 4:
+                points.append((x,y))
+                cv2.circle(image, (x,y), 15, (0, 0, 255), -1)
+                cv2.imshow(window_name, image)
 
-    while len(points) < 4:
-        # TODO end only on q or Esc
+    keep_running = True
+    while keep_running:
         cv2.imshow(window_name, image)
         cv2.setMouseCallback(window_name, click_event)
         key = cv2.waitKey(0)
 
-        if key == ord('q'):
-            break
-        elif key == ord('r') and points:
+        if key == ord('r') and points:
             points.pop()  # undo the last point
-            # TODO remove also from the image
-        elif key == 27:  # Esc key to exit 
-            # TODO join with q
+            image = original_image.copy()
+            for (x,y) in points:
+                cv2.circle(image, (x,y), 15, (0, 0, 255), -1)
+            cv2.imshow(window_name, image)
+        elif key in [27, ord('q')]: # Esc or q key to exit 
             cv2.destroyAllWindows()
-            exit()
+            keep_running = False
 
     cv2.destroyAllWindows()
     return points
