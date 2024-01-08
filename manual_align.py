@@ -1,12 +1,16 @@
 import cv2
 import numpy as np
 import argparse
+from PyPDF2 import PdfReader, PdfWriter
+import img2pdf
+from PIL import Image
+import io
 
 from libs.pdf_to_image import convert_pdf_to_image, resize_image
 from libs.processing.align_images import compute_closest_point, transform
 
 
-def select_points(image):
+def select_points(image, window_name):
     points = []
 
     def click_event(event, x, y, flags, params):
@@ -14,12 +18,12 @@ def select_points(image):
         if event == cv2.EVENT_LBUTTONDOWN:
             points.append((x,y))
             cv2.circle(image, (x,y), 15, (0, 0, 255), -1)
-            cv2.imshow('Select Points', image)
+            cv2.imshow(window_name, image)
 
     while len(points) < 4:
         # TODO end only on q or Esc
-        cv2.imshow('Select Points', image)
-        cv2.setMouseCallback('Select Points', click_event)
+        cv2.imshow(window_name, image)
+        cv2.setMouseCallback(window_name, click_event)
         key = cv2.waitKey(0)
 
         if key == ord('q'):
@@ -35,18 +39,23 @@ def select_points(image):
     cv2.destroyAllWindows()
     return points
 
-def store_output():
-    pass
+
+def to_pdf(image):
+    image_pil = Image.fromarray(image)
+    image_bytes = io.BytesIO()
+    image_pil.save(image_bytes, format='JPEG')
+    return img2pdf.convert(image_bytes.getvalue())
 
 
-def process(target, template):
+def process(target, template, backside=False):
     height, width, _ = target.shape
 
     target = resize_image(target, (width, height))
     template = resize_image(template, (width, height))
 
     # Display and select points on the template image
-    template_points = select_points(template.copy())
+    window_name = 'TEMPLATE' + '(backside)' if backside else 'TEMPLATE'
+    template_points = select_points(template.copy(), window_name)
     # template_points = [(29, 233), (2218, 236), (30, 3074), (2213, 3084)]
 
     # sort by finding closest points to corners
@@ -56,7 +65,8 @@ def process(target, template):
                        compute_closest_point((0, height), template_points)]
 
     # Display and select points on the target image
-    target_points = select_points(target.copy())
+    window_name =  'SCAN' + '(backside)' if backside else 'SCAN'
+    target_points = select_points(target.copy(), window_name)
     # target_points = [(149, 322), (2435, 338), (107, 3270), (2396, 3306)]
 
     target_points = [compute_closest_point((0, 0), target_points),
@@ -69,16 +79,33 @@ def process(target, template):
 
 
 def main(template_path, target_path, output_path, backside_template):
+    output_pdf_writer = PdfWriter()
+
     # Convert PDF images to OpenCV format
-    # TODO dont touch other pages if present? (backside)
     template = np.array(convert_pdf_to_image(template_path))
     target = np.array(convert_pdf_to_image(target_path))
 
-    aligned_image = process(template, target)
+    aligned_frontside = process(target, template)
 
-    # TODO store as pdf
+    frontside_pdf = to_pdf(aligned_frontside)
+    frontside_pdf_reader = PdfReader(io.BytesIO(frontside_pdf))
+    output_pdf_writer.add_page(frontside_pdf_reader.pages[0])
+
+    if backside_template:
+        template = np.array(convert_pdf_to_image(backside_template))
+        target = np.array(convert_pdf_to_image(target_path, page=1))
+
+        aligned_backside = process(target, template, backside=True)
+        backside_pdf = to_pdf(aligned_backside)
+        backside_pdf_reader = PdfReader(io.BytesIO(backside_pdf))
+        output_pdf_writer.add_page(backside_pdf_reader.pages[0])
+    else:
+        original_pdf = PdfReader(target_path)
+        output_pdf_writer.add_page(original_pdf.pages[1])
+
     # Save the aligned image to the output file
-    cv2.imwrite(output_path, aligned_image)
+    with open(output_path, 'wb') as output_pdf:
+        output_pdf_writer.write(output_pdf)
 
 
 if __name__ == '__main__':
