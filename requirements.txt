@@ -13,3 +13,5 @@ azure-cognitiveservices-vision-computervision
 pyzbar
 biopython
 scikit-image
+img2pdf
+PyPDF2

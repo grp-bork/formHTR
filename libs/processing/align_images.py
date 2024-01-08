@@ -48,13 +48,14 @@ def find_corners(image):
     return outer_corners
 
 
+def transform(scanned, template, scanned_points, template_points):
+    # Compute the transformation matrix and apply it
+    h, _ = cv2.findHomography(np.array(scanned_points), np.array(template_points))
+    return cv2.warpPerspective(scanned, h, (template.shape[1], template.shape[0]))
+
+
 def align_images(scanned, template):
     # Find corners in both images
     template_corners = find_corners(template)
     scanned_corners = find_corners(scanned)
-
-    # Compute the transformation matrix and apply it
-    h, _ = cv2.findHomography(np.array(scanned_corners), np.array(template_corners))
-    aligned = cv2.warpPerspective(scanned, h, (template.shape[1], template.shape[0]))
-
-    return aligned
+    return transform(scanned, template, scanned_corners, template_corners)
