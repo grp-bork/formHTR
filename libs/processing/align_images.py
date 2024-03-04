@@ -38,6 +38,8 @@ def find_corners(image, num=10):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (5, 5), 0)
 
+    _, gray = cv2.threshold(gray, 20, 255, cv2.THRESH_BINARY)
+
     # Enhanced Edge Detection
     edged = cv2.Canny(gray, 50, 150)
     edged = cv2.dilate(edged, None, iterations=1)
