@@ -77,13 +77,17 @@ def main(scanned_logsheet, template, config_file, output_file, google_credential
 
     # extract contents from the back side (if present)
     if backside:
-        contents_back, artefacts_back = process_logsheet(scanned_logsheet, backside_template, backside_config, credentials,
-                                                         debug=debug, checkbox_edges=checkbox_edges, front=False, skip_alignment=aligned)
+        try:
+            contents_back, artefacts_back = process_logsheet(scanned_logsheet, backside_template, backside_config, credentials,
+                                                            debug=debug, checkbox_edges=checkbox_edges, front=False, skip_alignment=aligned)
 
-        # join results
-        contents += contents_back
-        for key in artefacts.keys():
-            artefacts[key] = artefacts[key] + artefacts_back[key]
+            # join results
+            contents += contents_back
+            for key in artefacts.keys():
+                artefacts[key] = artefacts[key] + artefacts_back[key]
+        except ValueError:
+            # probably backside is present, but it is actually a blank page
+            pass
 
     ratio = compute_success_ratio(contents, artefacts)
 
