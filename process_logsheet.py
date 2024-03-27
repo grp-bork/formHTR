@@ -23,7 +23,7 @@ def load_credentials(google_credentials, amazon_credentials, azure_credentials):
     return {'google': google_credentials, 'amazon': amazon_credentials, 'azure': azure_credentials}
 
 
-def preprocess_input(scanned_logsheet, template, config, page, skip_alignment, max_size=4, dpi=300):
+def preprocess_input(scanned_logsheet, template, config, page, skip_alignment, filter_grayscale, max_size=4, dpi=300):
     # convert pdfs to images
     template_image = convert_pdf_to_image(template, dpi=dpi)
     template_image = np.array(template_image)
@@ -37,14 +37,14 @@ def preprocess_input(scanned_logsheet, template, config, page, skip_alignment, m
 
     # fix logsheet_image (reorient and scale)
     if not skip_alignment:
-        logsheet_image = align_images(logsheet_image, template_image)
+        logsheet_image = align_images(logsheet_image, template_image, filter_grayscale)
 
     if get_image_size(logsheet_image) > max_size * 2**20:
-        logsheet_image = preprocess_input(scanned_logsheet, template, config, page, skip_alignment, max_size, dpi=dpi-50)
+        logsheet_image = preprocess_input(scanned_logsheet, template, config, page, skip_alignment, filter_grayscale, max_size, dpi=dpi-50)
     return logsheet_image
 
 
-def process_logsheet(logsheet, template, config_file, credentials, debug=False, front=True, checkbox_edges=0.2, skip_alignment=False):
+def process_logsheet(logsheet, template, config_file, credentials, debug=False, front=True, checkbox_edges=0.2, skip_alignment=False, filter_grayscale=False):
     # load CSV config
     config = LogsheetConfig([], [])
     config.import_from_json(config_file)
@@ -52,7 +52,7 @@ def process_logsheet(logsheet, template, config_file, credentials, debug=False, 
     page = 0 if front else 1
 
     # assume PDF and CSV config correspond to each other (QR codes are not reliable anyway)
-    logsheet_image = preprocess_input(logsheet, template, config, page, skip_alignment)
+    logsheet_image = preprocess_input(logsheet, template, config, page, skip_alignment, filter_grayscale)
     # call external OCR services
     identified_content = call_services(logsheet_image, credentials, config)
 
@@ -64,7 +64,7 @@ def process_logsheet(logsheet, template, config_file, credentials, debug=False, 
 
 
 def main(scanned_logsheet, template, config_file, output_file, google_credentials, amazon_credentials, azure_credentials, 
-         debug, backside, backside_template, backside_config, ugly_checkboxes, aligned):
+         debug, backside, backside_template, backside_config, ugly_checkboxes, aligned, filter_grayscale):
     
     checkbox_edges = 0.2
     if ugly_checkboxes:
@@ -73,17 +73,21 @@ def main(scanned_logsheet, template, config_file, output_file, google_credential
     credentials = load_credentials(google_credentials, amazon_credentials, azure_credentials)
     
     # extract contents from the front page
-    contents, artefacts = process_logsheet(scanned_logsheet, template, config_file, credentials, debug=debug, checkbox_edges=checkbox_edges, skip_alignment=aligned)
+    contents, artefacts = process_logsheet(scanned_logsheet, template, config_file, credentials, debug=debug, checkbox_edges=checkbox_edges, skip_alignment=aligned, filter_grayscale=filter_grayscale)
 
     # extract contents from the back side (if present)
     if backside:
-        contents_back, artefacts_back = process_logsheet(scanned_logsheet, backside_template, backside_config, credentials,
-                                                         debug=debug, checkbox_edges=checkbox_edges, front=False, skip_alignment=aligned)
+        try:
+            contents_back, artefacts_back = process_logsheet(scanned_logsheet, backside_template, backside_config, credentials,
+                                                            debug=debug, checkbox_edges=checkbox_edges, front=False, skip_alignment=aligned)
 
-        # join results
-        contents += contents_back
-        for key in artefacts.keys():
-            artefacts[key] = artefacts[key] + artefacts_back[key]
+            # join results
+            contents += contents_back
+            for key in artefacts.keys():
+                artefacts[key] = artefacts[key] + artefacts_back[key]
+        except ValueError:
+            # probably backside is present, but it is actually a blank page
+            pass
 
     ratio = compute_success_ratio(contents, artefacts)
 
@@ -114,6 +118,7 @@ if __name__ == '__main__':
     optional.add_argument('--backside_config', type=str, help='Path to JSON file containing config of the backside')
     optional.add_argument('--ugly_checkboxes', action=argparse.BooleanOptionalAction, default=False, help='Checkboxes in the logsheet have irregular shape or large edges.')
     optional.add_argument('--aligned', action=argparse.BooleanOptionalAction, default=False, help='The scanned image is already aligned with template, skip automatic alignment step.')
+    optional.add_argument('--filter_grayscale', action=argparse.BooleanOptionalAction, default=False, help='During the alignment step, keep only the darkest pixels in grayscale.')
 
     args = args_parser.parse_args()
 
@@ -121,4 +126,4 @@ if __name__ == '__main__':
         args_parser.error('The --backside argument requires --backside_template and --backside_config.')
 
     main(args.pdf_logsheet, args.pdf_template, args.config_file, args.output_file, args.google, args.amazon, args.azure, 
-         args.debug, args.backside, args.backside_template, args.backside_config, args.ugly_checkboxes, args.aligned)
+         args.debug, args.backside, args.backside_template, args.backside_config, args.ugly_checkboxes, args.aligned, args.filter_grayscale)

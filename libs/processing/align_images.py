@@ -34,9 +34,12 @@ def compute_closest_point(point, corners):
     return corners[closest_index]
 
 
-def find_corners(image, num=10):
+def find_corners(image, filter_grayscale, num=10):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (5, 5), 0)
+
+    if filter_grayscale:
+        _, gray = cv2.threshold(gray, 20, 255, cv2.THRESH_BINARY)
 
     # Enhanced Edge Detection
     edged = cv2.Canny(gray, 50, 150)
@@ -66,7 +69,7 @@ def find_corners(image, num=10):
 
     corners_valid = validate_corners(outer_corners, height, width)
     if not corners_valid and num < 50:
-        return find_corners(image, num=num+10)
+        return find_corners(image, filter_grayscale, num=num+10)
 
     return outer_corners
 
@@ -77,8 +80,8 @@ def transform(scanned, template, scanned_points, template_points):
     return cv2.warpPerspective(scanned, h, (template.shape[1], template.shape[0]))
 
 
-def align_images(scanned, template):
+def align_images(scanned, template, filter_grayscale):
     # Find corners in both images
-    template_corners = find_corners(template)
-    scanned_corners = find_corners(scanned)
+    template_corners = find_corners(template, filter_grayscale)
+    scanned_corners = find_corners(scanned, filter_grayscale)
     return transform(scanned, template, scanned_corners, template_corners)
