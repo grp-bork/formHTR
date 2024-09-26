@@ -77,16 +77,12 @@ def find_corners(image, filter_grayscale, num=10, gray_filter=20):
     
     for corner in outer_corners:
         copy_image = cv2.circle(copy_image, corner, radius=15, color=(255, 0, 0), thickness=15)
-    
-    cv2.imshow('image', copy_image)
-    cv2.waitKey(0)
 
     corners_valid = validate_corners(outer_corners, height, width)
     if not corners_valid and num < 50:
-        # TODO if not valid, do not do the alignment
         return find_corners(image, filter_grayscale, num=num+10, gray_filter=gray_filter+10)
 
-    return outer_corners
+    return outer_corners, corners_valid
 
 
 def transform(scanned, template, scanned_points, template_points):
@@ -97,6 +93,7 @@ def transform(scanned, template, scanned_points, template_points):
 
 def align_images(scanned, template, filter_grayscale):
     # Find corners in both images
-    template_corners = find_corners(template, filter_grayscale)
-    scanned_corners = find_corners(scanned, filter_grayscale)
-    return transform(scanned, template, scanned_corners, template_corners)
+    template_corners, template_valid = find_corners(template, filter_grayscale)
+    scanned_corners, scanned_valid = find_corners(scanned, filter_grayscale)
+    if template_valid and scanned_valid:
+        return transform(scanned, template, scanned_corners, template_corners)
