@@ -36,7 +36,7 @@ def store_image(image, location, index):
     return filename
 
 
-def store_results(results, artefacts, output_file):
+def store_results(results, artefacts, output_file, include_validation=False):
     """
     Write identified results into an Excel sheet
 
@@ -44,6 +44,7 @@ def store_results(results, artefacts, output_file):
         results (list): identified results
         artefacts (dict): identified artefacts per service 
         output_file (str): path to the output xlsx file
+        include_validation (bool): add value options to the output file
     """
     # create directory to store mini images
     directory = os.path.dirname(output_file)
@@ -65,7 +66,7 @@ def store_results(results, artefacts, output_file):
     for row_number, result in enumerate(results, 2):
         worksheet.write(f'A{row_number}', result[0])
         values = order_results(result[1])
-        if len(values) > 1:
+        if include_validation and len(values) > 1:
             worksheet.data_validation(f'B{row_number}', {'validate': 'list', 'show_error': False, 'source': values})
 
         inferred = result[1].get('inferred', None)
@@ -75,7 +76,8 @@ def store_results(results, artefacts, output_file):
         worksheet.write(f'B{row_number}', inferred)
 
         if type(inferred) == bool:
-            worksheet.data_validation(f'B{row_number}', {'validate': 'list', 'show_error': False, 'source': [True, False]})
+            if include_validation:
+                worksheet.data_validation(f'B{row_number}', {'validate': 'list', 'show_error': False, 'source': [True, False]})
             worksheet.conditional_format(f'B{row_number}', {'type': 'cell',
                                          'criteria': '==',
                                          'value': True,
