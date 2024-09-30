@@ -39,9 +39,10 @@ def preprocess_input(scanned_logsheet, template, config, page, skip_alignment, f
     if not skip_alignment:
         logsheet_image = align_images(logsheet_image, template_image, filter_grayscale)
 
-    if get_image_size(logsheet_image) > max_size * 2**20:
-        logsheet_image = preprocess_input(scanned_logsheet, template, config, page, skip_alignment, filter_grayscale, max_size, dpi=dpi-50)
-    return logsheet_image
+    if logsheet_image is not None:
+        if get_image_size(logsheet_image) > max_size * 2**20:
+            logsheet_image = preprocess_input(scanned_logsheet, template, config, page, skip_alignment, filter_grayscale, max_size, dpi=dpi-50)
+        return logsheet_image
 
 
 def process_logsheet(logsheet, template, config_file, credentials, debug=False, front=True, checkbox_edges=0.2, skip_alignment=False, filter_grayscale=False):
@@ -53,14 +54,17 @@ def process_logsheet(logsheet, template, config_file, credentials, debug=False, 
 
     # assume PDF and CSV config correspond to each other (QR codes are not reliable anyway)
     logsheet_image = preprocess_input(logsheet, template, config, page, skip_alignment, filter_grayscale)
+    if logsheet_image is not None:
     # call external OCR services
-    identified_content = call_services(logsheet_image, credentials, config)
+        identified_content = call_services(logsheet_image, credentials, config)
 
-    if debug:
-        annotate_pdfs(identified_content, logsheet_image, front)
+        if debug:
+            annotate_pdfs(identified_content, logsheet_image, front)
 
-    # process contents
-    return process_content(identified_content, logsheet_image, config, checkbox_edges)
+        # process contents
+        return process_content(identified_content, logsheet_image, config, checkbox_edges)
+    else:
+        return None, None
 
 
 def main(scanned_logsheet, template, config_file, output_file, google_credentials, amazon_credentials, azure_credentials, 
@@ -75,25 +79,27 @@ def main(scanned_logsheet, template, config_file, output_file, google_credential
     # extract contents from the front page
     contents, artefacts = process_logsheet(scanned_logsheet, template, config_file, credentials, debug=debug, checkbox_edges=checkbox_edges, skip_alignment=aligned, filter_grayscale=filter_grayscale)
 
-    # extract contents from the back side (if present)
-    if backside:
-        try:
-            contents_back, artefacts_back = process_logsheet(scanned_logsheet, backside_template, backside_config, credentials,
-                                                            debug=debug, checkbox_edges=checkbox_edges, front=False, skip_alignment=aligned)
+    if contents is not None:
+        # extract contents from the back side (if present)
+        if backside:
+            try:
+                contents_back, artefacts_back = process_logsheet(scanned_logsheet, backside_template, backside_config, credentials,
+                                                                debug=debug, checkbox_edges=checkbox_edges, front=False, skip_alignment=aligned)
+                
+                if contents_back is not None:
+                    # join results
+                    contents += contents_back
+                    for key in artefacts.keys():
+                        artefacts[key] = artefacts[key] + artefacts_back[key]
+            except ValueError:
+                # probably backside is present, but it is actually a blank page
+                pass
 
-            # join results
-            contents += contents_back
-            for key in artefacts.keys():
-                artefacts[key] = artefacts[key] + artefacts_back[key]
-        except ValueError:
-            # probably backside is present, but it is actually a blank page
-            pass
+        ratio = compute_success_ratio(contents, artefacts)
 
-    ratio = compute_success_ratio(contents, artefacts)
-
-    # store to Excel sheet
-    store_results(contents, artefacts, output_file)
-    return ratio
+        # store to Excel sheet
+        store_results(contents, artefacts, output_file)
+        return ratio
 
 
 if __name__ == '__main__':
