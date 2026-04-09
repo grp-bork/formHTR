@@ -23,6 +23,7 @@ def select_rois(
     detect_residuals: bool = False,
     google_credentials_path: str | None = None,
     display_residuals: bool = False,
+    headless: bool = False,
 ) -> None:
     image = np.array(convert_pdf_to_image(template_pdf))
 
@@ -40,11 +41,16 @@ def select_rois(
 
         if detect_residuals:
             if not google_credentials_path:
-                raise ValueError("google_credentials_path is required when detect_residuals=True")
+                raise ValueError(
+                    "google_credentials_path is required when detect_residuals=True")
             residuals = find_residuals(image, google_credentials_path)
 
         height, width, _ = image.shape
         config = LogsheetConfig(rectangles, residuals, height, width)
+
+    if headless:
+        config.export_to_json(output_config_json)
+        return
 
     widget = SelectROIsWidget(image, config, display_residuals)
     process_select_cli(widget)
@@ -70,4 +76,3 @@ def annotate_rois(
     process_annotate_cli(widget)
     cv2.destroyAllWindows()
     widget.config.export_to_json(output_config_json, remove_unannotated)
-

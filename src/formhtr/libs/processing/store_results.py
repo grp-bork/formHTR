@@ -1,7 +1,9 @@
+import csv
 import os
+from shutil import rmtree
+
 import cv2
 import xlsxwriter
-from shutil import rmtree
 
 
 def order_results(values):
@@ -67,7 +69,8 @@ def store_results(results, artefacts, output_file, include_validation=False):
         worksheet.write(f'A{row_number}', result[0])
         values = order_results(result[1])
         if include_validation and len(values) > 1:
-            worksheet.data_validation(f'B{row_number}', {'validate': 'list', 'show_error': False, 'source': values})
+            worksheet.data_validation(
+                f'B{row_number}', {'validate': 'list', 'show_error': False, 'source': values})
 
         inferred = result[1].get('inferred', None)
         if inferred is None and len(values) != 0:
@@ -77,11 +80,12 @@ def store_results(results, artefacts, output_file, include_validation=False):
 
         if type(inferred) == bool:
             if include_validation:
-                worksheet.data_validation(f'B{row_number}', {'validate': 'list', 'show_error': False, 'source': [True, False]})
+                worksheet.data_validation(f'B{row_number}', {
+                                          'validate': 'list', 'show_error': False, 'source': [True, False]})
             worksheet.conditional_format(f'B{row_number}', {'type': 'cell',
                                          'criteria': '==',
-                                         'value': True,
-                                         'format': bool_format})
+                                                            'value': True,
+                                                            'format': bool_format})
 
         filename = store_image(result[2], images_directory, row_number)
         height, width, _ = result[2].shape
@@ -105,16 +109,44 @@ def store_results(results, artefacts, output_file, include_validation=False):
                 if extra[1].size != 0:
                     extra_worksheet.write(f'A{row_number}', extra[0])
 
-                    filename = store_image(extra[1], images_directory, row_number+1000)
+                    filename = store_image(
+                        extra[1], images_directory, row_number+1000)
                     height, width, _ = extra[1].shape
                     max_width = max(width, max_width)
                     extra_worksheet.insert_image(f'B{row_number}', filename)
                     extra_worksheet.set_row_pixels(row_number-1, height)
                     row_number += 1
             row_number += 1
-    
+
     extra_worksheet.set_column_pixels(1, 2, max_width)
     extra_worksheet.autofit()
 
     workbook.close()
     rmtree(images_directory)
+
+
+def store_results_csv(results, artefacts, output_file):
+    """
+    Write identified results into a CSV file.
+
+    Args:
+        results (list): identified results
+        artefacts (dict): identified artefacts per service 
+        output_file (str): path to the output csv file
+    """
+    with open(output_file, mode='w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+
+        writer.writerow(['varname', 'inferred value'])
+
+        for result in results:
+            row_id = result[0]
+            data_dict = result[1]
+
+            values = order_results(data_dict)
+
+            inferred = data_dict.get('inferred', None)
+            if inferred is None and len(values) != 0:
+                inferred = values[0]
+
+            writer.writerow([row_id, inferred])

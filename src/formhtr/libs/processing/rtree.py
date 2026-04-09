@@ -4,11 +4,11 @@ from ..region import Rectangle
 
 class Ensemble:
     def __init__(self, indetified_content, config):
-        self.google_rtree = RectangleTree(indetified_content['google'])
+        self.google_rtree = RectangleTree(indetified_content['google'] if indetified_content['google'] is not None else [])
         self.google_rtree.prune_residuals(config.residuals)
-        self.amazon_rtree = RectangleTree(indetified_content['amazon'])
+        self.amazon_rtree = RectangleTree(indetified_content['amazon'] if indetified_content['amazon'] is not None else [])
         self.amazon_rtree.prune_residuals(config.residuals)
-        self.azure_rtree = RectangleTree(indetified_content['azure'])
+        self.azure_rtree = RectangleTree(indetified_content['azure'] if indetified_content['azure'] is not None else [])
         self.azure_rtree.prune_residuals(config.residuals)
 
     def find_intersection(self, rectangle):

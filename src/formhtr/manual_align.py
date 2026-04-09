@@ -50,13 +50,16 @@ def _to_pdf_bytes(image) -> bytes:
     return img2pdf.convert(image_bytes.getvalue())
 
 
-def _align_page(target, template, *, backside: bool = False):
+def align_page(target, template, *, backside: bool = False,
+               template_points: list[tuple[int, int]] | None = None,
+               target_points: list[tuple[int, int]] | None = None):
     height, width, _ = target.shape
 
     target = resize_image(target, (width, height))
     template = resize_image(template, (width, height))
 
-    template_points = _select_points(template.copy(), "TEMPLATE(backside)" if backside else "TEMPLATE")
+    template_points = template_points if template_points is not None else _select_points(
+        template.copy(), "TEMPLATE(backside)" if backside else "TEMPLATE")
     template_points = [
         compute_closest_point((0, 0), template_points),
         compute_closest_point((width, 0), template_points),
@@ -64,7 +67,8 @@ def _align_page(target, template, *, backside: bool = False):
         compute_closest_point((0, height), template_points),
     ]
 
-    target_points = _select_points(target.copy(), "SCAN(backside)" if backside else "SCAN")
+    target_points = target_points if target_points is not None else _select_points(
+        target.copy(), "SCAN(backside)" if backside else "SCAN")
     target_points = [
         compute_closest_point((0, 0), target_points),
         compute_closest_point((width, 0), target_points),
@@ -81,13 +85,17 @@ def manual_align_pdf(
     scanned_logsheet_pdf: str,
     output_pdf: str,
     backside_template_pdf: str | None = None,
+    template_points: list[tuple[int, int]] | None = None,
+    target_points: list[tuple[int, int]] | None = None,
 ) -> None:
     output_pdf_writer = PdfWriter()
 
     template = np.array(convert_pdf_to_image(template_pdf))
     target = np.array(convert_pdf_to_image(scanned_logsheet_pdf))
 
-    aligned_frontside = _align_page(target, template, backside=False)
+    aligned_frontside = align_page(target, template, backside=False,
+                                   template_points=template_points,
+                                   target_points=target_points)
     frontside_pdf_bytes = _to_pdf_bytes(aligned_frontside)
     frontside_pdf_reader = PdfReader(io.BytesIO(frontside_pdf_bytes))
     output_pdf_writer.add_page(frontside_pdf_reader.pages[0])
@@ -96,7 +104,9 @@ def manual_align_pdf(
         template = np.array(convert_pdf_to_image(backside_template_pdf))
         target = np.array(convert_pdf_to_image(scanned_logsheet_pdf, page=1))
 
-        aligned_backside = _align_page(target, template, backside=True)
+        aligned_backside = align_page(target, template, backside=True,
+                                      template_points=template_points,
+                                      target_points=target_points)
         backside_pdf_bytes = _to_pdf_bytes(aligned_backside)
         backside_pdf_reader = PdfReader(io.BytesIO(backside_pdf_bytes))
         output_pdf_writer.add_page(backside_pdf_reader.pages[0])
@@ -106,4 +116,3 @@ def manual_align_pdf(
 
     with open(output_pdf, "wb") as f:
         output_pdf_writer.write(f)
-

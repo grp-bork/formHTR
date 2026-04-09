@@ -4,13 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "formhtr"
-version = "0.1.1"
+version = "0.2.0"
 description = "Handprint text recognition in form documents."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [
-  { name = "Matej Trojak", email = "matej.trojak@embl.de" }
+  { name = "Matej Trojak", email = "matej.trojak@embl.de" },
+  { name = "Jan Glos", email = "jan.glos2001@gmail.com" }
 ]
 keywords = ["ocr", "forms", "computer-vision"]
 classifiers = [

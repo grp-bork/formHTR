@@ -8,5 +8,6 @@ if SRC_DIR.exists():
 
 from formhtr.cli import main
 
+
 if __name__ == "__main__":
-    raise SystemExit(main(["manual-align", *sys.argv[1:]]))
+    raise SystemExit(main(["export-logsheet", *sys.argv[1:]]))

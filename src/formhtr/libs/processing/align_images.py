@@ -1,6 +1,7 @@
-import numpy as np
-import cv2
 from math import dist, isclose
+
+import cv2
+import numpy as np
 
 
 def validate_corners(corners, height, width, tol=20):
@@ -97,3 +98,18 @@ def align_images(scanned, template, filter_grayscale):
     scanned_corners, scanned_valid = find_corners(scanned, filter_grayscale)
     if template_valid and scanned_valid:
         return transform(scanned, template, scanned_corners, template_corners)
+
+def format_point(point):
+    return {
+        "x": int(point[0]),
+        "y": int(point[1])
+    }
+
+def get_alignment_data(scanned, template):
+    template_corners, _ = find_corners(template, False)
+    scanned_corners, _ = find_corners(scanned, False)
+   
+    return {
+        "templatePoints": [format_point(p) for p in template_corners],
+        "targetPoints": [format_point(p) for p in scanned_corners]
+    }
