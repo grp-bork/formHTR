@@ -1,0 +1,27 @@
+{
+    "content": [
+        {
+            "coords": [
+                122,
+                1789,
+                2373,
+                2381
+            ],
+            "type": "Handwritten",
+            "varname": "comments"
+        }
+    ],
+    "height": 3508,
+    "to_ignore": [
+        {
+            "content": "COMMENTS",
+            "coords": [
+                295,
+                1821,
+                554,
+                1860
+            ]
+        }
+    ],
+    "width": 2480
+}

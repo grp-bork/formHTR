@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.util
 import sys
 from pathlib import Path
 
@@ -36,3 +37,13 @@ def sample_residual() -> Residual:
 @pytest.fixture
 def rgb_image() -> np.ndarray:
     return np.full((20, 20, 3), 255, dtype=np.uint8)
+
+
+@pytest.fixture(scope="session")
+def extracted_data() -> dict:
+    fixture_path = PROJECT_ROOT / "tests" / "test-data" / "extracted_content.py"
+    spec = importlib.util.spec_from_file_location("extracted_fixture", fixture_path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec is not None and spec.loader is not None
+    spec.loader.exec_module(module)
+    return module.EXTRACTED
