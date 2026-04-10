@@ -3,6 +3,7 @@ Handprint text recognition in form documents.
 
 [![PyPI version](https://img.shields.io/pypi/v/formhtr.svg)](https://pypi.org/project/formhtr/)
 [![Tests](https://github.com/grp-bork/formHTR/actions/workflows/tests.yml/badge.svg)](https://github.com/grp-bork/formHTR/actions/workflows/tests.yml)
+[![docs](https://readthedocs.org/projects/formhtr/badge/?version=latest)](https://formhtr.readthedocs.io/en/latest/)
 
 ## Installation
 
