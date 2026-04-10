@@ -44,6 +44,13 @@ Repository = "https://github.com/grp-bork/formHTR"
 [project.scripts]
 formhtr = "formhtr.cli:main"
 
+[project.optional-dependencies]
+docs = [
+  "sphinx>=7,<9",
+  "sphinx-rtd-theme>=3",
+  "myst-parser>=3,<5",
+]
+
 [tool.setuptools]
 package-dir = {"" = "src"}
 include-package-data = true
