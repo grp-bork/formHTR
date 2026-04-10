@@ -27,12 +27,6 @@ You can verify runtime requirements with:
 formhtr doctor
 ```
 
-### conda (dev)
-
-```
-conda env create -f conda_env.yaml
-```
-
 ## Usage
 
 Run `formhtr --help` for full CLI help.
@@ -154,7 +148,7 @@ From the repository root (after `git clone`), set a short path prefix:
 DATA=tests/test-data
 ```
 
-#### CLI (`formhtr`)
+#### CLI
 
 ```bash
 # Check qpdf / zbar (no test files required)
@@ -326,6 +320,12 @@ sphinx-build -b html docs/source docs/_build/html
 ### Setup
 
 Create your development environment using the provided [script](conda/environment-dev.yml) via conda to install all required dependencies.
+
+### conda (dev)
+
+```
+conda env create -f conda_env.yaml
+```
 
 ### Contributing
 

@@ -10,7 +10,6 @@ via cloud providers.
 
    README <readme>
    Changelog <changelog>
-   installation
    reference
 
 Indices and tables
