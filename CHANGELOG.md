@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add testing with some mock data [#9](https://github.com/grp-bork/formHTR/issues/9), implement CI for automatic testing [#16](https://github.com/grp-bork/formHTR/issues/16)
+- Sphinx documentation under `docs/` and  Read the Docs config (`.readthedocs.yaml`) [#14](https://github.com/grp-bork/formHTR/issues/14)
+
+### Changed
+
+- improved documentation (docstrings)
 
 ## [0.2.0] - 2026-04-09
 
