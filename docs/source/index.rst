@@ -10,7 +10,7 @@ via cloud providers.
 
    README <readme>
    Changelog <changelog>
-   reference
+   Documentation <reference>
 
 Indices and tables
 ==================

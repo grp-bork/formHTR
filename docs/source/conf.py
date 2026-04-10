@@ -21,6 +21,7 @@ release = __version__
 
 extensions = [
     "myst_parser",
+    "sphinxarg.ext",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.intersphinx",
@@ -32,6 +33,10 @@ myst_enable_extensions = ["colon_fence"]
 exclude_patterns: list[str] = []
 
 html_theme = "sphinx_rtd_theme"
+html_theme_options = {
+    "navigation_depth": 4,
+    "collapse_navigation": False,
+}
 html_static_path: list[str] = []
 
 autodoc_default_options = {
