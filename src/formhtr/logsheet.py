@@ -20,6 +20,14 @@ from .manual_align import align_page
 
 @dataclass(frozen=True)
 class ServiceCredentials:
+    """Holds OCR credentials for ``call_services``.
+
+    Attributes:
+        google_credentials_path: Path to Google service-account JSON, or ``None``.
+        amazon_credentials: Loaded Amazon credentials dict, or ``None``.
+        azure_credentials: Loaded Azure credentials dict, or ``None``.
+    """
+
     google_credentials_path: str | None
     amazon_credentials: dict[str, Any] | None
     azure_credentials: dict[str, Any] | None
@@ -31,6 +39,16 @@ def load_credentials(
     amazon_credentials_path: str | None = None,
     azure_credentials_path: str | None = None,
 ) -> ServiceCredentials:
+    """Load credential files into a ``ServiceCredentials`` instance.
+
+    Args:
+        google_credentials_path: Path to Google JSON (not loaded here).
+        amazon_credentials_path: Path to Amazon JSON (``ACCESS_KEY``, ``SECRET_KEY``, ``REGION``).
+        azure_credentials_path: Path to Azure JSON (``SUBSCRIPTION_KEY``, ``ENDPOINT``).
+
+    Returns:
+        Frozen dataclass with paths/dicts for enabled providers.
+    """
     amazon_credentials = None
     azure_credentials = None
 
@@ -61,6 +79,22 @@ def preprocess_input(
     dpi: int = 300,
     alignment_config_path: str | None = None,
 ):
+    """Rasterize PDFs, align scan to template, and enforce a maximum JPEG size.
+
+    Args:
+        scanned_logsheet_pdf: Path to the scanned logsheet PDF.
+        template_pdf: Path to the blank template PDF.
+        config: Loaded layout (width/height used for resizing).
+        page: Page index in the scan PDF.
+        skip_alignment: If True, skip homography alignment.
+        filter_grayscale: Passed to automatic alignment (edge-based corners).
+        max_size_mb: If the in-memory JPEG exceeds this, reduce ``dpi`` and retry.
+        dpi: Initial rasterization DPI.
+        alignment_config_path: Optional JSON with ``template_points`` and ``target_points``.
+
+    Returns:
+        Aligned logsheet as a ``numpy`` array, or ``None`` if alignment yields no image.
+    """
     template_image = np.array(convert_pdf_to_image(template_pdf, dpi=dpi))
     logsheet_image = np.array(convert_pdf_to_image(
         scanned_logsheet_pdf, page, dpi=dpi))
@@ -118,6 +152,23 @@ def extract_logsheet(
     filter_grayscale: bool = False,
     alignment_config_path: str | None = None,
 ):
+    """Preprocess one page, run OCR services, optionally write debug PDFs, parse ROIs.
+
+    Args:
+        scanned_logsheet_pdf: Path to the scanned PDF.
+        template_pdf: Path to the template PDF.
+        config_json: Path to ROI/residual JSON config.
+        credentials: Provider credentials (any subset may be set).
+        debug: If True, write annotated debug PDFs under ``debug/``.
+        front: If True, use page 0; else page 1.
+        checkbox_edges: Inner margin ratio for checkbox tick detection.
+        skip_alignment: Skip alignment in preprocessing.
+        filter_grayscale: Passed to automatic alignment.
+        alignment_config_path: Optional manual alignment JSON.
+
+    Returns:
+        ``(results, artefacts)`` from ``process_content``, or ``(None, None)`` if preprocess fails.
+    """
     config = LogsheetConfig([], [])
     config.import_from_json(config_json)
 
@@ -169,6 +220,29 @@ def process_logsheet_to_xlsx(
     alignment_config_path: str | None = None,
     backside_alignment_config_path: str | None = None,
 ) -> float | None:
+    """End-to-end extraction to spreadsheet or CSV, optionally both sides of a scan.
+
+    Args:
+        scanned_logsheet_pdf: Path to the scanned PDF.
+        template_pdf: Front template PDF path.
+        config_json: Front ROI config JSON path.
+        output_xlsx: Output ``.xlsx`` or ``.csv`` path (see ``store_csv``).
+        credentials: OCR credentials for enabled providers.
+        debug: Enable debug PDF output during extraction.
+        backside: Whether to append back-side ROIs.
+        backside_template_pdf: Back template PDF (required if ``backside``).
+        backside_config_json: Back config JSON (required if ``backside``).
+        ugly_checkboxes: Use a larger edge ignore ratio for checkboxes.
+        already_aligned: Skip alignment in ``preprocess_input``.
+        filter_grayscale: Passed to automatic alignment.
+        store_csv: If True, write CSV via ``store_results_csv`` instead of XLSX.
+        alignment_config_path: Optional front alignment JSON.
+        backside_alignment_config_path: Optional back alignment JSON.
+
+    Returns:
+        Dict from ``compute_success_ratio`` (``identified``, ``artefacts``, ``ratio``),
+        or ``None`` if the front side could not be processed.
+    """
     checkbox_edges = 0.4 if ugly_checkboxes else 0.2
 
     contents, artefacts = extract_logsheet(

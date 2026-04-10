@@ -13,6 +13,15 @@ from .libs.processing.align_images import compute_closest_point, transform
 
 
 def _select_points(image, window_name: str):
+    """Let the user click four corner points in an OpenCV window.
+
+    Args:
+        image: BGR image to display.
+        window_name: OpenCV window title.
+
+    Returns:
+        List of up to four ``(x, y)`` points (may be fewer if the user quits early).
+    """
     original_image = image.copy()
     points: list[tuple[int, int]] = []
 
@@ -44,6 +53,14 @@ def _select_points(image, window_name: str):
 
 
 def _to_pdf_bytes(image) -> bytes:
+    """Encode a single-page raster image as PDF bytes.
+
+    Args:
+        image: ``numpy`` image array (RGB or BGR as accepted by PIL).
+
+    Returns:
+        PDF file content as bytes.
+    """
     image_pil = Image.fromarray(image)
     image_bytes = io.BytesIO()
     image_pil.save(image_bytes, format="JPEG")
@@ -53,6 +70,18 @@ def _to_pdf_bytes(image) -> bytes:
 def align_page(target, template, *, backside: bool = False,
                template_points: list[tuple[int, int]] | None = None,
                target_points: list[tuple[int, int]] | None = None):
+    """Warp ``target`` onto ``template`` using four-point homography.
+
+    Args:
+        target: Scanned page image (``numpy`` BGR).
+        template: Template image of the same logical size.
+        backside: Affects GUI window labels only.
+        template_points: Four template corners, or ``None`` to pick in a GUI.
+        target_points: Four scan corners, or ``None`` to pick in a GUI.
+
+    Returns:
+        Warped ``target`` with template dimensions.
+    """
     height, width, _ = target.shape
 
     target = resize_image(target, (width, height))
@@ -88,6 +117,19 @@ def manual_align_pdf(
     template_points: list[tuple[int, int]] | None = None,
     target_points: list[tuple[int, int]] | None = None,
 ) -> None:
+    """Write a PDF whose pages are the aligned scan (front and optionally back).
+
+    Args:
+        template_pdf: Front template PDF path.
+        scanned_logsheet_pdf: Scanned PDF (at least one page; two if backside is used).
+        output_pdf: Output PDF path to create or overwrite.
+        backside_template_pdf: Optional back template; if omitted, page 2 of the scan is copied.
+        template_points: Optional shared four template corners (else GUI per ``align_page``).
+        target_points: Optional shared four scan corners (else GUI per ``align_page``).
+
+    Returns:
+        ``None``; writes ``output_pdf`` on disk.
+    """
     output_pdf_writer = PdfWriter()
 
     template = np.array(convert_pdf_to_image(template_pdf))

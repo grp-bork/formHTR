@@ -13,6 +13,18 @@ from .manual_align import align_page
 
 @dataclass(frozen=True)
 class ExportEntry:
+    """Single ROI row for export (name, optional fixed text, box, page).
+
+    Attributes:
+        varname: Variable or label for the ROI.
+        content: Placeholder or fixed text stored in the sheet.
+        x: Left pixel coordinate.
+        y: Top pixel coordinate.
+        width: Box width in pixels.
+        height: Box height in pixels.
+        page: Source page index in the scan PDF.
+    """
+
     varname: str
     content: str
     x: int
@@ -24,12 +36,29 @@ class ExportEntry:
 
 @dataclass(frozen=True)
 class ExportConfig:
+    """Parsed export JSON (legacy ``data`` or current ``content`` schema).
+
+    Attributes:
+        width: Optional page width from config.
+        height: Optional page height from config.
+        entries: List of regions to crop and export.
+    """
+
     width: int | None
     height: int | None
     entries: list[ExportEntry]
 
 
 def _entry_from_data(item: dict, force_page: int | None = None) -> ExportEntry:
+    """Build an ``ExportEntry`` from a legacy ``data`` row.
+
+    Args:
+        item: Dict with ``varname``, ``content``, ``coordinates``, optional ``page``.
+        force_page: Override page index when merging multi-page exports.
+
+    Returns:
+        Frozen ``ExportEntry`` instance.
+    """
     coordinates = item.get("coordinates") or {}
     page = force_page if force_page is not None else int(item.get("page", 0))
 
@@ -45,6 +74,15 @@ def _entry_from_data(item: dict, force_page: int | None = None) -> ExportEntry:
 
 
 def _entry_from_content(item: dict, force_page: int | None = None) -> ExportEntry:
+    """Build an ``ExportEntry`` from a standard ``content`` ROI row.
+
+    Args:
+        item: Dict with ``coords`` ``[x0, y0, x1, y1]`` and optional fields.
+        force_page: Page index to assign (``0`` for front when ``None``).
+
+    Returns:
+        Frozen ``ExportEntry`` instance.
+    """
     coords = item.get("coords") or [0, 0, 0, 0]
     start_x, start_y, end_x, end_y = [int(v) for v in coords]
     page = 0 if force_page is None else force_page
@@ -61,6 +99,18 @@ def _entry_from_content(item: dict, force_page: int | None = None) -> ExportEntr
 
 
 def _load_config_file(config_file: str, *, force_page: int | None = None) -> ExportConfig:
+    """Load export-oriented config JSON into structured entries.
+
+    Args:
+        config_file: Path to JSON with either ``data`` or ``content`` top-level key.
+        force_page: If set, assign this page index to every entry.
+
+    Returns:
+        ``ExportConfig`` with dimensions and ``entries``.
+
+    Raises:
+        ValueError: If the JSON format is not recognized.
+    """
     with open(config_file, "r") as f:
         payload = json.load(f)
 
@@ -87,6 +137,14 @@ def _load_config_file(config_file: str, *, force_page: int | None = None) -> Exp
 
 
 def _parse_points(points: list) -> list[tuple[int, int]]:
+    """Normalize alignment points to ``(x, y)`` integer tuples.
+
+    Args:
+        points: List of ``{"x": ..., "y": ...}`` dicts or length-2 sequences.
+
+    Returns:
+        List of ``(int, int)`` corners.
+    """
     parsed: list[tuple[int, int]] = []
     for point in points:
         if isinstance(point, dict):
@@ -97,6 +155,18 @@ def _parse_points(points: list) -> list[tuple[int, int]]:
 
 
 def _load_alignment_points(alignment_config_path: str) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
+    """Read template and target corner lists from an alignment JSON file.
+
+    Args:
+        alignment_config_path: JSON path; keys ``template_points`` / ``target_points``
+            or camelCase equivalents.
+
+    Returns:
+        ``(template_points, target_points)`` each a list of four ``(x, y)`` tuples.
+
+    Raises:
+        ValueError: If required keys are missing.
+    """
     with open(alignment_config_path, "r") as f:
         align_config = json.load(f)
 
@@ -119,6 +189,17 @@ def _process_side(
     aligned: bool,
     alignment_config_path: str | None,
 ):
+    """Align a logsheet raster to its template for one side.
+
+    Args:
+        logsheet_image: Scan page as ``numpy`` array.
+        template_image: Template page as ``numpy`` array.
+        aligned: If True, return ``logsheet_image`` unchanged.
+        alignment_config_path: Optional JSON with manual corner pairs; else auto-align.
+
+    Returns:
+        Aligned scan image (fallback to original if alignment fails).
+    """
     if aligned:
         return logsheet_image
 
@@ -156,6 +237,23 @@ def export_logsheet_to_xlsx(
     backside_config_json: str | None = None,
     backside_alignment_config_path: str | None = None,
 ) -> None:
+    """Crop ROI regions from a scan into an XLSX (no OCR).
+
+    Args:
+        scanned_logsheet_pdf: Path to the scanned PDF.
+        template_pdf: Front template PDF path.
+        config_json: Front export/ROI config JSON.
+        output_xlsx: Output ``.xlsx`` path.
+        already_aligned: Skip alignment when True.
+        alignment_config_path: Optional front alignment JSON.
+        backside: Include back-side entries when config/template are provided.
+        backside_template_pdf: Back template PDF path.
+        backside_config_json: Back config JSON path.
+        backside_alignment_config_path: Optional back alignment JSON.
+
+    Returns:
+        ``None``; writes ``output_xlsx``.
+    """
     front_config = _load_config_file(config_json)
     entries = list(front_config.entries)
 

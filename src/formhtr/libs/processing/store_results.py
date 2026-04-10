@@ -7,6 +7,14 @@ import xlsxwriter
 
 
 def order_results(values):
+    """Collect non-empty per-provider values in column order.
+
+    Args:
+        values: Dict with optional keys ``inferred``, ``google``, ``amazon``, ``azure``.
+
+    Returns:
+        List of truthy values in fixed key order.
+    """
     output = []
     for key in ['inferred', 'google', 'amazon', 'azure']:
         value = values.get(key, None)
@@ -16,6 +24,14 @@ def order_results(values):
 
 
 def write_header(worksheet):
+    """Write the main metadata sheet column titles.
+
+    Args:
+        worksheet: ``xlsxwriter`` worksheet for the Metadata tab.
+
+    Returns:
+        ``None``.
+    """
     worksheet.write('A1', 'Variable name')
     worksheet.write('B1', 'Extracted content')
     worksheet.write('C1', 'Cropped image')
@@ -31,7 +47,7 @@ def store_image(image, location, index):
         index (int): unique identifier of the image
 
     Returns:
-        _type_: filename of stored image
+        Absolute path string of the written PNG file.
     """
     filename = f'{location}/cropped_image_{index}.png'
     cv2.imwrite(filename, image, [cv2.IMWRITE_PNG_COMPRESSION, 9])
@@ -39,14 +55,16 @@ def store_image(image, location, index):
 
 
 def store_results(results, artefacts, output_file, include_validation=False):
-    """
-    Write identified results into an Excel sheet
+    """Write ROI results and artefact crops into an XLSX workbook.
 
     Args:
-        results (list): identified results
-        artefacts (dict): identified artefacts per service 
-        output_file (str): path to the output xlsx file
-        include_validation (bool): add value options to the output file
+        results: List of ``[varname, value_dict, crop_numpy]`` rows.
+        artefacts: Dict mapping service name to ``[text, crop_numpy]`` lists.
+        output_file: Path to the ``.xlsx`` file to create.
+        include_validation: If True, add Excel data validation where applicable.
+
+    Returns:
+        ``None``. Temporary PNG crops next to ``output_file`` are removed after close.
     """
     # create directory to store mini images
     directory = os.path.dirname(output_file)
@@ -126,13 +144,15 @@ def store_results(results, artefacts, output_file, include_validation=False):
 
 
 def store_results_csv(results, artefacts, output_file):
-    """
-    Write identified results into a CSV file.
+    """Write variable names and inferred values to UTF-8 CSV (no images).
 
     Args:
-        results (list): identified results
-        artefacts (dict): identified artefacts per service 
-        output_file (str): path to the output csv file
+        results: List of ``[varname, value_dict, crop]`` (crop ignored).
+        artefacts: Unused; kept for API symmetry with ``store_results``.
+        output_file: Path to the ``.csv`` file to create.
+
+    Returns:
+        ``None``.
     """
     with open(output_file, mode='w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)

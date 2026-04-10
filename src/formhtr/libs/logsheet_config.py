@@ -21,14 +21,26 @@ class LogsheetConfig:
         self.width = width
 
     def add_roi(self, start_x, start_y, end_x, end_y, varname=None, content_type=None):
-        """
-        Create new ROI
+        """Append a new ROI rectangle to ``regions``.
+
+        Args:
+            start_x: Left edge (inclusive).
+            start_y: Top edge (inclusive).
+            end_x: Right edge.
+            end_y: Bottom edge.
+            varname: Optional variable label.
+            content_type: Optional type string (e.g. ``Handwritten``).
+
+        Returns:
+            ``None``.
         """
         self.regions.append(ROI(start_x, start_y, end_x, end_y, varname, content_type))
 
     def delete_last_region(self):
-        """
-        The undo command
+        """Remove the most recently added ROI, if any.
+
+        Returns:
+            ``None``.
         """
         if self.regions:
             self.regions.pop()
@@ -41,6 +53,9 @@ class LogsheetConfig:
             index (int): region identifier
             attribute (str): attribute to be set
             value (str): desired value
+
+        Returns:
+            ``None``.
         """
         if attribute == 'content_type' and value is not None:
             value = ROI_TYPES[value]
@@ -53,6 +68,9 @@ class LogsheetConfig:
         Args:
             index (int): region identifier
             clean_len (int, optional): length of text to clear. Defaults to 20.
+
+        Returns:
+            ``None``.
         """
         print(str(self.regions[index]) + ' ' * clean_len, end='\r')
 
@@ -63,6 +81,9 @@ class LogsheetConfig:
         Args:
             output_file (str): location of output file.
             remove_unannotated (bool, optional): Remove ROIs without any content type specified. Defaults to False.
+
+        Returns:
+            ``None``.
         """
         output = {'to_ignore': [], 'content': [], 'height': self.height, 'width': self.width}
 
@@ -86,6 +107,9 @@ class LogsheetConfig:
 
         Args:
             input_file (str): path to JSON file
+
+        Returns:
+            ``None``; mutates ``self`` regions, residuals, height, and width.
         """
         with open(input_file, 'r') as f:
             data = json.load(f)

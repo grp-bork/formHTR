@@ -17,6 +17,12 @@ def _install_hint(dep_name: str) -> str:
 
 
 def check_system_dependencies() -> list[tuple[str, str]]:
+    """Return missing optional system dependencies.
+
+    Returns:
+        List of ``(name, install_hint)`` for each missing tool or library
+        (currently ``qpdf`` and ``zbar``).
+    """
     missing: list[tuple[str, str]] = []
 
     if shutil.which("qpdf") is None:
@@ -29,6 +35,14 @@ def check_system_dependencies() -> list[tuple[str, str]]:
 
 
 def ensure_system_dependencies(required: set[str]) -> None:
+    """Raise ``RuntimeError`` if any required dependency is missing.
+
+    Args:
+        required: Subset of ``{"qpdf", "zbar"}`` to enforce.
+
+    Raises:
+        RuntimeError: If a listed dependency is not available.
+    """
     missing = check_system_dependencies()
     missing_required = [(name, hint) for name, hint in missing if name in required]
     if not missing_required:
