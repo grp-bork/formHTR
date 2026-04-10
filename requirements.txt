@@ -15,3 +15,4 @@ biopython
 scikit-image
 img2pdf
 PyPDF2
+pytest

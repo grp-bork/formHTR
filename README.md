@@ -2,6 +2,7 @@
 Handprint text recognition in form documents.
 
 [![PyPI version](https://img.shields.io/pypi/v/formhtr.svg)](https://pypi.org/project/formhtr/)
+[![Tests](https://github.com/grp-bork/formHTR/actions/workflows/tests.yml/badge.svg)](https://github.com/grp-bork/formHTR/actions/workflows/tests.yml)
 
 ![Trec](https://github.com/grp-bork/formHTR/assets/15349569/c0789616-80d0-43c8-8693-d3d9f070511c)
 
@@ -32,6 +33,29 @@ formhtr doctor
 
 ```
 conda env create -f conda_env.yaml
+```
+
+## Tests
+
+The repository includes unit and mocked integration-style tests for the OCR
+pipeline, CLI dispatch/validation, and output generation helpers. Tests are
+executed automatically on pull requests and on pushes to `main`.
+
+Run locally:
+
+```bash
+python -m pip install -r requirements.txt
+python -m pytest -q
+```
+
+Optional live OCR test:
+
+- Add at least one credential file in `credentials/`:
+  `google_credentials.json`, `amazon_credentials.json`, or `azure_credentials.json`.
+- The live test is skipped automatically when credentials are missing and in CI.
+
+```bash
+python -m pytest -q -m live_services
 ```
 
 ## Usage
