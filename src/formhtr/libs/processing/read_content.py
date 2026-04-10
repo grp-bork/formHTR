@@ -5,17 +5,18 @@ from .checkbox import is_ticked
 
 
 def process_content(indetified_content, logsheet_image, config, checkbox_edges):
-    """
-    Top level function to read content of ROIs.
+    """Fill each configured ROI using OCR unions, barcodes, or checkbox heuristics.
 
     Args:
-        indetified_content (dict): identified content using OCR services
-        logsheet_image (Image): logsheet image
-        config (LogsheetConfig): configuration of given logsheet
-        checkbox_edges (bool): cutoff edges for checkboxes to avoid detecting box
+        indetified_content: Dict ``google`` / ``amazon`` / ``azure`` -> word lists or ``None``.
+        logsheet_image: Full-page aligned image as ``numpy`` array.
+        config: ``LogsheetConfig`` with ``regions`` and ``residuals``.
+        checkbox_edges: Fraction of ROI border to ignore when scoring checkbox ink.
 
     Returns:
-        list: a list of identified content with its confidence
+        ``(results, artefacts)`` where ``results`` is a list of
+        ``[varname, content_dict, fragment]`` and ``artefacts`` maps each service
+        to leftover OCR snippets not assigned to ROIs.
     """
     results = []
     artefacts = dict()

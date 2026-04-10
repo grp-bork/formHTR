@@ -5,6 +5,17 @@ import numpy as np
 
 
 def validate_corners(corners, height, width, tol=20):
+    """Check that four corners form a plausible document quad.
+
+    Args:
+        corners: Four ``(x, y)`` points in order TL, TR, BR, BL.
+        height: Image height in pixels.
+        width: Image width in pixels.
+        tol: Maximum relative margin (percent of image) for side length mismatch.
+
+    Returns:
+        ``True`` if opposite sides match within tolerance.
+    """
     top_width = dist(corners[0], corners[1])
     bottom_width = dist(corners[3], corners[2])
 
@@ -33,12 +44,33 @@ def validate_corners(corners, height, width, tol=20):
 
 
 def compute_closest_point(point, corners):
+    """Pick the corner nearest to a reference image corner.
+
+    Args:
+        point: Reference ``(x, y)``.
+        corners: Candidate corner coordinates.
+
+    Returns:
+        The closest corner from ``corners``.
+    """
     distances = [dist(point, corner) for corner in corners]
     closest_index = np.argmin(distances)
     return corners[closest_index]
 
 
 def find_corners(image, filter_grayscale, num=10, gray_filter=20):
+    """Detect outer document corners via contours and min-area rectangles.
+
+    Args:
+        image: BGR ``numpy`` image.
+        filter_grayscale: If True, threshold grayscale before edge detection.
+        num: Number of largest contours to consider (increased recursively on failure).
+        gray_filter: Threshold value when ``filter_grayscale`` is True.
+
+    Returns:
+        ``(outer_corners, valid)`` where ``outer_corners`` are four ``(x, y)`` tuples
+        and ``valid`` reflects ``validate_corners`` (may recurse with larger ``num``).
+    """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (5, 5), 0)
 
@@ -87,25 +119,61 @@ def find_corners(image, filter_grayscale, num=10, gray_filter=20):
 
 
 def transform(scanned, template, scanned_points, template_points):
-    # Compute the transformation matrix and apply it
+    """Apply a homography mapping scan corners to template corners.
+
+    Args:
+        scanned: Source BGR image.
+        template: Target image defining output size.
+        scanned_points: Four scan corner coordinates.
+        template_points: Four template corner coordinates.
+
+    Returns:
+        Warped ``scanned`` with template dimensions.
+    """
     h, _ = cv2.findHomography(np.array(scanned_points), np.array(template_points))
     return cv2.warpPerspective(scanned, h, (template.shape[1], template.shape[0]))
 
 
 def align_images(scanned, template, filter_grayscale):
-    # Find corners in both images
+    """Align ``scanned`` to ``template`` using automatically detected corners.
+
+    Args:
+        scanned: Scanned page BGR image.
+        template: Template BGR image.
+        filter_grayscale: Passed to ``find_corners`` for the scan and template.
+
+    Returns:
+        Warped scan, or ``None`` if corners are invalid for either image.
+    """
     template_corners, template_valid = find_corners(template, filter_grayscale)
     scanned_corners, scanned_valid = find_corners(scanned, filter_grayscale)
     if template_valid and scanned_valid:
         return transform(scanned, template, scanned_corners, template_corners)
 
 def format_point(point):
+    """Serialize a corner to JSON-friendly ints.
+
+    Args:
+        point: ``(x, y)`` numeric pair.
+
+    Returns:
+        Dict with ``x`` and ``y`` keys.
+    """
     return {
         "x": int(point[0]),
         "y": int(point[1])
     }
 
 def get_alignment_data(scanned, template):
+    """Compute template and scan corner sets for external alignment UIs.
+
+    Args:
+        scanned: Scanned BGR image.
+        template: Template BGR image.
+
+    Returns:
+        Dict with ``templatePoints`` and ``targetPoints`` lists of ``{"x","y"}`` dicts.
+    """
     template_corners, _ = find_corners(template, False)
     scanned_corners, _ = find_corners(scanned, False)
    

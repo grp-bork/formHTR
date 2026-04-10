@@ -2,6 +2,14 @@ import cv2
 
 
 def process_cli(widget):
+    """Dispatch keyboard commands for ``AnnotateROIsWidget``.
+
+    Args:
+        widget: Instance with navigation and ``update_content_type`` / ``read_varname``.
+
+    Returns:
+        ``None`` when the user presses ``q`` or Esc.
+    """
     exit = False
     while not exit:
         key = cv2.waitKey(0)

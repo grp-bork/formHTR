@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "formhtr"
-version = "0.2.0"
+dynamic = ["version"]
 description = "Handprint text recognition in form documents."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -47,6 +47,9 @@ formhtr = "formhtr.cli:main"
 [tool.setuptools]
 package-dir = {"" = "src"}
 include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {attr = "formhtr.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["src"]

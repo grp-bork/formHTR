@@ -25,6 +25,22 @@ def select_rois(
     display_residuals: bool = False,
     headless: bool = False,
 ) -> None:
+    """Define ROIs on a template PDF and save JSON layout.
+
+    Args:
+        template_pdf: Path to the template PDF (first page).
+        output_config_json: Path to write the ROI config JSON.
+        autodetect: Run rectangle detection to seed ROIs.
+        autodetect_filter: Scale passed to ``detect_rectangles``.
+        existing_config_json: Optional config to load and continue editing.
+        detect_residuals: Use Google Vision to find printed text to ignore (needs credentials).
+        google_credentials_path: Google JSON path when ``detect_residuals`` is True.
+        display_residuals: Draw residual regions in the UI.
+        headless: Skip GUI and only export (with autodetect/residuals as configured).
+
+    Returns:
+        ``None``; writes ``output_config_json``.
+    """
     image = np.array(convert_pdf_to_image(template_pdf))
 
     config = LogsheetConfig([], [])
@@ -66,6 +82,18 @@ def annotate_rois(
     remove_unannotated: bool = False,
     display_residuals: bool = False,
 ) -> None:
+    """Label ROI content types and variable names, then save updated config.
+
+    Args:
+        template_pdf: Path to the template PDF.
+        config_json: Existing ROI config to load.
+        output_config_json: Path to write the updated config.
+        remove_unannotated: If True, drop ROIs without a type on export.
+        display_residuals: Draw residual regions in the UI.
+
+    Returns:
+        ``None``; writes ``output_config_json``.
+    """
     image = np.array(convert_pdf_to_image(template_pdf))
 
     config = LogsheetConfig([], [])

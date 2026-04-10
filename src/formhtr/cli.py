@@ -177,6 +177,15 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Parse CLI arguments, dispatch to the appropriate command, return exit code.
+
+    Args:
+        argv: Argument list (excluding program name). Uses ``sys.argv[1:]`` when ``None``.
+
+    Returns:
+        Process exit code: ``0`` on success, ``1`` for ``doctor`` with missing deps,
+        ``2`` for unknown command (should not normally occur).
+    """
     parser = _build_parser()
     args = parser.parse_args(argv)
 

@@ -85,14 +85,14 @@ def detect_rectangles(image, filter_scale):
 
 
 def find_residuals(image, credentials):
-    """Use Google vision service to find existing printed texts (residuals)
+    """Detect printed text via Google Vision and convert hits to ``Residual`` objects.
 
     Args:
-        image (list): image in numpy array format
-        credentials (dict): credentials for Google vision service
+        image: Template page as ``numpy`` array (RGB/BGR).
+        credentials: Path to Google service-account JSON (passed to ``GoogleVision``).
 
     Returns:
-        list: list of identified residuals
+        List of ``Residual`` instances for config ``to_ignore`` entries.
     """
 
     google = GoogleVision(credentials)

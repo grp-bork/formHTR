@@ -7,6 +7,18 @@ from .google_vision import GoogleVision
 
 
 def call_services(logsheet_image, credentials, config):
+    """Run enabled OCR backends on one rasterized page.
+
+    Args:
+        logsheet_image: ``numpy`` image array (RGB/BGR) of the aligned page.
+        credentials: Dict with keys ``google``, ``amazon``, ``azure``. Values are
+            a path string (Google), a credential dict (Amazon/Azure), or falsy to skip.
+        config: Object with ``width`` and ``height`` (page size) for Amazon box scaling.
+
+    Returns:
+        Dict with keys ``google``, ``amazon``, ``azure``. Each value is a list of
+        ``Rectangle`` instances, or ``None`` if that provider was not used or returned nothing.
+    """
     google = GoogleVision(credentials['google']) if credentials['google'] else None
     amazon = AmazonVision(credentials['amazon']) if credentials['amazon'] else None
     azure = AzureVision(credentials['azure']) if credentials['azure'] else None

@@ -13,6 +13,17 @@ def _prepare_alignment_images(
     page: int,
     dpi: int = 300,
 ):
+    """Load scan and template pages and resize them to a common pixel size.
+
+    Args:
+        scanned_logsheet_pdf: Path to the scanned multi-page PDF.
+        template_pdf: Path to the template PDF for this side.
+        page: Zero-based page index in the scan PDF.
+        dpi: Rasterization resolution.
+
+    Returns:
+        Pair ``(logsheet_image, template_image)`` as ``numpy`` arrays (BGR).
+    """
     template_image = np.array(convert_pdf_to_image(template_pdf, dpi=dpi))
     logsheet_image = np.array(convert_pdf_to_image(
         scanned_logsheet_pdf, page=page, dpi=dpi))
@@ -33,6 +44,18 @@ def get_page_alignment_data(
     page: int = 0,
     dpi: int = 300,
 ) -> dict:
+    """Corners and image dimensions for automatic alignment of one scan page.
+
+    Args:
+        scanned_logsheet_pdf: Path to the scanned PDF.
+        template_pdf: Path to the template PDF.
+        page: Scan page index (``0`` = front, ``1`` = back when applicable).
+        dpi: Rasterization resolution.
+
+    Returns:
+        Dict with ``templatePoints``, ``targetPoints``, ``imageWidth``, ``imageHeight``
+        (JSON-friendly point dicts and integers).
+    """
     logsheet_image, template_image = _prepare_alignment_images(
         scanned_logsheet_pdf=scanned_logsheet_pdf,
         template_pdf=template_pdf,
@@ -55,6 +78,17 @@ def build_alignment_payload(
     backside_template_pdf: str | None = None,
     dpi: int = 300,
 ) -> dict:
+    """Build a payload with front (and optional back) alignment corner data.
+
+    Args:
+        scanned_logsheet_pdf: Path to the scanned PDF (at least two pages if back is used).
+        template_pdf: Front template PDF path.
+        backside_template_pdf: Optional back template PDF path.
+        dpi: Rasterization resolution.
+
+    Returns:
+        Dict with keys ``frontside`` (dict) and ``backside`` (dict or ``None``).
+    """
     frontside_alignment_data = get_page_alignment_data(
         scanned_logsheet_pdf=scanned_logsheet_pdf,
         template_pdf=template_pdf,

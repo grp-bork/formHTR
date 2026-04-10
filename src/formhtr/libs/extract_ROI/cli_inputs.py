@@ -2,6 +2,14 @@ import cv2
 
 
 def process_cli(widget):
+    """Dispatch keyboard commands for ``SelectROIsWidget``.
+
+    Args:
+        widget: Instance with ``undo_add_rectangle``.
+
+    Returns:
+        ``None`` when the user presses ``q`` or Esc.
+    """
     exit = False
     while not exit:
         key = cv2.waitKey(0)

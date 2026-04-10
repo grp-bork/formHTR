@@ -4,6 +4,14 @@ from pyzbar.pyzbar import decode
 
 
 def extract_barcode(candidates):
+    """Pick a barcode string from per-service single-word OCR fallbacks.
+
+    Args:
+        candidates: Dict mapping provider name to a list of ``Rectangle`` (or empty).
+
+    Returns:
+        Most frequent barcode string among singleton lists, or ``None`` if none.
+    """
     barcodes = []
     for key in candidates.keys():
         if len(candidates[key]) == 1:
@@ -13,7 +21,15 @@ def extract_barcode(candidates):
         return max(set(barcodes), key=barcodes.count)
 
 def read_barcode(image, candidates):
-    # try zxingcpp
+    """Decode a barcode from a ROI image, with rotation retry and OCR fallback.
+
+    Args:
+        image: ROI crop as ``numpy`` BGR array.
+        candidates: Per-service OCR rectangles (used if decoders fail).
+
+    Returns:
+        Decoded payload string, or ``None`` if nothing is found.
+    """
     detected_objects = zxingcpp.read_barcodes(image)
     if detected_objects:
         return detected_objects[0].text

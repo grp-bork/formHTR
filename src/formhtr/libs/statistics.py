@@ -6,7 +6,7 @@ def compute_success_ratio(contents, artefacts):
         artefacts (dict): artefact per service
 
     Returns:
-        float: success ratio
+        Dict with keys ``identified`` (int), ``artefacts`` (int), ``ratio`` (float).
     """
     num_of_identified = len(contents)
     max_artefacts = max([len(items) for items in artefacts.values()])
