@@ -4,8 +4,6 @@ Handprint text recognition in form documents.
 [![PyPI version](https://img.shields.io/pypi/v/formhtr.svg)](https://pypi.org/project/formhtr/)
 [![Tests](https://github.com/grp-bork/formHTR/actions/workflows/tests.yml/badge.svg)](https://github.com/grp-bork/formHTR/actions/workflows/tests.yml)
 
-![Trec](https://github.com/grp-bork/formHTR/assets/15349569/c0789616-80d0-43c8-8693-d3d9f070511c)
-
 ## Installation
 
 ### pip
@@ -35,29 +33,6 @@ formhtr doctor
 conda env create -f conda_env.yaml
 ```
 
-## Tests
-
-The repository includes unit and mocked integration-style tests for the OCR
-pipeline, CLI dispatch/validation, and output generation helpers. Tests are
-executed automatically on pull requests and on pushes to `main`.
-
-Run locally:
-
-```bash
-python -m pip install -r requirements.txt
-python -m pytest -q
-```
-
-Optional live OCR test:
-
-- Add at least one credential file in `credentials/`:
-  `google_credentials.json`, `amazon_credentials.json`, or `azure_credentials.json`.
-- The live test is skipped automatically when credentials are missing and in CI.
-
-```bash
-python -m pytest -q -m live_services
-```
-
 ## Usage
 
 Run `formhtr --help` for full CLI help.
@@ -83,6 +58,92 @@ formhtr process-logsheet \
   --google google_credentials.json \
   --amazon amazon_credentials.json \
   --azure azure_credentials.json
+```
+
+### Select ROIs
+
+Find and define locations of regions of interest (ROIs) in the given PDF.
+
+Generally, it is possible to draw ROIs (rectangles) manually but also to detect them automatically.
+The coordinates of ROIs are stored in a JSON file.
+
+The tool is supposed to be run from the command line, as the control commands are entered there.
+
+*Control commands*
+
+* Press `q` or `Esc` to exit editing and save the config file.
+* Press `r` to remove the last rectangle.
+
+Run `formhtr select-rois -h` for details.
+
+### Annotate ROIs
+
+Specify the type of content for each rectangle.
+
+The workflow is designed in a way that you can navigate over specified ROIs and assign them the expected type of their content.
+This is done by pressing appropriate control commands.
+
+*Control commands*
+
+* Press `q` or `Esc` to exit editing and save the config file.
+* Press `h` to add "Handwritten" type to the current ROI.
+* Press `c` to add "Checkbox" type to the current ROI.
+* Press `b` to add "Barcode" type to the current ROI.
+* Press `r` or `d` to delete the type from the current ROI.
+* Press `v` to enter the variable name.
+* Press an arrow to navigate through ROIs (only left and right for now).
+
+Run `formhtr annotate-rois -h` for details.
+
+### Process logsheet
+
+Extract values from specified ROIs.
+
+This is the crucial step that applies various techniques to extract the information as precisely as possible.
+It can process one logsheet at a time, given the template and config files.
+
+Run `formhtr process-logsheet -h` for details.
+
+
+### Credentials
+
+The processing of logsheets is using external services requiring credentials to use them. Here we specify structure that is expected for credentials, always in JSON format.
+
+__Google__
+
+```
+{
+  "type": "service_account",
+  "project_id": "theid",,
+  "private_key_id": "thekey",
+  "private_key": "-----BEGIN PRIVATE KEY-----anotherkey-----END PRIVATE KEY-----\n"
+  "client_email": "emailaddress",
+  "client_id": "id",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "someurl",
+  "universe_domain": "googleapis.com"
+}
+```
+
+__Amazon__
+
+```
+{
+    "ACCESS_KEY": "YOUR_KEY_ID_HERE",
+    "SECRET_KEY": "YOUR_ACCESS_KEY_HERE",
+    "REGION": "YOUR_REGION_NAME_HERE"
+}
+```
+
+__Microsoft__
+
+```
+{
+    "SUBSCRIPTION_KEY": "YOURKEYHERE",
+    "ENDPOINT": "https://ENDPOINT"
+}
 ```
 
 ### Examples
@@ -246,91 +307,53 @@ manual_align_pdf(
 # align_page is used on in-memory images inside the library; typical use is via manual_align_pdf.
 ```
 
-### Create ROIs
+## Documentation
 
-This functionality is split (for now) into two separate scripts.
+API reference and installation notes are built with **Sphinx** under `docs/source/`. After you connect this repository to [Read the Docs](https://readthedocs.org/) (import the GitHub repo; the root `.readthedocs.yaml` drives the build), each push to the default branch triggers a documentation build. Enable “Build pull requests” in the RTD project settings if you want preview builds for PRs.
 
-#### select ROIs
+Pull requests also run a **GitHub Actions** job (`.github/workflows/docs.yml`) that installs the package and runs `sphinx-build`, so broken docs fail CI before merge.
 
-Find and define locations of regions of interest (ROIs) in the given PDF.
+Build locally (install [Poppler](https://poppler.freedesktop.org/) / `poppler-utils` alongside zbar and qpdf so `pdf2image` can run):
 
-Generally, it is possible to draw ROIs (rectangles) manually but also to detect them automatically.
-The coordinates of ROIs are stored in a JSON file.
-
-The tool is supposed to be run from the command line, as the control commands are entered there.
-
-*Control commands*
-
-* Press `q` or `Esc` to exit editing and save the config file.
-* Press `r` to remove the last rectangle.
-
-Run `formhtr select-rois -h` for details.
-
-#### annotate ROIs
-
-Specify the type of content for each rectangle.
-
-The workflow is designed in a way that you can navigate over specified ROIs and assign them the expected type of their content.
-This is done by pressing appropriate control commands.
-
-*Control commands*
-
-* Press `q` or `Esc` to exit editing and save the config file.
-* Press `h` to add "Handwritten" type to the current ROI.
-* Press `c` to add "Checkbox" type to the current ROI.
-* Press `b` to add "Barcode" type to the current ROI.
-* Press `r` or `d` to delete the type from the current ROI.
-* Press `v` to enter the variable name.
-* Press an arrow to navigate through ROIs (only left and right for now).
-
-Run `formhtr annotate-rois -h` for details.
-
-### process logsheet
-
-Extract values from specified ROIs.
-
-This is the crucial step that applies various techniques to extract the information as precisely as possible.
-It can process one logsheet at a time, given the template and config files.
-
-Run `formhtr process-logsheet -h` for details.
-
-#### Credentials
-
-The processing of logsheets is using external services requiring credentials to use them. Here we specify structure that is expected for credentials, always in JSON format.
-
-__Google__
-
-```
-{
-  "type": "service_account",
-  "project_id": "theid",,
-  "private_key_id": "thekey",
-  "private_key": "-----BEGIN PRIVATE KEY-----anotherkey-----END PRIVATE KEY-----\n"
-  "client_email": "emailaddress",
-  "client_id": "id",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "someurl",
-  "universe_domain": "googleapis.com"
-}
+```bash
+pip install ".[docs]"
+sphinx-build -b html docs/source docs/_build/html
+# equivalent: make -C docs html
 ```
 
-__Amazon__
+## Developer Documentation
 
-```
-{
-    "ACCESS_KEY": "YOUR_KEY_ID_HERE",
-    "SECRET_KEY": "YOUR_ACCESS_KEY_HERE",
-    "REGION": "YOUR_REGION_NAME_HERE"
-}
+### Setup
+
+Create your development environment using the provided [script](conda/environment-dev.yml) via conda to install all required dependencies.
+
+### Contributing
+
+We appreciate contributions - feel free to open an issue on our repository, create your own fork, work on the problem and post a PR.
+Please add your contributions to the [changelog](CHANGELOG.md) and to adhere to the [versioning](https://semver.org/spec/v2.0.0.html).
+For more information see [here](CONTRIBUTING.md).
+
+### Testing
+
+All functionality is tested with the [pytest](https://docs.pytest.org/en/6.2.x/contents.html) framework.
+
+The repository includes unit and mocked integration-style tests for the OCR
+pipeline, CLI dispatch/validation, and output generation helpers. Tests are
+executed automatically on pull requests and on pushes to `main`.
+
+Run locally:
+
+```bash
+python -m pip install -r requirements.txt
+python -m pytest -q
 ```
 
-__Microsoft__
+Optional live OCR test:
 
-```
-{
-    "SUBSCRIPTION_KEY": "YOURKEYHERE",
-    "ENDPOINT": "https://ENDPOINT"
-}
+- Add at least one credential file in `credentials/`:
+  `google_credentials.json`, `amazon_credentials.json`, or `azure_credentials.json`.
+- The live test is skipped automatically when credentials are missing and in CI.
+
+```bash
+python -m pytest -q -m live_services
 ```
