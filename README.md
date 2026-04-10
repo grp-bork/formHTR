@@ -48,6 +48,16 @@ python -m pip install -r requirements.txt
 python -m pytest -q
 ```
 
+Optional live OCR test:
+
+- Add at least one credential file in `credentials/`:
+  `google_credentials.json`, `amazon_credentials.json`, or `azure_credentials.json`.
+- The live test is skipped automatically when credentials are missing and in CI.
+
+```bash
+python -m pytest -q -m live_services
+```
+
 ## Usage
 
 Run `formhtr --help` for full CLI help.
