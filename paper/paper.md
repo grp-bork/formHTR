@@ -19,10 +19,13 @@ authors:
 affiliations:
  - name: EMBL, Heidelberg, Germany
    index: 1
+   ror: "03mstc592"
  - name: EMBL-EBI, Hinxton, UK
    index: 2
+   ror: "02catss52"
  - name: Masaryk university, Czech republic
    index: 3
+   ror: "02j46qs45"
 date: 14 April 2026
 bibliography: paper.bib
 ---
@@ -35,23 +38,35 @@ TODO
 
 TODO
 
+- need of automatic processing using multiple OCR models allowing decision making
+- target audience is primarily non-technical
+- motivated by large-scale expedition, high abundance of instances of the same forms, following the need to annotate the template to increase the content extraction chances
+- fusion of results with inputs
+
 # State of the field                                                                                                                  
 
-TODO
+- individual OCR setvices and packages
+- handprint combining it, but not maintained anymore, + does not allow the annotation
 
 # Software design
 
-TODO
+- highlight voting algorithm, explain future improvements?
+- explain rtree [@rtree] approach overlaps
 
 # Research impact statement
 
 TODO
+
+- used in TREC expediiton for extraction of metadata[^1] from more than 10k logsheet forms
+
+[^1]: https://www.ebi.ac.uk/biosamples/samples?text=Traversing+European+Coastlines+%28TREC%29+expedition
 
 # Example workflow
 
 TODO
 
 # Author's Contributions
+
 TODO
 
 # AI usage disclosure
@@ -60,6 +75,7 @@ No generative AI tools were used in the development of this software, the writin
 of this manuscript, or the preparation of supporting materials.
 
 # Acknowledgements
-TODO
+
+- TREC project / EMBL internal 
 
 # References
