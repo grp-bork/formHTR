@@ -1,13 +1,12 @@
 name: Draft PDF
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, reopened]
     paths:
       - paper/**
 
 permissions:
   contents: read
-  pull-requests: write
   issues: write
 
 jobs:
@@ -17,6 +16,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
       - name: Build draft PDF
         uses: openjournals/openjournals-draft-action@master
         with:
