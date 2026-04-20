@@ -38,15 +38,17 @@ The formHTR is a Python software package for automatic extraction of (handwritte
 
 Large-scale scientific expeditions often collect huge amounts of samples, with a need to write down the context of the samples and observed features. While digital forms are getting more popular, paper forms are still the mostly used form for their reliability in extreme environments, stability, and ease to use ([@VANTAMELEN2004123], [@BREWER2016131]).
 
-For such cases, it is neccesary to process the documents automatically with minimal manual input and proofreading. Assuming the forms are often filled in with handwritting, optical character recognition (OCR) methods [@ocr156468] are used to extract the content. While training custom models on a particular handwritting is generally more precise, in a large-scale expeditions the amount of distict handwrittings and turnaround of staff is usually infeasible. The use of multiple pretrained general purpose OCR models, allowing concensus decision making, is a more suitable approach.
+For such cases, it is neccesary to process the documents automatically with minimal manual input and proofreading. Assuming the forms are often filled in with handwritting, optical character recognition (OCR) methods [@ocr156468] are used to extract the content. While training custom models on a particular handwritting style of a person is generally more precise, in a large-scale expeditions the amount of distict handwrittings and turnaround of staff is usually infeasible. The use of multiple pretrained general purpose OCR models, allowing concensus decision making, is a more suitable approach.
 
 Additionally, assuming a large-scale expedition enforces certain standards on the sample collection process, so does on the metadata level. That means standardised forms are often developed, and used over and over in various sampling scenarious. As a consequence, to digitalise the contents of such forms, we can leverage the known structure and expected content types of such documents, and navigate the OCR methods for more reliable results.
 
 # State of the field
 
-There are several large OCR models provided by major IT companies - these include Google Cloud Vision API [@google_vision_api], Azure AI Document Intelligence [@azure_form_recognizer] and Amazon Textract [@amazon_textract]. There are also smaller libraries such as Tesseract OCR Engine [@tesseract_ocr] or OCR4all [@ocr4all], as well as tool handprint combining them [@handprint].
+The current OCR landscape of pretrained tools can be split between open-source models and cloud-based services. On the open-source side, there are many tools such as Tesseract OCR [@tesseract_ocr], EasyOCR [@easyocr], OCR4All [@app9224853], and PaddleOCR [@cui2025paddleocr30technicalreport] provide pretrained models or optionally allow to train custom models. Some of the trade-offs are in accuracy, speed, and deployment complexity. The cloud-based pretrained OCR services, including Google Cloud Vision API [@google_vision_api], Azure AI Document Intelligence [@azure_form_recognizer], and Amazon Textract [@amazon_textract]. These solutions accessible via APIs are highly optimized for structured documents and provide higher-level outputs (e.g. key–value pairs).
 
-- handprint combining it, but not maintained anymore, + does not allow the annotation
+A natural extension are tools that combine multiple tools, models, or services. Systems such as OCRmyPDF [@ocrmypdf] or unified interfaces like OcrPy [@ocrpy] integrate engines like Tesseract, cloud APIs, and downstream processing into a single pipeline, effectively abstracting over multiple OCR backends. Tools like Handprint [@handprint] combine multiple cloud services to output annotated images or raw results, as well as compare the recognized text to some level of the ground truth (expected content)[^1].
+
+[^1]: The is not maintained anymore.
 
 # Software design
 
@@ -56,9 +58,9 @@ The tool is structured into two main parts. The first part, further devided into
 
 The second step identifies and extracts content from the ROIs. The first substep is to align the scanned document with its template. The motivation of this step is to ensure the ROIs actually match the regions in the scannned document, otherwise they would point to potentially empty or generally nonsense regions. While the task is rather straightforward, the execution can be tricky especially when the template has no fiducial markers or the scan quality is low. For this reason, a manual alignment is possible as well.
 
-The second substep is to convert the aligned document to an image and query several OCR models to identify and extract the content. For this purpose, three services are used by calling their respective APIs - Google Cloud Vision [@google_vision_api], Azure AI Document Intelligence [@azure_form_recognizer], and Amazon Textract [@amazon_textract]. All three services output a list of extracted content with its location (bounding box) in the image.[^1]
+The second substep is to convert the aligned document to an image and query several OCR models to identify and extract the content. For this purpose, three services are used by calling their respective APIs - Google Cloud Vision [@google_vision_api], Azure AI Document Intelligence [@azure_form_recognizer], and Amazon Textract [@amazon_textract]. All three services output a list of extracted content with its location (bounding box) in the image.[^2]
 
-[^1]: All services offer a free tier with limited amount of requests per month, but the user needs to register and obtain access credentials. We try to keep the steps how to do it up-to-date on the [wiki pages](link_TODO) of the repository, but it's a highly variable process beyond our control.
+[^2]: All services offer a free tier with limited amount of requests per month, but the user needs to register and obtain access credentials. We try to keep the steps how to do it up-to-date on the [wiki pages](link_TODO) of the repository, but it's a highly variable process beyond our control.
 
 Next step is a binning of identified contents into the ROIs for each service. A corresponding ROI needs to be decided for each captured fragment of text (a word). There are several cases that need to be considered, such as a word spanning over multiple ROIs or multiple words overlapping with a single ROI. To find all overlaps for a ROI from all the services, the number of possibilities and cases that need to be investigated can grow. We use ```rtree``` [@rtree] to index the regions and capture their overlaps for all services and the template specification, consequently allowing an effective querying for matches. Additionally, the document can contain preprinted contents (residuals) that do not belong to ROIs, but an imperfect alignment can shift them into a ROI. This is handled by defining the residuals already in the annotation step, allowing their elimination from the outputs. 
 
@@ -68,11 +70,11 @@ Finally, the output of the tool is an Excel spreadsheet (an ```.xlsx``` file) wi
 
 # Research impact statement
 
-The tool was used on a set of scanned logsheets containing provenance metadata coming from the Traversing European Coastlines (TREC) expedition[^2]. Roughly 10 thousands double-sided logsheets of roughly 100 different types were collected, together providing contextual metadata to more than 80 thousands collected samples. Using this package, the used logsheet templates were annotated and all the scanned documents processed. The metadata was extracted and curated, and archived[^3] in the BioSamples database [@courtot2022biosamples]. The contextual metadata is an essential base for the samples analysis and data production, which is in initial phase during writing of this manuscript.
+The tool was used on a set of scanned logsheets containing provenance metadata coming from the Traversing European Coastlines (TREC) expedition[^3]. Roughly 10 thousands double-sided logsheets of roughly 100 different types were collected, together providing contextual metadata to more than 80 thousands collected samples. Using this package, the used logsheet templates were annotated and all the scanned documents processed. The metadata was extracted and curated, and archived[^4] in the BioSamples database [@courtot2022biosamples]. The contextual metadata is an essential base for the samples analysis and data production, which is in initial phase during writing of this manuscript.
 
-[^2]: https://www.embl.org/about/info/trec/
+[^3]: https://www.embl.org/about/info/trec/
 
-[^3]: https://www.ebi.ac.uk/biosamples/samples?text=Traversing+European+Coastlines+%28TREC%29+expedition
+[^4]: https://www.ebi.ac.uk/biosamples/samples?text=Traversing+European+Coastlines+%28TREC%29+expedition
 
 # Example workflow
 
