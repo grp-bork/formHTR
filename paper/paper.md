@@ -36,12 +36,9 @@ The formHTR is a Python software package for automatic extraction of (handwritte
 
 # Statement of need
 
-Large-scale scientific expeditions often collect huge amounts of samples, with a need to write down the context of the samples and observed features. While digital forms are getting more popular, paper forms are still the mostly used form for their reliability in extreme environments, stability, and ease to use [@VANTAMELEN2004123,@BREWER2016131]. 
+Large-scale scientific expeditions often collect huge amounts of samples, with a need to write down the context of the samples and observed features. While digital forms are getting more popular, paper forms are still the mostly used form for their reliability in extreme environments, stability, and ease to use ([@VANTAMELEN2004123], [@BREWER2016131]).
 
-- need of automatic processing using multiple OCR models allowing decision making
-- target audience is primarily non-technical
-- fusion of results with inputs
-- infeaseble to train models on multiple ever changing set of handwritings
+For such cases, it is neccesary to process the documents automatically with minimal manual input and proofreading. Assuming the forms are often filled in with handwritting, optical character recognition (OCR) methods [@ocr156468] are used to extract the content. While training custom models on a particular handwritting is generally more precise, in a large-scale expeditions the amount of distict handwrittings and turnaround of staff is usually infeasible. The use of multiple pretrained general purpose OCR models, allowing concensus decision making, is a more suitable approach.
 
 Additionally, assuming a large-scale expedition enforces certain standards on the sample collection process, so does on the metadata level. That means standardised forms are often developed, and used over and over in various sampling scenarious. As a consequence, to digitalise the contents of such forms, we can leverage the known structure and expected content types of such documents, and navigate the OCR methods for more reliable results.
 
