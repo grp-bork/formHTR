@@ -101,12 +101,11 @@ formhtr process-logsheet \
 
 # Author's Contributions
 
-TODO
+MT wrote the manuscript and developed the software. JG contributed to the software. SP contributed via conceptual guidance and contributed to the manuscript. PB provided conceptual oversight and funding.
 
 # AI usage disclosure
 
-No generative AI tools were used in the development of this software, the writing
-of this manuscript, or the preparation of supporting materials.
+No generative AI tools were used in the development of this software, or the writing of this manuscript. AI tools were used the preparation of supporting materials, namely setting up and generating the documentation and tests.
 
 # Acknowledgements
 
