@@ -79,7 +79,25 @@ The tool was used on a set of scanned logsheets containing provenance metadata c
 
 # Example workflow
 
-TODO
+An example workflow comprises of the three steps, assuming we have a template and scan documents. We first need to create and annotate ROIs for the template, and consequently process it creating the output Excel spreadsheet.
+
+```
+# 1) Create ROI config for a template
+formhtr select-rois --pdf-file template.pdf --output-file config.json
+
+# 2) Annotate ROI types and variable names
+formhtr annotate-rois --pdf-file template.pdf --config-file config.json --output-file config_annotated.json
+
+# 3) Process a scanned logsheet
+formhtr process-logsheet \
+  --pdf-logsheet scan.pdf \
+  --pdf-template template.pdf \
+  --config-file config_annotated.json \
+  --output-file output.xlsx \
+  --google google_credentials.json \
+  --amazon amazon_credentials.json \
+  --azure azure_credentials.json
+```
 
 # Author's Contributions
 
