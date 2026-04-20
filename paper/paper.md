@@ -71,11 +71,11 @@ Finally, the output of the tool is an Excel spreadsheet (an ```.xlsx``` file) wi
 
 # Research impact statement
 
-TODO
+The tool was used on a set of scanned logsheets containing provenance metadata coming from the Traversing European Coastlines (TREC) expedition[^2]. Roughly 10 thousands double-sided logsheets of roughly 100 different types were collected, together providing contextual metadata to more than 80 thousands collected samples. Using this package, the used logsheet templates were annotated and all the scanned documents processed. The metadata was extracted and curated, and archived[^3] in the BioSamples database [@courtot2022biosamples]. The contextual metadata is an essential base for the samples analysis and data production, which is in initial phase during writing of this manuscript.
 
-- used in TREC expediiton for extraction of metadata[^2] from more than 10k logsheet forms
+[^2]: https://www.embl.org/about/info/trec/
 
-[^2]: https://www.ebi.ac.uk/biosamples/samples?text=Traversing+European+Coastlines+%28TREC%29+expedition
+[^3]: https://www.ebi.ac.uk/biosamples/samples?text=Traversing+European+Coastlines+%28TREC%29+expedition
 
 # Example workflow
 
