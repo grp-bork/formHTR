@@ -1,5 +1,5 @@
 ---
-title: 'formHTR: A Python package for handprint text recognition in form documents'
+title: 'formHTR: A Python package for handwritten text recognition in form documents'
 tags:
   - Python
   - OCR
@@ -32,7 +32,7 @@ bibliography: paper.bib
 
 # Summary
 
-The formHTR is a Python software package for automatic extraction of (handwritten) contents from scanned PDF form documents. While extraction step itself is secured using advanced OCR models, a key step in the process is annotation of the regions of interest in the form. This significantly improves the success rate of the outputs by providing expected content locations and types. The identified contents using the OCR models can be then compared and evaluated using such a specification.
+The formHTR is a Python software package for automatic extraction of handwritten contents from scanned form documents. While extraction step itself is secured using advanced pretrained OCR models, a key step in the process is considering the prior knowledge of the expected contents. That is achieved by the precise, semi-automatic annotation of the regions of interest (ROIs) in the form template, specifying the locations and content types of ROIs. Using this approach in combination with comparing and evaluating outputs from multiple OCR models significantly improves the quality of the extraction.
 
 # Statement of need
 
@@ -48,7 +48,7 @@ The current OCR landscape of pretrained tools can be split between open-source m
 
 A natural extension are tools that combine multiple tools, models, or services. Systems such as OCRmyPDF [@ocrmypdf] or unified interfaces like OcrPy [@ocrpy] integrate engines like Tesseract, cloud APIs, and downstream processing into a single pipeline, effectively abstracting over multiple OCR backends. Tools like Handprint [@handprint] combine multiple cloud services to output annotated images or raw results, as well as compare the recognized text to some level of the ground truth (expected content)[^1].
 
-[^1]: The is not maintained anymore.
+[^1]: The package is not maintained anymore.
 
 # Software design
 
@@ -60,7 +60,7 @@ The second step identifies and extracts content from the ROIs. The first substep
 
 The second substep is to convert the aligned document to an image and query several OCR models to identify and extract the content. For this purpose, three services are used by calling their respective APIs - Google Cloud Vision [@google_vision_api], Azure AI Document Intelligence [@azure_form_recognizer], and Amazon Textract [@amazon_textract]. All three services output a list of extracted content with its location (bounding box) in the image.[^2]
 
-[^2]: All services offer a free tier with limited amount of requests per month, but the user needs to register and obtain access credentials. We try to keep the steps how to do it up-to-date on the [wiki pages](link_TODO) of the repository, but it's a highly variable process beyond our control.
+[^2]: All services offer a free tier with limited amount of requests per month, but the user needs to register and obtain access credentials. We try to keep the steps how to do it up-to-date on the [wiki pages](https://github.com/grp-bork/formHTR/wiki/Setup-services) of the repository, but it's a highly variable process beyond our control.
 
 Next step is a binning of identified contents into the ROIs for each service. A corresponding ROI needs to be decided for each captured fragment of text (a word). There are several cases that need to be considered, such as a word spanning over multiple ROIs or multiple words overlapping with a single ROI. To find all overlaps for a ROI from all the services, the number of possibilities and cases that need to be investigated can grow. We use ```rtree``` [@rtree] to index the regions and capture their overlaps for all services and the template specification, consequently allowing an effective querying for matches. Additionally, the document can contain preprinted contents (residuals) that do not belong to ROIs, but an imperfect alignment can shift them into a ROI. This is handled by defining the residuals already in the annotation step, allowing their elimination from the outputs. 
 
@@ -108,6 +108,6 @@ No generative AI tools were used in the development of this software, or the wri
 
 # Acknowledgements
 
-- TREC project / EMBL internal 
+This publication was enabled by the support of EMBL member states to the TREC expedition, within the framework of EMBL’s Molecules to Ecosystems Programme (2022-2026).
 
 # References

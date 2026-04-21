@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "formhtr"
 dynamic = ["version"]
-description = "Handprint text recognition in form documents."
+description = "Handwritten text recognition in form documents."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"

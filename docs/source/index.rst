@@ -1,7 +1,7 @@
 Welcome to formHTR's documentation!
 ===================================
 
-Handprint text recognition in form documents: region of interest (ROI) definition and OCR
+Handwritten text recognition in form documents: region of interest (ROI) definition and OCR
 via cloud providers.
 
 .. toctree::
