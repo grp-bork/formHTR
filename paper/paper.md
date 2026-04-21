@@ -38,9 +38,9 @@ The formHTR is a Python software package for automatic extraction of handwritten
 
 Large-scale scientific expeditions often collect huge amounts of samples, with a need to write down the context of the samples and observed features (metadata). While digital metadata collection methods are getting more popular, paper forms (so called *logsheets*) are still the most popular method for their reliability in extreme environments, stability, natural scalability, and ease to use ([@VANTAMELEN2004123], [@BREWER2016131]).
 
-It is neccesary build an infrastructure for processing of the logsheets automatically with minimum of manual interventions and laborious proofreading. Optical character recognition (OCR) methods [@ocr156468] are used to extract the content from a scanned logsheet, with additional complexity added by handwritten type of content. While training custom models on a particular handwritting style of a person is generally more precise, in a large-scale expeditions, the turnaround of staff and consequently the amount of distict handwrittings is usually infeasible. The use of multiple pretrained general purpose OCR models, allowing consensus or majority decision making, is a more suitable approach.
+It is necessary build an infrastructure for processing of the logsheets automatically with minimum of manual interventions and laborious proofreading. Optical character recognition (OCR) methods [@ocr156468] are used to extract the content from a scanned logsheet, with additional complexity added by handwritten type of content. While training custom models on a particular handwriting style of a person is generally more precise, in a large-scale expeditions, the turnaround of staff and consequently the amount of distinct handwritings is usually infeasible. The use of multiple pretrained general purpose OCR models, allowing consensus or majority decision making, is a more suitable approach.
 
-Additionally, assuming a large-scale expedition enforces certain standards on the sample collection process, so does on the metadata level. That means standardised logsheets are often developed, and used repeatedly in various sampling scenarious. As a consequence, to digitalise the contents of such logsheets, we can leverage their known structure and expected content types, and navigate the OCR methods for more reliable and precise results.
+Additionally, assuming a large-scale expedition enforces certain standards on the sample collection process, so does on the metadata level. That means standardised logsheets are often developed, and used repeatedly in various sampling scenarios. As a consequence, to digitalise the contents of such logsheets, we can leverage their known structure and expected content types, and navigate the OCR methods for more reliable and precise results.
 
 # State of the field
 
@@ -52,11 +52,11 @@ A natural extension are tools that combine multiple tools, models, or services. 
 
 # Software design
 
-The tool is structured into two main parts. The first part, further devided into two substeps, is dedicated to annotating form templates in order to specify the regions of interest (ROIs) and assign them a meaning (name, type, and the position). The first substep is used solely for selecting and manipulating the region locations, while in the second substep the variable names and types are assigned to individual ROIs. The output of the whole step is a config file containing position, name, and type of identified ROIs. In \autoref{fig:overview} there is an overview of the all the steps.
+The tool is structured into two main parts. The first part, further divided into two substeps, is dedicated to annotating form templates in order to specify the regions of interest (ROIs) and assign them a meaning (name, type, and the position). The first substep is used solely for selecting and manipulating the region locations, while in the second substep the variable names and types are assigned to individual ROIs. The output of the whole step is a config file containing position, name, and type of identified ROIs. In \autoref{fig:overview} there is an overview of the all the steps.
 
 ![Schematic overview of formHTR annotation and processing workflow. \label{fig:overview}](scheme.png)
 
-The second step identifies and extracts content from the ROIs. The first substep is to align the scanned logsheet with its template. The motivation of this step is to ensure the ROIs actually match the regions in the scannned logsheet, otherwise they would point to potentially empty or generally mismatched regions. While the goal is straightforward, the execution can be problematic, especially when the template has no fiducial markers or the scan quality is low. For this reason, a manual alignment is possible as well.
+The second step identifies and extracts content from the ROIs. The first substep is to align the scanned logsheet with its template. The motivation of this step is to ensure the ROIs actually match the regions in the scanned logsheet, otherwise they would point to potentially empty or generally mismatched regions. While the goal is straightforward, the execution can be problematic, especially when the template has no fiducial markers or the scan quality is low. For this reason, a manual alignment is possible as well.
 
 The second substep is to convert the aligned logsheet to an image and query several OCR models to identify and extract the content. For this purpose, three services are used by calling their respective APIs - Google Cloud Vision [@google_vision_api], Azure AI Document Intelligence [@azure_form_recognizer], and Amazon Textract [@amazon_textract]. All three services output a set of detected words with their location (bounding box) in the image.[^2]
 
@@ -68,7 +68,7 @@ Next step is a binning of identified contents into the ROIs for each service. An
 
 Assuming the words are binned for all services, we can use a voting algorithm to pick the most likely output. With three services, a majority vote can be applied. In cases when there is no consensus, a random choice is made. Similarly, the tool works even with less than three services enabled, but naturally the quality of the output is lowered by inability to perform the voting. On top of the voting, the weight of votes can be altered by using the known information about the ROIs. In the current version, priority to numerical values (if expected) is given. This aspect has a very high potential for extensions in the future versions (e.g. allow only values from a dictionary, limit the length of the content, satisfy a regex, number in an integer range).
 
-Finally, the output of the tool is an Excel spreadsheet (an ```.xlsx``` file) with two sheets. The first sheet has three columns - variable name coming from the specification, extracted content as the result coming from the voting algorithm, and insterted picture cut out of the scanned (and aligned) logsheet based on the bouding box defined in the specification. This can be used for a quick proofreading of the outputs. The second sheet contains any miscellaneous content that did not fall into any ROI nor was filtered out as a residual. This can typically alert the user to any comments and notes written on unexpected parts of the logsheet.
+Finally, the output of the tool is an Excel spreadsheet (an ```.xlsx``` file) with two sheets. The first sheet has three columns - variable name coming from the specification, extracted content as the result coming from the voting algorithm, and inserted picture cut out of the scanned (and aligned) logsheet based on the bounding box defined in the specification. This can be used for a quick proofreading of the outputs. The second sheet contains any miscellaneous content that did not fall into any ROI nor was filtered out as a residual. This can typically alert the user to any comments and notes written on unexpected parts of the logsheet.
 
 # Research impact statement
 
@@ -106,7 +106,7 @@ MT wrote the manuscript and developed the software. JG contributed to the softwa
 
 # AI usage disclosure
 
-No generative AI tools were used in the development of this software, or the writing of this manuscript. AI tools were used the preparation of supporting materials, namely setting up and generating the documentation and tests.
+No generative AI tools were used in the development of this software, or the writing of this manuscript. AI tools were used in the preparation of supporting materials, namely setting up and generating the documentation and tests.
 
 # Acknowledgements
 
