@@ -349,6 +349,10 @@ python -m pip install -r requirements.txt
 python -m pytest -q
 ```
 
+For local development from a git checkout, convenience wrapper scripts live in
+`scripts/` and forward to the CLI entrypoints (for example
+`python scripts/process_logsheet.py ...`).
+
 Optional live OCR test:
 
 - Add at least one credential file in `credentials/`:
