@@ -8,7 +8,10 @@ from formhtr import cli
 
 
 def test_process_logsheet_requires_at_least_one_ocr_credential(monkeypatch):
-    monkeypatch.setattr("formhtr.cli.ensure_system_dependencies", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(
+        "formhtr.commands.process_logsheet.ensure_system_dependencies",
+        lambda *_args, **_kwargs: None,
+    )
     with pytest.raises(SystemExit):
         cli.main(
             [
@@ -26,9 +29,12 @@ def test_process_logsheet_requires_at_least_one_ocr_credential(monkeypatch):
 
 
 def test_process_logsheet_dispatches_and_prints_ratio(monkeypatch, capsys):
-    monkeypatch.setattr("formhtr.cli.ensure_system_dependencies", lambda *_args, **_kwargs: None)
     monkeypatch.setattr(
-        "formhtr.cli.load_credentials",
+        "formhtr.commands.process_logsheet.ensure_system_dependencies",
+        lambda *_args, **_kwargs: None,
+    )
+    monkeypatch.setattr(
+        "formhtr.commands.process_logsheet.load_credentials",
         lambda **_kwargs: "CREDENTIALS",
     )
     captured = {}
@@ -37,7 +43,7 @@ def test_process_logsheet_dispatches_and_prints_ratio(monkeypatch, capsys):
         captured.update(kwargs)
         return {"ratio": 0.875}
 
-    monkeypatch.setattr("formhtr.cli.process_logsheet_to_xlsx", fake_process)
+    monkeypatch.setattr("formhtr.commands.process_logsheet.process_logsheet_to_xlsx", fake_process)
 
     code = cli.main(
         [
@@ -80,7 +86,7 @@ def test_select_rois_rejects_invalid_headless_display_combo():
 
 def test_doctor_returns_nonzero_when_missing_deps(monkeypatch, capsys):
     monkeypatch.setattr(
-        "formhtr.cli.check_system_dependencies",
+        "formhtr.commands.doctor.check_system_dependencies",
         lambda: [("qpdf", "install hint")],
     )
     code = cli.main(["doctor"])
@@ -92,7 +98,10 @@ def test_doctor_returns_nonzero_when_missing_deps(monkeypatch, capsys):
 
 def test_automatic_align_writes_json_payload(monkeypatch, capsys):
     payload = {"frontside": {"x": 1}, "backside": None}
-    monkeypatch.setattr("formhtr.cli.build_alignment_payload", lambda **_kwargs: payload)
+    monkeypatch.setattr(
+        "formhtr.commands.automatic_align.build_alignment_payload",
+        lambda **_kwargs: payload,
+    )
     code = cli.main(
         [
             "automatic-align",

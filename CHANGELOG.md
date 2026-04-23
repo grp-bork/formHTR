@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - improved documentation (docstrings)
+- move top level development scripts to `scripts` folder
 
 ## [0.2.0] - 2026-04-09
 
