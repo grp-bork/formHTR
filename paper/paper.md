@@ -10,6 +10,9 @@ authors:
     affiliation: 1
   - name: Jan Glos
     affiliation: 3
+  - name: Michael Kuhn
+    orcid: 0000-0002-2841-872X
+    affiliation: 1
   - name: Stéphane Pesant
     orcid: 0000-0002-4936-5209
     affiliation: 2
@@ -32,7 +35,7 @@ bibliography: paper.bib
 
 # Summary
 
-`formHTR` is a Python software package for automatic extraction of handwritten contents from scanned form documents. While the content extraction itself is secured using advanced pretrained OCR models, a key step in the process is considering the prior knowledge of the expected contents. That is achieved by the precise, semi-automatic annotation of the regions of interest (ROIs) in the form template, specifying the locations and content types of ROIs. Using this approach in combination with comparing and evaluating outputs from multiple OCR models significantly improves the quality of the extraction.
+`formHTR` is a Python software package for automatic extraction of handwritten contents from scanned form documents. While the content extraction itself is accomplished using advanced pretrained OCR models, a key step in the process is considering the prior knowledge of the expected contents. That is achieved by the precise, semi-automatic annotation of the regions of interest (ROIs) in the form template, specifying the locations and content types of ROIs. Using this approach in combination with comparing and evaluating outputs from multiple OCR models significantly improves the quality of the extraction.
 
 # Statement of need
 
