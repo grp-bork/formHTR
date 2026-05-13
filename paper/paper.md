@@ -1,5 +1,5 @@
 ---
-title: 'formHTR: A Python package for handwritten text recognition in form documents'
+title: 'formHTR: Template-Guided OCR Extraction of Handwritten Content from Scanned Forms'
 tags:
   - Python
   - OCR
@@ -38,7 +38,7 @@ bibliography: paper.bib
 
 # Summary
 
-`formHTR` is a Python software package for automatic extraction of handwritten contents from scanned form documents. While the content extraction itself is accomplished using advanced pretrained OCR models, a key step in the process is considering the prior knowledge of the expected contents. That is achieved by the precise, semi-automatic annotation of the regions of interest (ROIs) in the form template, specifying the locations and content types of ROIs. Using this approach in combination with comparing and evaluating outputs from multiple OCR models significantly improves the quality of the extraction.
+`formHTR` is a Python software package for automatic handwritten text recognition (HTR) and extraction from scanned form documents. While the content extraction itself is accomplished using advanced pretrained OCR models, a key step in the process is considering the prior knowledge of the expected contents. That is achieved by the precise, semi-automatic annotation of the regions of interest (ROIs) in the form template, specifying the locations and content types of ROIs. Using this approach in combination with comparing and evaluating outputs from multiple OCR models significantly improves the quality of the extraction.
 
 # Statement of need
 
