@@ -13,6 +13,9 @@ authors:
   - name: Michael Kuhn
     orcid: 0000-0002-2841-872X
     affiliation: 1
+  - name: Kerstin Leberecht
+    orcid: 0000-0002-0733-7509
+    affiliation: 1
   - name: Stéphane Pesant
     orcid: 0000-0002-4936-5209
     affiliation: 2
@@ -75,7 +78,7 @@ The output of `formHTR` is an Excel spreadsheet (an `.xlsx` file) with two sheet
 
 # Research impact statement
 
-`formHTR` was used on a set of scanned logsheets containing provenance metadata coming from the TRaversing European Coastlines (TREC) expedition[^3]. Roughly ten thousand double-sided logsheets of roughly hundred different types (templates) were collected, together providing contextual metadata to more than eighty thousand collected samples. Using `formHTR`, the logsheet templates were annotated and all the scanned logsheets processed. The metadata was extracted and curated, and archived[^4] in the BioSamples database [@courtot2022biosamples]. The contextual metadata is an essential foundation for sample analysis and data production, which, at the time of writing is in the initial phase.
+The need for `formHTR` tool arose during the TRaversing European Coastlines (TREC) expedition[^3]. The tool was developed and continuously optimized for the expedition, and consequently used on a collection of approximately ten thousand double-sided logsheets spanning around hundred different template types, together providing contextual metadata to more than eighty thousand collected samples. Using `formHTR`, the logsheet templates were annotated and all the scanned logsheets processed. The metadata was extracted and curated, and archived[^4] in the BioSamples database [@courtot2022biosamples]. The contextual metadata is an essential foundation for sample analysis and data production, which, at the time of writing is in the initial phase.
 
 [^3]: https://www.embl.org/about/info/trec/
 
@@ -105,7 +108,7 @@ formhtr process-logsheet \
 
 # Author's Contributions
 
-MT wrote the manuscript and developed the software. JG contributed to the software. SP contributed via conceptual guidance and contributed to the manuscript. PB provided conceptual oversight and funding.
+MT wrote the manuscript and developed the software. JG contributed to the software. SP, MK, and KL contributed via conceptual guidance and contributed to the manuscript. PB provided conceptual oversight and funding.
 
 # AI usage disclosure
 
