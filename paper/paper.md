@@ -13,6 +13,9 @@ authors:
   - name: Michael Kuhn
     orcid: 0000-0002-2841-872X
     affiliation: 1
+  - name: Kerstin Leberecht
+    orcid: 0000-0002-0733-7509
+    affiliation: 1
   - name: Stéphane Pesant
     orcid: 0000-0002-4936-5209
     affiliation: 2
@@ -105,7 +108,7 @@ formhtr process-logsheet \
 
 # Author's Contributions
 
-MT wrote the manuscript and developed the software. JG contributed to the software. SP contributed via conceptual guidance and contributed to the manuscript. PB provided conceptual oversight and funding.
+MT wrote the manuscript and developed the software. JG contributed to the software. SP, MK, and KL contributed via conceptual guidance and contributed to the manuscript. PB provided conceptual oversight and funding.
 
 # AI usage disclosure
 
