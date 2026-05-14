@@ -8,17 +8,17 @@ authors:
     orcid: 0000-0003-0841-2707
     corresponding: true
     affiliation: 1
-  - name: Jan Glos
-    affiliation: 3
-  - name: Michael Kuhn
-    orcid: 0000-0002-2841-872X
-    affiliation: 1
-  - name: Kerstin Leberecht
-    orcid: 0000-0002-0733-7509
-    affiliation: 1
   - name: Stéphane Pesant
     orcid: 0000-0002-4936-5209
     affiliation: 2
+  - name: Jan Glos
+    affiliation: 3
+  - name: Kerstin Leberecht
+    orcid: 0000-0002-0733-7509
+    affiliation: 1
+  - name: Michael Kuhn
+    orcid: 0000-0002-2841-872X
+    affiliation: 1
   - name: Peer Bork
     orcid: 0000-0002-2627-833X
     affiliation: 1
@@ -44,7 +44,7 @@ bibliography: paper.bib
 
 Large-scale scientific expeditions often collect huge amounts of samples, with a need to record the origin and context of the samples and observed features (metadata). While digital metadata collection methods are becoming more popular, paper forms (so called *logsheets*) are still the most popular method for their reliability in extreme environments, stability, natural scalability, and ease to use [@VANTAMELEN2004123; @BREWER2016131].
 
-It is necessary to build an infrastructure for processing of the logsheets automatically with a minimal amount of manual interventions and laborious proofreading. Optical character recognition (OCR) methods [@ocr156468] are used to extract the content from a scanned logsheet, with additional complexity added by handwritten type of content. While training custom models on a particular handwriting style of a person is generally more precise, this approach is infeasible for large-scale expeditions with high turnaround of staff and consequently higher amount of distinct handwritings. The use of multiple pretrained general purpose OCR models, allowing consensus or majority decision making, is a more suitable approach.
+It is necessary to build an infrastructure that processes logsheets automatically with a minimal amount of manual interventions and laborious proofreading. Optical character recognition (OCR) methods [@ocr156468] are used to extract the content from a scanned logsheet, with additional complexity added by handwritten type of content. While training custom models on a particular handwriting style of a person is generally more precise, this approach is impractical for large-scale expeditions with high turnaround of staff and consequently higher amount of distinct handwritings. The use of multiple pretrained general purpose OCR models, allowing consensus or majority decision making, is a more suitable approach.
 
 Additionally, assuming a large-scale expedition enforces certain standards on the sample collection process, so does it on the metadata level. That means standardised logsheets are often developed, and used repeatedly in various sampling scenarios. As a consequence, to digitalise the contents of such logsheets, we can leverage their known structure and expected content types to navigate the OCR methods for more reliable and precise results.
 
@@ -52,13 +52,13 @@ Additionally, assuming a large-scale expedition enforces certain standards on th
 
 The current OCR landscape of pretrained tools can be split between open-source models and cloud-based services. On the open-source side, there are many tools such as Tesseract OCR [@tesseract_ocr], EasyOCR [@easyocr], OCR4All [@app9224853], and PaddleOCR [@cui2025paddleocr30technicalreport] which provide pretrained models or optionally allow to train custom models. Some of the trade-offs are in accuracy, speed, and deployment complexity. Cloud-based pretrained OCR services, including Google Cloud Vision API [@google_vision_api], Azure AI Document Intelligence [@azure_form_recognizer], and Amazon Textract [@amazon_textract], are accessible via APIs and are highly optimised for structured documents and provide higher-level outputs (e.g. key–value pairs).
 
-A natural extension are tools that combine multiple tools, models, or services. Systems such as OCRmyPDF [@ocrmypdf] or unified interfaces like OcrPy [@ocrpy] integrate engines like Tesseract, cloud APIs, and downstream processing into a single pipeline, effectively abstracting over multiple OCR backends. The tool `Handprint` [@handprint] combines multiple cloud services and outputs annotated images or raw results, as well as compares the recognized text to some level of the ground truth (expected content)[^1].
+Naturally, the combination of multiple tools, models, or services has emerged. Systems such as OCRmyPDF [@ocrmypdf] or unified interfaces like OcrPy [@ocrpy] integrate engines like Tesseract, cloud APIs, and downstream processing into a single pipeline, effectively abstracting over multiple OCR backends. The tool `Handprint` [@handprint] combines multiple cloud services and outputs annotated images or raw results, as well as compares the recognized text to some level of the ground truth (expected content)[^1].
 
 [^1]: The package is not maintained anymore.
 
 # Software design
 
-The tool is structured into two main steps with an overview in \autoref{fig:overview}. The specification step is dedicated to annotating form templates in order to specify the regions of interest (ROIs) and assign them a meaning. This is achieved by selecting and manipulating the region locations, while the variable names and ROI types are assigned to individual ROIs. The output of the specification step is a config file containing position, name, and type of identified ROIs.
+`formHTR` is structured into two main steps with an overview in \autoref{fig:overview}. The specification step selects regions of interest (ROIs) from a template and assign them a meaning. This is achieved by selecting and manipulating the region locations, while the variable names and ROI types are assigned to individual ROIs. The output of the specification step is a config file containing position, name, and type of identified ROIs.
 
 ![Schematic overview of formHTR annotation and processing workflow. \label{fig:overview}](scheme.png)
 
@@ -68,7 +68,7 @@ The aligned logsheet is converted to an image and several OCR models are queried
 
 [^2]: All services offer a free tier with limited amount of requests per month. The user needs to provide suitable account credentials. A quick start description how to do this is available at the [wiki pages](https://github.com/grp-bork/formHTR/wiki/Setup-services) of the `formHTR` repository.
 
-After collecting the identified contents for each service, the process of binning assigns each captured text fragment (word) to the appropriate ROI. Several cases need to be considered, such as a word spanning over multiple ROIs, multiple words overlapping with a single ROI, or a sentence split into several words (for examples, see \autoref{fig:binning}). To find all overlaps for a ROI from all the services, we use `R-tree` [@rtree] to index the regions and capture their overlaps for all services' outputs and the template specification, and consequently use it to effectively query for intersections. Additionally, the logsheet can contain preprinted contents (*residuals*) that do not belong to ROIs, but can be shifted to its boundary box by an imperfect alignment. This is handled by defining the residuals already in the specification step, thus allowing to exclude them from the outputs.
+After collecting the identified contents for each service, the process of binning assigns each captured text fragment (word) to the appropriate ROI. Several cases need to be considered, such as a word spanning over multiple ROIs, multiple words overlapping with a single ROI, or a sentence split into several words (see examples in \autoref{fig:binning}). To find all overlaps for a ROI from all the services, we use `R-tree` [@rtree] to index the regions and capture their overlaps for all services' outputs and the template specification, and consequently use it to effectively query for intersections. Additionally, the logsheet can contain preprinted contents (*residuals*) that do not belong to ROIs, but can be shifted to its boundary box by an imperfect alignment. This is handled by defining the residuals already in the specification step, thus allowing to exclude them from the outputs.
 
 ![Examples of different scenarios of text position identification relative to a ROI. Each row (distinguished by color) corresponds to a different service. In the left column, two regions are in close proximity, causing the identified text to overlap with a neighboring region or to be recognized as a single word. In the right column, the detected words and sentence splitting into words vary across services. \label{fig:binning}](binning.png)
 
@@ -116,6 +116,6 @@ No generative AI tools were used in the development of this software, or the wri
 
 # Acknowledgements
 
-This publication was enabled by the support of EMBL member states to the TREC expedition, within the framework of EMBL’s Molecules to Ecosystems Programme (2022-2026).
+This work has been funded by the European Union’s Horizon 2020 research and innovation program (project BIOcean5D with grant agreement No. 101059915). Additionally, this publication was enabled by the support of EMBL member states to the TREC expedition, within the framework of EMBL’s Molecules to Ecosystems Programme (2022-2026).
 
 # References
