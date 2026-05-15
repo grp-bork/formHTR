@@ -116,6 +116,6 @@ No generative AI tools were used in the development of this software, or the wri
 
 # Acknowledgements
 
-This work has been funded by the European Union’s Horizon 2020 research and innovation program (project BIOcean5D with grant agreement No. 101059915). Additionally, this publication was enabled by the support of EMBL member states to the TREC expedition, within the framework of EMBL’s Molecules to Ecosystems Programme (2022-2026).
+This publication was enabled by the support of EMBL member states to the TREC expedition (within the framework of EMBL’s Molecules to Ecosystems Programme 2022-2026) and partially funded by the European Union’s Horizon 2020 research and innovation program (project BIOcean5D with grant agreement No. 101059915). Views and opinions expressed are, however, those of the authors only and do not necessarily reflect those of the European Union. Neither the European Union nor the granting authority can be held responsible for them.
 
 # References
