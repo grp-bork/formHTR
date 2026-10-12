@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Stop deleting a pre-existing `images/` directory next to XLSX output; temporary crops now use a private temp directory.
+
 ## [0.3.1] - 2026-09-15
 
 ### Changed

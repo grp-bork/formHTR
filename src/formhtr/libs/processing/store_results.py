@@ -1,6 +1,5 @@
 import csv
-import os
-from shutil import rmtree
+import tempfile
 
 import cv2
 import xlsxwriter
@@ -64,83 +63,74 @@ def store_results(results, artefacts, output_file, include_validation=False):
         include_validation: If True, add Excel data validation where applicable.
 
     Returns:
-        ``None``. Temporary PNG crops next to ``output_file`` are removed after close.
+        ``None``. Temporary PNG crops are written to a private temp directory
+        and removed after the workbook is closed.
     """
-    # create directory to store mini images
-    directory = os.path.dirname(output_file)
-    images_directory = os.path.join(directory, 'images')
+    with tempfile.TemporaryDirectory() as images_directory:
+        workbook = xlsxwriter.Workbook(output_file)
+        worksheet = workbook.add_worksheet('Metadata')
+        write_header(worksheet)
 
-    if not os.path.exists(images_directory):
-        os.makedirs(images_directory)
+        max_width = 0
 
-    # create a new Excel file and add a worksheet
-    workbook = xlsxwriter.Workbook(output_file)
-    worksheet = workbook.add_worksheet('Metadata')
-    write_header(worksheet)
+        bool_format = workbook.add_format({'bg_color': '#f1e740'})
 
-    max_width = 0
+        for row_number, result in enumerate(results, 2):
+            worksheet.write(f'A{row_number}', result[0])
+            values = order_results(result[1])
+            if include_validation and len(values) > 1:
+                worksheet.data_validation(
+                    f'B{row_number}', {'validate': 'list', 'show_error': False, 'source': values})
 
-    bool_format = workbook.add_format({'bg_color': '#f1e740'})
+            inferred = result[1].get('inferred', None)
+            if inferred is None and len(values) != 0:
+                inferred = values[0]
 
-    # fill in data
-    for row_number, result in enumerate(results, 2):
-        worksheet.write(f'A{row_number}', result[0])
-        values = order_results(result[1])
-        if include_validation and len(values) > 1:
-            worksheet.data_validation(
-                f'B{row_number}', {'validate': 'list', 'show_error': False, 'source': values})
+            worksheet.write(f'B{row_number}', inferred)
 
-        inferred = result[1].get('inferred', None)
-        if inferred is None and len(values) != 0:
-            inferred = values[0]
+            if type(inferred) == bool:
+                if include_validation:
+                    worksheet.data_validation(f'B{row_number}', {
+                                              'validate': 'list', 'show_error': False, 'source': [True, False]})
+                worksheet.conditional_format(f'B{row_number}', {'type': 'cell',
+                                             'criteria': '==',
+                                                                'value': True,
+                                                                'format': bool_format})
 
-        worksheet.write(f'B{row_number}', inferred)
+            filename = store_image(result[2], images_directory, row_number)
+            height, width, _ = result[2].shape
+            max_width = max(width, max_width)
+            worksheet.insert_image(f'C{row_number}', filename)
+            worksheet.set_row_pixels(row_number-1, height)
 
-        if type(inferred) == bool:
-            if include_validation:
-                worksheet.data_validation(f'B{row_number}', {
-                                          'validate': 'list', 'show_error': False, 'source': [True, False]})
-            worksheet.conditional_format(f'B{row_number}', {'type': 'cell',
-                                         'criteria': '==',
-                                                            'value': True,
-                                                            'format': bool_format})
+        worksheet.set_column_pixels(2, 3, max_width)
+        worksheet.autofit()
 
-        filename = store_image(result[2], images_directory, row_number)
-        height, width, _ = result[2].shape
-        max_width = max(width, max_width)
-        worksheet.insert_image(f'C{row_number}', filename)
-        worksheet.set_row_pixels(row_number-1, height)
+        max_width = 0
 
-    worksheet.set_column_pixels(2, 3, max_width)
-    worksheet.autofit()
+        extra_worksheet = workbook.add_worksheet('Extra')
+        row_number = 1
+        for key in artefacts.keys():
+            if len(artefacts[key]) != 0:
+                extra_worksheet.write(f'A{row_number}', key)
+                row_number += 1
+                for extra in artefacts[key]:
+                    if extra[1].size != 0:
+                        extra_worksheet.write(f'A{row_number}', extra[0])
 
-    max_width = 0
+                        filename = store_image(
+                            extra[1], images_directory, row_number+1000)
+                        height, width, _ = extra[1].shape
+                        max_width = max(width, max_width)
+                        extra_worksheet.insert_image(f'B{row_number}', filename)
+                        extra_worksheet.set_row_pixels(row_number-1, height)
+                        row_number += 1
+                row_number += 1
 
-    # add extra identified content
-    extra_worksheet = workbook.add_worksheet('Extra')
-    row_number = 1
-    for key in artefacts.keys():
-        if len(artefacts[key]) != 0:
-            extra_worksheet.write(f'A{row_number}', key)
-            row_number += 1
-            for extra in artefacts[key]:
-                if extra[1].size != 0:
-                    extra_worksheet.write(f'A{row_number}', extra[0])
+        extra_worksheet.set_column_pixels(1, 2, max_width)
+        extra_worksheet.autofit()
 
-                    filename = store_image(
-                        extra[1], images_directory, row_number+1000)
-                    height, width, _ = extra[1].shape
-                    max_width = max(width, max_width)
-                    extra_worksheet.insert_image(f'B{row_number}', filename)
-                    extra_worksheet.set_row_pixels(row_number-1, height)
-                    row_number += 1
-            row_number += 1
-
-    extra_worksheet.set_column_pixels(1, 2, max_width)
-    extra_worksheet.autofit()
-
-    workbook.close()
-    rmtree(images_directory)
+        workbook.close()
 
 
 def store_results_csv(results, artefacts, output_file):
