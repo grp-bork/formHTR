@@ -31,6 +31,15 @@ def test_identify_words_two_lines_prefers_numeric_when_requested():
     assert value == "12.3"
 
 
+def test_identify_words_keeps_non_ascii_when_services_agree():
+    assert identify_words(["Tromsø 4°C"] * 3, is_number=False) == "Tromsø 4°C"
+    assert identify_words(["25 µm"], is_number=False) == "25 µm"
+
+
+def test_identify_words_keeps_non_ascii_in_majority_vote():
+    assert identify_words(["Tromsø", "Tromso", "Tromsø"], is_number=False) == "Tromsø"
+
+
 def test_separate_to_lines_groups_by_vertical_distance():
     rectangles = [
         Rectangle(0, 0, 10, 10, "A"),

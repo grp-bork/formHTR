@@ -44,7 +44,6 @@ class GoogleVision:
         # Iterate through OCR results and annotate the image
         for text in outputs[1:]:  # [1:] to exclude the first element which is the entire text
             vertices = [(vertex.x, vertex.y) for vertex in text.bounding_poly.vertices]
-            string_encode = text.description.encode('ascii', 'ignore')
             start, end = extract_corners(vertices)
-            identified.append(Rectangle(*start, *end, string_encode.decode()))
+            identified.append(Rectangle(*start, *end, text.description))
         return identified

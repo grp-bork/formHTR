@@ -1,5 +1,10 @@
-from Bio import pairwise2
+from Bio.Align import PairwiseAligner
 import numpy as np
+
+_aligner = PairwiseAligner()
+_aligner.mode = "global"
+_aligner.open_gap_score = -3
+_aligner.extend_gap_score = -1
 
 
 def is_a_number(string):
@@ -108,8 +113,8 @@ def align_pairwise(string_1, string_2):
     Returns:
         str: aligned string
     """
-    alignments = pairwise2.align.globalxs(string_1, string_2, -3, -1, gap_char=' ')
-    return alignments[0][0]
+    alignment = next(_aligner.align(string_1, string_2))
+    return alignment[0].replace("-", " ")
 
 
 def majority_vote(strings):
@@ -140,18 +145,6 @@ def majority_vote(strings):
     return ''.join(result)
 
 
-def remove_non_ascii(string):
-    """Remove non-ascii characters (these do not work in the alignment)
-
-    Args:
-        string (str): input line
-
-    Returns:
-        str: line containing only ascii characters
-    """
-    return ''.join(char for char in string if ord(char) < 128)
-
-
 def identify_words(lines, is_number):
     """Identify words from lines.
     Behaves differently based on how many lines there are.
@@ -163,13 +156,13 @@ def identify_words(lines, is_number):
     Returns:
         str: identified word
     """
-    # curate lines
-    lines = list(map(remove_non_ascii, lines))
     lines = list(filter(None, lines))
-
-    if len(lines) == 1:
+    if not lines:
+        return None
+    if len(set(lines)) == 1:
         return lines[0]
-    elif len(lines) == 2:
+
+    if len(lines) == 2:
         values = [align_pairwise(lines[0], lines[1]), 
                   align_pairwise(lines[1], lines[0])]
         if is_number:
