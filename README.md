@@ -28,6 +28,14 @@ System dependencies:
 - Fedora: `sudo dnf install zbar qpdf poppler-utils`
 - conda: `conda install -c conda-forge zbar qpdf poppler`
 
+On Apple Silicon macOS, Homebrew libraries live in `/opt/homebrew/lib`, which is not on the default loader path. If `formhtr doctor` still reports a missing `zbar` after `brew install`, or `pyzbar` raises `Unable to find zbar shared library`, set:
+
+```bash
+export DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib
+```
+
+(Intel Homebrew typically uses `/usr/local/lib` instead.)
+
 You can verify runtime requirements with:
 
 ```bash

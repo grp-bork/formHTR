@@ -5,7 +5,6 @@ import sys
 
 from formhtr.deps import ensure_system_dependencies
 from formhtr.libs.statistics import format_stats
-from formhtr.logsheet import load_credentials, process_logsheet_to_xlsx
 
 
 def register_parser(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
@@ -67,6 +66,8 @@ def run(args: argparse.Namespace) -> int:
     if args.google is None and args.amazon is None and args.azure is None:
         raise ValueError(
             "At least one OCR service credentials must be provided among --google, --amazon, and --azure.")
+
+    from formhtr.logsheet import load_credentials, process_logsheet_to_xlsx
 
     credentials = load_credentials(
         google_credentials_path=args.google,

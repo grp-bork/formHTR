@@ -1,31 +1,27 @@
 from __future__ import annotations
 
 import argparse
+import importlib
 import sys
 
 from . import __version__
-from .commands import (
-    annotate_rois,
-    automatic_align,
-    doctor,
-    export_logsheet,
-    manual_align,
-    pdf_dimensions,
-    process_logsheet,
-    select_rois,
+from .deps import configure_zbar_library_search
+
+
+COMMAND_MODULE_NAMES = (
+    "formhtr.commands.process_logsheet",
+    "formhtr.commands.manual_align",
+    "formhtr.commands.select_rois",
+    "formhtr.commands.annotate_rois",
+    "formhtr.commands.doctor",
+    "formhtr.commands.automatic_align",
+    "formhtr.commands.export_logsheet",
+    "formhtr.commands.pdf_dimensions",
 )
 
 
-COMMAND_MODULES = (
-    process_logsheet,
-    manual_align,
-    select_rois,
-    annotate_rois,
-    doctor,
-    automatic_align,
-    export_logsheet,
-    pdf_dimensions,
-)
+def _command_modules():
+    return tuple(importlib.import_module(name) for name in COMMAND_MODULE_NAMES)
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -34,7 +30,7 @@ def _build_parser() -> argparse.ArgumentParser:
                         version=f"%(prog)s {__version__}")
 
     sub = parser.add_subparsers(dest="command", required=True)
-    for module in COMMAND_MODULES:
+    for module in _command_modules():
         module.register_parser(sub)
 
     return parser
@@ -50,6 +46,7 @@ def main(argv: list[str] | None = None) -> int:
         Process exit code: ``0`` on success, ``1`` for ``doctor`` with missing deps,
         ``2`` for unknown command (should not normally occur).
     """
+    configure_zbar_library_search()
     parser = _build_parser()
     args = parser.parse_args(argv)
     runner = getattr(args, "_runner", None)

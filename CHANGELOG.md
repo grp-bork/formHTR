@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Stop deleting a pre-existing `images/` directory next to XLSX output; temporary crops now use a private temp directory.
+- Allow `formhtr doctor`, `--help`, and `--version` to run when `zbar` is missing, and look up Homebrew's `libzbar` on macOS.
 
 ## [0.3.1] - 2026-09-15
 
