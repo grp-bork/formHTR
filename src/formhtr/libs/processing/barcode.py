@@ -17,7 +17,7 @@ def extract_barcode(candidates):
             barcodes.append(candidates[key][0].content)
 
     if barcodes:
-        return max(set(barcodes), key=barcodes.count)
+        return max(barcodes, key=barcodes.count)
 
 def read_barcode(image, candidates):
     """Decode a barcode from a ROI image, with rotation retry and OCR fallback.

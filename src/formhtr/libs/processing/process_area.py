@@ -6,6 +6,20 @@ _aligner.mode = "global"
 _aligner.open_gap_score = -3
 _aligner.extend_gap_score = -1
 
+SERVICE_ORDER = ("google", "amazon", "azure")
+
+
+def pick_most_frequent(items):
+    """Return the most common item; ties keep the first occurrence.
+
+    Args:
+        items: Non-empty sequence of hashable values.
+
+    Returns:
+        The value with the highest count. Equal counts prefer the earlier item.
+    """
+    return max(items, key=items.count)
+
 
 def is_a_number(string):
     """Polish given string and check if can be converted to float.
@@ -39,7 +53,7 @@ def identify_number(values):
     float_strings = [is_a_number(value) for value in values]
     filtered_items = list(filter(lambda item: item is not None, float_strings))
     if len(filtered_items) != 0:
-        return max(set(filtered_items), key=filtered_items.count)
+        return pick_most_frequent(filtered_items)
 
 
 def separate_to_lines(rectangles):
@@ -138,7 +152,7 @@ def majority_vote(strings):
         for char in chars:
             count[char] = count.get(char, 0) + 1
         
-        # Get the character with maximum occurrence
+        # Highest count wins; ties keep the first character seen (first service).
         voted_char = max(count, key=count.get)
         result.append(voted_char)
 
@@ -294,11 +308,11 @@ def general_text_area(candidates, roi, is_number):
 
     max_words, max_lines = get_max_dimensions(candidate_lines)
 
-    # if the text area is reasonably small
+    for key in candidate_lines:
+        results[key] = construct_lines(candidate_lines[key])
+
+    # Vote only on compact fields; larger ones keep the first service with content.
     if max_lines <= 3 and max_words <= 5:
-        for key in candidate_lines:
-            results[key] = construct_lines(candidate_lines[key])
-    
         aligned_groups = align_lines(candidate_lines.values())
         words = []
         for group in aligned_groups:
@@ -307,6 +321,9 @@ def general_text_area(candidates, roi, is_number):
                 words.append(word.strip())
         results['inferred'] = '\n'.join(words)
     else:
-        results['inferred'] = construct_lines(list(candidate_lines.values())[0])
+        for key in SERVICE_ORDER:
+            if key in candidate_lines:
+                results['inferred'] = results[key]
+                break
 
     return results
