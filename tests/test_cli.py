@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
+import textwrap
 
 import pytest
 
@@ -34,7 +37,7 @@ def test_process_logsheet_dispatches_and_prints_stats(monkeypatch, capsys):
         lambda *_args, **_kwargs: None,
     )
     monkeypatch.setattr(
-        "formhtr.commands.process_logsheet.load_credentials",
+        "formhtr.logsheet.load_credentials",
         lambda **_kwargs: "CREDENTIALS",
     )
     captured = {}
@@ -43,7 +46,7 @@ def test_process_logsheet_dispatches_and_prints_stats(monkeypatch, capsys):
         captured.update(kwargs)
         return {"matches": 7, "artefacts": 8, "ratio": 0.875}
 
-    monkeypatch.setattr("formhtr.commands.process_logsheet.process_logsheet_to_xlsx", fake_process)
+    monkeypatch.setattr("formhtr.logsheet.process_logsheet_to_xlsx", fake_process)
 
     code = cli.main(
         [
@@ -82,6 +85,55 @@ def test_select_rois_rejects_invalid_headless_display_combo():
                 "--display-residuals",
             ]
         )
+
+
+def test_help_and_doctor_run_when_pyzbar_cannot_load_zbar():
+    script = textwrap.dedent(
+        """
+        import importlib.abc
+        import sys
+
+        class BlockPyzbar(importlib.abc.MetaPathFinder):
+            def find_spec(self, fullname, path, target=None):
+                if fullname == "pyzbar" or fullname.startswith("pyzbar."):
+                    raise ImportError("Unable to find zbar shared library")
+                return None
+
+        sys.meta_path.insert(0, BlockPyzbar())
+        sys.path[:] = {path!r}
+        from formhtr.cli import main
+        raise SystemExit(main(["--help"]))
+        """
+    ).format(path=sys.path)
+    help_proc = subprocess.run(
+        [sys.executable, "-c", script], capture_output=True, text=True, check=False)
+    assert help_proc.returncode == 0, help_proc.stderr
+    assert "doctor" in help_proc.stdout
+
+    doctor_script = textwrap.dedent(
+        """
+        import importlib.abc
+        import sys
+
+        class BlockPyzbar(importlib.abc.MetaPathFinder):
+            def find_spec(self, fullname, path, target=None):
+                if fullname == "pyzbar" or fullname.startswith("pyzbar."):
+                    raise ImportError("Unable to find zbar shared library")
+                return None
+
+        sys.meta_path.insert(0, BlockPyzbar())
+        sys.path[:] = {path!r}
+        from formhtr.deps import check_system_dependencies
+        from formhtr.cli import main
+        check_system_dependencies()
+        raise SystemExit(main(["doctor"]))
+        """
+    ).format(path=sys.path)
+    doctor_proc = subprocess.run(
+        [sys.executable, "-c", doctor_script], capture_output=True, text=True, check=False)
+    assert doctor_proc.returncode in (0, 1), doctor_proc.stderr
+    assert "Traceback" not in doctor_proc.stderr
+    assert "Unable to find zbar shared library" not in doctor_proc.stderr
 
 
 def test_doctor_returns_nonzero_when_missing_deps(monkeypatch, capsys):
