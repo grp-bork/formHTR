@@ -1,6 +1,5 @@
 import cv2
 import zxingcpp
-from pyzbar.pyzbar import decode
 
 
 def extract_barcode(candidates):
@@ -18,7 +17,7 @@ def extract_barcode(candidates):
             barcodes.append(candidates[key][0].content)
 
     if barcodes:
-        return max(set(barcodes), key=barcodes.count)
+        return max(barcodes, key=barcodes.count)
 
 def read_barcode(image, candidates):
     """Decode a barcode from a ROI image, with rotation retry and OCR fallback.
@@ -35,6 +34,9 @@ def read_barcode(image, candidates):
         return detected_objects[0].text
     
     # try pyzbar
+    from formhtr.deps import configure_zbar_library_search
+    configure_zbar_library_search()
+    from pyzbar.pyzbar import decode
     decoded_objects = decode(image)
     barcodes = [obj.data.decode('utf-8') for obj in decoded_objects]
     if barcodes:

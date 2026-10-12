@@ -28,6 +28,14 @@ System dependencies:
 - Fedora: `sudo dnf install zbar qpdf poppler-utils`
 - conda: `conda install -c conda-forge zbar qpdf poppler`
 
+On Apple Silicon macOS, Homebrew libraries live in `/opt/homebrew/lib`, which is not on the default loader path. If `formhtr doctor` still reports a missing `zbar` after `brew install`, or `pyzbar` raises `Unable to find zbar shared library`, set:
+
+```bash
+export DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib
+```
+
+(Intel Homebrew typically uses `/usr/local/lib` instead.)
+
 You can verify runtime requirements with:
 
 ```bash
@@ -115,9 +123,9 @@ __Google__
 ```
 {
   "type": "service_account",
-  "project_id": "theid",,
+  "project_id": "theid",
   "private_key_id": "thekey",
-  "private_key": "-----BEGIN PRIVATE KEY-----anotherkey-----END PRIVATE KEY-----\n"
+  "private_key": "-----BEGIN PRIVATE KEY-----anotherkey-----END PRIVATE KEY-----\n",
   "client_email": "emailaddress",
   "client_id": "id",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -310,11 +318,9 @@ manual_align_pdf(
 
 ## Documentation
 
-API reference and installation notes are built with **Sphinx** under `docs/source/`. After you connect this repository to [Read the Docs](https://readthedocs.org/) (import the GitHub repo; the root `.readthedocs.yaml` drives the build), each push to the default branch triggers a documentation build. Enable “Build pull requests” in the RTD project settings if you want preview builds for PRs.
+Hosted API reference and installation notes: [https://formhtr.readthedocs.io](https://formhtr.readthedocs.io).
 
-Pull requests also run a **GitHub Actions** job (`.github/workflows/docs.yml`) that installs the package and runs `sphinx-build`, so broken docs fail CI before merge.
-
-Build locally (install [Poppler](https://poppler.freedesktop.org/) / `poppler-utils` alongside zbar and qpdf so `pdf2image` can run):
+To build the same docs locally (install [Poppler](https://poppler.freedesktop.org/) / `poppler-utils` alongside zbar and qpdf so `pdf2image` can run):
 
 ```bash
 pip install ".[docs]"
@@ -326,7 +332,7 @@ sphinx-build -b html docs/source docs/_build/html
 
 ### Setup
 
-Create your development environment using the provided [script](conda/environment-dev.yml) via conda to install all required dependencies.
+Create your development environment using the provided [conda_env.yaml](conda_env.yaml) via conda to install all required dependencies.
 
 ### conda (dev)
 

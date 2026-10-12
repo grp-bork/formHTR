@@ -27,6 +27,11 @@ def test_store_results_csv_writes_inferred_and_fallback_values(tmp_path):
 
 def test_store_results_creates_xlsx_and_cleans_images_dir(tmp_path):
     output = tmp_path / "results.xlsx"
+    images_dir = tmp_path / "images"
+    images_dir.mkdir()
+    sentinel = images_dir / "scan.txt"
+    sentinel.write_text("keep\n", encoding="utf-8")
+
     img = np.zeros((8, 8, 3), dtype=np.uint8)
     results = [["flag", {"inferred": True}, img]]
     artefacts = {"google": [["extra", img]], "amazon": [], "azure": []}
@@ -35,4 +40,6 @@ def test_store_results_creates_xlsx_and_cleans_images_dir(tmp_path):
 
     assert output.exists()
     assert output.stat().st_size > 0
-    assert not (tmp_path / "images").exists()
+    assert sentinel.exists()
+    assert sentinel.read_text(encoding="utf-8") == "keep\n"
+    assert list(images_dir.glob("cropped_image_*.png")) == []

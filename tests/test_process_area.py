@@ -26,9 +26,27 @@ def test_majority_vote_votes_per_character():
     assert majority_vote(["abc", "axc", "ayc"]) == "abc"
 
 
+def test_majority_vote_tie_keeps_first_service():
+    assert majority_vote(["cat", "cot", "cut"]) == "cat"
+
+
+def test_identify_number_tie_is_deterministic():
+    assert identify_number(["12.5", "72.5"]) == "12.5"
+    assert identify_number(["72.5", "12.5"]) == "72.5"
+
+
 def test_identify_words_two_lines_prefers_numeric_when_requested():
     value = identify_words(["12,3", "12.3"], is_number=True)
     assert value == "12.3"
+
+
+def test_identify_words_keeps_non_ascii_when_services_agree():
+    assert identify_words(["Tromsø 4°C"] * 3, is_number=False) == "Tromsø 4°C"
+    assert identify_words(["25 µm"], is_number=False) == "25 µm"
+
+
+def test_identify_words_keeps_non_ascii_in_majority_vote():
+    assert identify_words(["Tromsø", "Tromso", "Tromsø"], is_number=False) == "Tromsø"
 
 
 def test_separate_to_lines_groups_by_vertical_distance():
@@ -62,6 +80,17 @@ def test_align_lines_groups_close_centers_together():
         ]
     )
     assert len(grouped) == 1
+
+
+def test_general_text_area_long_field_uses_first_service():
+    google = [Rectangle(i * 12, 0, i * 12 + 10, 10, f"w{i}") for i in range(6)]
+    amazon = [Rectangle(i * 12, 0, i * 12 + 10, 10, f"a{i}") for i in range(6)]
+    candidates = {"google": google, "amazon": amazon, "azure": []}
+    roi = ROI(0, 0, 80, 20, "notes", "Handwritten")
+    out = general_text_area(candidates, roi, is_number=False)
+    assert out["inferred"] == out["google"]
+    assert out["google"].startswith("w0")
+    assert out["amazon"].startswith("a0")
 
 
 def test_general_text_area_returns_inferred_value():

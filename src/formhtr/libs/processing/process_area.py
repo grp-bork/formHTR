@@ -1,5 +1,24 @@
-from Bio import pairwise2
+from Bio.Align import PairwiseAligner
 import numpy as np
+
+_aligner = PairwiseAligner()
+_aligner.mode = "global"
+_aligner.open_gap_score = -3
+_aligner.extend_gap_score = -1
+
+SERVICE_ORDER = ("google", "amazon", "azure")
+
+
+def pick_most_frequent(items):
+    """Return the most common item; ties keep the first occurrence.
+
+    Args:
+        items: Non-empty sequence of hashable values.
+
+    Returns:
+        The value with the highest count. Equal counts prefer the earlier item.
+    """
+    return max(items, key=items.count)
 
 
 def is_a_number(string):
@@ -34,7 +53,7 @@ def identify_number(values):
     float_strings = [is_a_number(value) for value in values]
     filtered_items = list(filter(lambda item: item is not None, float_strings))
     if len(filtered_items) != 0:
-        return max(set(filtered_items), key=filtered_items.count)
+        return pick_most_frequent(filtered_items)
 
 
 def separate_to_lines(rectangles):
@@ -108,8 +127,8 @@ def align_pairwise(string_1, string_2):
     Returns:
         str: aligned string
     """
-    alignments = pairwise2.align.globalxs(string_1, string_2, -3, -1, gap_char=' ')
-    return alignments[0][0]
+    alignment = next(_aligner.align(string_1, string_2))
+    return alignment[0].replace("-", " ")
 
 
 def majority_vote(strings):
@@ -133,23 +152,11 @@ def majority_vote(strings):
         for char in chars:
             count[char] = count.get(char, 0) + 1
         
-        # Get the character with maximum occurrence
+        # Highest count wins; ties keep the first character seen (first service).
         voted_char = max(count, key=count.get)
         result.append(voted_char)
 
     return ''.join(result)
-
-
-def remove_non_ascii(string):
-    """Remove non-ascii characters (these do not work in the alignment)
-
-    Args:
-        string (str): input line
-
-    Returns:
-        str: line containing only ascii characters
-    """
-    return ''.join(char for char in string if ord(char) < 128)
 
 
 def identify_words(lines, is_number):
@@ -163,13 +170,13 @@ def identify_words(lines, is_number):
     Returns:
         str: identified word
     """
-    # curate lines
-    lines = list(map(remove_non_ascii, lines))
     lines = list(filter(None, lines))
-
-    if len(lines) == 1:
+    if not lines:
+        return None
+    if len(set(lines)) == 1:
         return lines[0]
-    elif len(lines) == 2:
+
+    if len(lines) == 2:
         values = [align_pairwise(lines[0], lines[1]), 
                   align_pairwise(lines[1], lines[0])]
         if is_number:
@@ -301,11 +308,11 @@ def general_text_area(candidates, roi, is_number):
 
     max_words, max_lines = get_max_dimensions(candidate_lines)
 
-    # if the text area is reasonably small
+    for key in candidate_lines:
+        results[key] = construct_lines(candidate_lines[key])
+
+    # Vote only on compact fields; larger ones keep the first service with content.
     if max_lines <= 3 and max_words <= 5:
-        for key in candidate_lines:
-            results[key] = construct_lines(candidate_lines[key])
-    
         aligned_groups = align_lines(candidate_lines.values())
         words = []
         for group in aligned_groups:
@@ -314,6 +321,9 @@ def general_text_area(candidates, roi, is_number):
                 words.append(word.strip())
         results['inferred'] = '\n'.join(words)
     else:
-        results['inferred'] = construct_lines(list(candidate_lines.values())[0])
+        for key in SERVICE_ORDER:
+            if key in candidate_lines:
+                results['inferred'] = results[key]
+                break
 
     return results

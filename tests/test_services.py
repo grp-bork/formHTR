@@ -43,6 +43,17 @@ def test_google_process_output_normalizes_words(extracted_data):
     assert normalized[0].get_coords() == sample[0]["coords"]
 
 
+def test_google_process_output_keeps_non_ascii():
+    outputs = [
+        SimpleNamespace(description="full", bounding_poly=SimpleNamespace(vertices=[])),
+        _google_word("Tromsø", [0, 0, 10, 10]),
+        _google_word("25 µm", [12, 0, 22, 10]),
+    ]
+    google = GoogleVision.__new__(GoogleVision)
+    normalized = google.process_output(outputs)
+    assert [item.content for item in normalized] == ["Tromsø", "25 µm"]
+
+
 def test_amazon_process_output_maps_relative_to_absolute(extracted_data):
     sample = extracted_data["ctd_front"]["amazon"][:3]
     img_width, img_height = 2500, 3500
