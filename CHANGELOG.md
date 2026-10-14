@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-14
+
+### Changed
+
+- Confirm barcode decodes against OCR words when they are present, prefer checksummed symbologies, and retry both zxing-cpp and pyzbar after rotating the crop.
+
 ## [0.4.0] - 2026-10-12
 
 ### Changed
