@@ -79,7 +79,7 @@ The need for the `formHTR` tool arose during the TRaversing European Coastlines 
 
 [^3]: https://www.embl.org/about/info/trec/
 
-[^4]: https://www.ebi.ac.uk/biosamples/samples?text=Traversing+European+Coastlines+%28TREC%29+expedition
+[^4]: [https://www.ebi.ac.uk/biosamples/samples?text=Traversing+European+Coastlines+(TREC)+expedition](https://www.ebi.ac.uk/biosamples/samples?text=Traversing+European+Coastlines+%28TREC%29+expedition)
 
 # Example workflow
 
