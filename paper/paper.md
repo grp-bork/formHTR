@@ -75,11 +75,9 @@ The output of `formHTR` is an Excel spreadsheet (an `.xlsx` file) with two sheet
 
 # Research impact statement
 
-The need for the `formHTR` tool arose during the TRaversing European Coastlines (TREC) expedition[^3]. The tool was developed and continuously optimised for the expedition, and consequently used on a collection of approximately ten thousand double-sided logsheets spanning around a hundred different template types, together providing contextual metadata to more than eighty thousand collected samples. Using `formHTR`, the logsheet templates were annotated and all the scanned logsheets processed. The metadata was extracted and curated, and archived[^4] in the BioSamples database [@courtot2022biosamples]. The contextual metadata is an essential foundation for sample analysis and data production, which, at the time of writing, is in the initial phase.
+The need for the `formHTR` tool arose during the TRaversing European Coastlines (TREC) expedition [@bork2026toward]. The tool was developed and continuously optimised for the expedition, and consequently used on a collection of approximately ten thousand double-sided logsheets spanning around a hundred different template types, together providing contextual metadata to more than eighty thousand collected samples. Using `formHTR`, the logsheet templates were annotated and all the scanned logsheets processed. The metadata was extracted and curated, and archived[^3] in the BioSamples database [@courtot2022biosamples]. The contextual metadata is an essential foundation for sample analysis and data production, which, at the time of writing, is in the initial phase.
 
-[^3]: https://www.embl.org/about/info/trec/
-
-[^4]: [https://www.ebi.ac.uk/biosamples/samples?text=Traversing+European+Coastlines+(TREC)+expedition](https://www.ebi.ac.uk/biosamples/samples?text=Traversing+European+Coastlines+%28TREC%29+expedition)
+[^3]: [https://www.ebi.ac.uk/biosamples/samples?text=Traversing+European+Coastlines+(TREC)+expedition](https://www.ebi.ac.uk/biosamples/samples?text=Traversing+European+Coastlines+%28TREC%29+expedition)
 
 # Example workflow
 
