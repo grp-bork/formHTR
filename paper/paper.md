@@ -26,7 +26,7 @@ affiliations:
  - name: EMBL-EBI, Hinxton, UK
    index: 2
    ror: "02catss52"
- - name: Masaryk university, Czech republic
+ - name: Masaryk University, Czech Republic
    index: 3
    ror: "02j46qs45"
 date: 14 April 2026
@@ -47,7 +47,7 @@ Just as large-scale expeditions enforce standards on sample collection, they als
 
 # State of the field
 
-The current OCR landscape of pretrained tools can be split between open-source models and cloud-based services. On the open-source side, there are many tools such as Tesseract OCR [@tesseract_ocr], EasyOCR [@easyocr], OCR4All [@app9224853], and PaddleOCR [@cui2025paddleocr30technicalreport] which provide pretrained models or optionally allow to train custom models. Some of the trade-offs are in accuracy, speed, and deployment complexity. Cloud-based pretrained OCR services, including Google Cloud Vision API [@google_vision_api], Azure AI Vision  [@microsoft_azure_computer_vision_sdk], and Amazon Textract [@amazon_textract], are accessible via APIs and are highly optimised for printed and handwritten text, with some also providing higher-level outputs (e.g. key–value pairs).
+The current OCR landscape of pretrained tools can be split between open-source models and cloud-based services. On the open-source side, there are many tools such as Tesseract OCR [@tesseract_ocr], EasyOCR [@easyocr], OCR4all [@app9224853], and PaddleOCR [@cui2025paddleocr30technicalreport] which provide pretrained models or optionally allow to train custom models. Some of the trade-offs are in accuracy, speed, and deployment complexity. Cloud-based pretrained OCR services, including Google Cloud Vision API [@google_vision_api], Azure AI Vision  [@microsoft_azure_computer_vision_sdk], and Amazon Textract [@amazon_textract], are accessible via APIs and are highly optimised for printed and handwritten text, with some also providing higher-level outputs (e.g. key–value pairs).
 
 Naturally, the combination of multiple tools, models, or services has emerged. Systems such as OCRmyPDF [@ocrmypdf] or unified interfaces like OcrPy [@ocrpy] integrate engines like Tesseract, cloud APIs, and downstream processing into a single pipeline, effectively abstracting over multiple OCR backends. The tool Handprint [@handprint] combines multiple cloud services and outputs annotated images or raw results, as well as compares the recognised text against the expected content[^1]. None of these tools integrates a reusable form template, aligns a scan to that template, assigns recognised fragments to named fields, or outputs a table with fused results from several engines by the voting process. Extending any of them would have meant replacing that output model rather than reusing it, so a dedicated extraction pipeline was a more straightforward design.
 
